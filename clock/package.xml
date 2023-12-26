@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.alexthill.clock">
+	<packageinformation>
+		<packagename>Clock</packagename>
+		<packagedescription>Adds a clock showing the server time to the bottom of every page</packagedescription>
+		<version>6.0.0</version>
+		<date>2023-12-26</date>
+	</packageinformation>
+
+	<authorinformation>
+		<author>Alex Thill</author>
+		<authorurl>https://github.com/alexthill</authorurl>
+	</authorinformation>
+
+    <requiredpackages>
+        <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
+    </requiredpackages>
+
+	<instructions type="install">
+        <instruction type="template" />
+		<instruction type="templateListener" />
+	</instructions>
+</package>
