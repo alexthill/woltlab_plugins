@@ -1,0 +1,22 @@
+.whoWroteInfoBox ul {
+    align-items: center;
+    margin-bottom: 8px;
+}
+#whoWroteShownUsers {
+    color: var(--wcfContentText);
+}
+#whoWroteShownUsers a {
+    color: var(--wcfContentLink);
+}
+#tpl_wbb_threadUserPosts .wbbPost .messageSignature, #tpl_wbb_threadUserPosts .wbbPost .userCredits, #tpl_wbb_threadUserPosts .contentInteractionShareButton {
+    display: none;
+}
+#tpl_wbb_threadUserPosts .wbbPost .userAvatarImage {
+    width: 64px;
+    height: 64px;
+}
+#tpl_wbb_threadUserPosts .wbbPost {
+    content: " \2197";
+    font-weight: normal !important;
+    font-style: normal !important;
+}

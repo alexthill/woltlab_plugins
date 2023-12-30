@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/language.xsd" languagecode="de">
+    <category name="wbb.alexthill.who_wrote">
+		<item name="wbb.alexthill.who_wrote.more"><![CDATA[&hellip;mehr]]></item>
+		<item name="wbb.alexthill.who_wrote.less"><![CDATA[weniger]]></item>
+		<item name="wbb.alexthill.who_wrote.title"><![CDATA[{if $whoWrote|count === 1}Ein Benutzer hat{else}{@$whoWrote|count} Benutzer haben{/if} hier geschrieben]]></item>
+		<item name="wbb.alexthill.who_wrote.multiSelect"><![CDATA[Mehrfachauswahl]]></item>
+		<item name="wbb.alexthill.who_wrote.multiSelectHide"><![CDATA[verbergen]]></item>
+		<item name="wbb.alexthill.who_wrote.showPosts"><![CDATA[Beiträge ausgewählter Benutzer anzeigen]]></item>
+		<item name="wbb.alexthill.who_wrote.backToThread"><![CDATA[Zurück zum <a href="{link application='wbb' controller='Thread' object=$thread}{/link}">Thema</a>.]]></item>
+		<item name="wbb.alexthill.who_wrote.showingAll"><![CDATA[Keine gültige Benutzer-ID angegeben, es werden keine Beiträge angezeigt.]]></item>
+		<item name="wbb.alexthill.who_wrote.showingUsers"><![CDATA[Es werden nur die Beiträge von {assign var=counter value=0}{foreach from=$whoWroteShownUsers item=$user}{if $counter}, {/if}{user object=$user}{assign var=counter value=$counter + 1}{/foreach} angezeigt.]]></item>
+	</category>
+
+    <category name="wcf.acp.group">
+        <item name="wcf.acp.group.option.user.board.thread.canViewWhoWrote"><![CDATA[Kann sehen, wer in einem Thema geschrieben hat]]></item>
+        <item name="wcf.acp.group.option.user.board.thread.canViewWhoWroteCount"><![CDATA[Kann sehen, wie oft jemand in einem Thema geschrieben hat]]></item>
+    </category>
+
+    <category name="wcf.acp.option">
+        <item name="wcf.acp.option.category.board.thread.who_wrote"><![CDATA[Wer hat in Thema geschrieben]]></item>
+        <item name="wcf.acp.option.wbb_who_wrote_count"><![CDATA[Anzahl der Benutzer, die angezeigt werden soll.]]></item>
+        <item name="wcf.acp.option.wbb_who_wrote_count.description"><![CDATA[Restliche Benutzer können per Klick angezeigt werden [0, um immer alle Benutzer anzuzeigen]]]></item>
+    </category>
+</language>

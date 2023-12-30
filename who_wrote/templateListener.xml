@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/templateListener.xsd">
+    <import>
+        <templatelistener name="wbbWhoWrote">
+            <environment>user</environment>
+            <templatename>thread</templatename>
+            <eventname>infoBoxes</eventname>
+            <templatecode><![CDATA[{include file='__whoWrote' application='wbb'}]]></templatecode>
+        </templatelistener>
+        <templatelistener name="wbbWhoWroteShownUsers">
+            <environment>user</environment>
+            <templatename>thread</templatename>
+            <eventname>afterMetaData</eventname>
+            <templatecode><![CDATA[{include file='__whoWroteShownUsers' application='wbb'}]]></templatecode>
+        </templatelistener>
+        <templatelistener name="wbbWhoWrotePagination">
+            <environment>user</environment>
+            <templatename>contentInteraction</templatename>
+            <eventname>beforeButtons</eventname>
+            <templatecode><![CDATA[{include file='__whoWrotePagination' application='wbb'}]]></templatecode>
+        </templatelistener>
+    </import>
+</data>

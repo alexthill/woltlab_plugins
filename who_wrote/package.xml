@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.alexthill.who_wrote">
+	<packageinformation>
+        <packagename><![CDATA[Who has replied to a topic]]></packagename>
+        <packagedescription><![CDATA[Show in the thread footer the number of written contributions per user]]></packagedescription>
+        <packagename language="de"><![CDATA[Wer hat in einem Thema geantwortet]]></packagename>
+        <packagedescription language="de"><![CDATA[Zeige im Themen-Footer die Anzahl der geschriebenen Beiträge pro Benutzer]]></packagedescription>
+		<version>6.0.0 Beta 2</version>
+		<date>2023-12-30</date>
+	</packageinformation>
+
+	<authorinformation>
+		<author>Alex Thill</author>
+		<authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
+	</authorinformation>
+
+    <requiredpackages>
+        <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
+        <requiredpackage minversion="6.0.0">com.woltlab.wbb</requiredpackage>
+    </requiredpackages>
+
+	<instructions type="install">
+        <instruction type="language" />
+		<instruction type="file" application="wbb">files_wbb.tar</instruction>
+		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="eventListener" />
+        <instruction type="option" />
+        <instruction type="page" />
+        <instruction type="templateListener" />
+        <instruction type="userGroupOption" />
+	</instructions>
+    
+    <instructions  type="update" fromversion="6.0.0 Beta 1">
+		<instruction type="file" application="wbb">files_wbb.tar</instruction>
+		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
+	</instructions>
+</package>
