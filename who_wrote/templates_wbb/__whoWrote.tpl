@@ -73,7 +73,7 @@
                     {else}
                         {lang}wcf.user.guest{/lang}
                     {/if}
-                    {if $__wcf->getSession()->getPermission('user.board.thread.canViewWhoWroteCount')}({@$user['count']}){/if}
+                    {if $__wcf->getSession()->getPermission('user.board.thread.canViewWhoWroteCount')}({#$user['count']}){/if}
                 </li>
                 {assign var=counter value=$counter + 1}
             {/foreach}

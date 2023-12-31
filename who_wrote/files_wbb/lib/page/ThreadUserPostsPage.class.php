@@ -5,6 +5,7 @@ namespace wbb\page;
 use wbb\data\post\ThreadPostList;
 use wbb\data\thread\ViewableUserPostsThread;
 use wcf\data\user\UserProfileList;
+use wcf\system\cache\runtime\UserProfileRuntimeCache;
 use wcf\system\request\LinkHandler;
 use wcf\system\WCF;
 
@@ -23,7 +24,7 @@ class ThreadUserPostsPage extends ThreadPage {
      */
     public $userIDs = [];
     
-    public function getUserParam(): string {
+    public function getUsersParam(): string {
         return 'users=' . implode(self::SEPERATOR, $this->userIDs);
     }
     
@@ -33,13 +34,16 @@ class ThreadUserPostsPage extends ThreadPage {
     public function readParameters() {
         if (isset($_REQUEST['users'])) {
             $users = explode(',', $_REQUEST['users']);
+            $ids = [];
             foreach($users as $user) {
                 $id = intval($user);
                 if ($id !== 0) {
-                    $this->userIDs[] = $id;
+                    $ids = $id;
                 }
             }
+            $this->userIDs = array_unique($ids);
             sort($this->userIDs);
+            UserProfileRuntimeCache::getInstance()->cacheObjectIDs($this->userIDs);
         }
         
         // this must come last because setCanonicalURL is called in ancestor AbstractThreadPage::readParameters
@@ -54,17 +58,11 @@ class ThreadUserPostsPage extends ThreadPage {
     public function assignVariables() {
         parent::assignVariables();
         
-        if (count($this->userIDs) === 0) {
-            $userList = [];
-        } else {
-            $userList = new UserProfileList();
-            $userList->getConditionBuilder()->add(' user_table.userID IN (?)', [$this->userIDs]);
-            $userList->readObjects();
-        }
+        $userList = UserProfileRuntimeCache::getInstance()->getObjects($this->userIDs);
         
         WCF::getTPL()->assign([
             'whoWroteShownUsers' => $userList,
-            'whoWroteUsersParam' => $this->getUserParam(),
+            'whoWroteUsersParam' => $this->getUsersParam(),
         ]);
     }
     
@@ -87,7 +85,7 @@ class ThreadUserPostsPage extends ThreadPage {
      * @inheritDoc
      */
     protected function setCanonicalURL() {
-        $url = $this->getUserParam();
+        $url = $this->getUsersParam();
         if ($this->pageNo > 1) {
             $url .= '&pageNo=' . $this->pageNo;
         }
@@ -95,5 +93,12 @@ class ThreadUserPostsPage extends ThreadPage {
             'application' => 'wbb',
             'object' => $this->thread,
         ], $url);
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    protected function updateThreadVisit() {
+        // do nothing, do not mark anything as done if viewing only the post of certain users, do not collect $200
     }
 }

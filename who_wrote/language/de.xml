@@ -3,7 +3,7 @@
     <category name="wbb.alexthill.who_wrote">
 		<item name="wbb.alexthill.who_wrote.more"><![CDATA[&hellip;mehr]]></item>
 		<item name="wbb.alexthill.who_wrote.less"><![CDATA[weniger]]></item>
-		<item name="wbb.alexthill.who_wrote.title"><![CDATA[{if $whoWrote|count === 1}Ein Benutzer hat{else}{@$whoWrote|count} Benutzer haben{/if} hier geschrieben]]></item>
+		<item name="wbb.alexthill.who_wrote.title"><![CDATA[{if $whoWrote|count === 1}Ein Benutzer hat{else}{#$whoWrote|count} Benutzer haben{/if} hier geschrieben]]></item>
 		<item name="wbb.alexthill.who_wrote.multiSelect"><![CDATA[Mehrfachauswahl]]></item>
 		<item name="wbb.alexthill.who_wrote.multiSelectHide"><![CDATA[verbergen]]></item>
 		<item name="wbb.alexthill.who_wrote.showPosts"><![CDATA[Beiträge ausgewählter Benutzer anzeigen]]></item>

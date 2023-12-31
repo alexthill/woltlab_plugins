@@ -15,7 +15,7 @@
     width: 64px;
     height: 64px;
 }
-#tpl_wbb_threadUserPosts .wbbPost {
+#tpl_wbb_threadUserPosts .wbbPost .messagePublicationTime::after {
     content: " \2197";
     font-weight: normal !important;
     font-style: normal !important;

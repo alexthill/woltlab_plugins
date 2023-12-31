@@ -30,6 +30,13 @@ class ViewableUserPostsThread extends ViewableThread {
     /**
      * @inheritDoc
      */
+    public function canMarkAsDone() {
+        return false;
+    }
+    
+    /**
+     * @inheritDoc
+     */
     public function getLink(): string {
         return LinkHandler::getInstance()->getLink('ThreadUserPosts', [
             'application' => 'wbb',
