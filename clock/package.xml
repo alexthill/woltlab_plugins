@@ -3,6 +3,8 @@
 	<packageinformation>
 		<packagename>Clock</packagename>
 		<packagedescription>Adds a clock showing the server time to the bottom of every page</packagedescription>
+		<packagename language="de">Uhr</packagename>
+		<packagedescription language="de">Fügt eine Uhr, die die Serverzeit anzeigt, zu jeder Seite hinzu</packagedescription>
 		<version>6.0.0</version>
 		<date>2023-12-26</date>
 	</packageinformation>
