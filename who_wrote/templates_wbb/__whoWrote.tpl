@@ -6,14 +6,14 @@
         if (list.length > 0) {
             const btn = document.createElement('button');
             btn.className = 'button small';
-            btn.innerHTML = '{jslang}wbb.alexthill.who_wrote.more{/jslang}';
+            btn.innerHTML = '{jslang}wbb.thread.who_wrote.more{/jslang}';
             btn.addEventListener('click', () => {
                 if (list[0].style.display === 'none') {
                     forEach(list, (element) => element.style.display = '');
-                    btn.innerHTML = '{jslang}wbb.alexthill.who_wrote.less{/jslang}';
+                    btn.innerHTML = '{jslang}wbb.thread.who_wrote.less{/jslang}';
                 } else {
                     forEach(list, (element) => element.style.display = 'none');
-                    btn.innerHTML = '{jslang}wbb.alexthill.who_wrote.more{/jslang}';
+                    btn.innerHTML = '{jslang}wbb.thread.who_wrote.more{/jslang}';
                 }
             });
             container.appendChild(btn);
@@ -27,11 +27,11 @@
             if (selectList.style.display === 'none') {
                 selectList.style.display = '';
                 showBtn.style.display = '';
-                selectBtn.innerHTML = '{jslang}wbb.alexthill.who_wrote.multiSelectHide{/jslang}';
+                selectBtn.innerHTML = '{jslang}wbb.thread.who_wrote.multiSelectHide{/jslang}';
             } else {
                 selectList.style.display = 'none';
                 showBtn.style.display = 'none';
-                selectBtn.innerHTML = '{jslang}wbb.alexthill.who_wrote.multiSelect{/jslang}';
+                selectBtn.innerHTML = '{jslang}wbb.thread.who_wrote.multiSelect{/jslang}';
             }
         });
         const selectedIds = new Set();
@@ -61,7 +61,7 @@
     })();
 </script>
 <section class="box whoWroteInfoBox">
-    <h2 class="boxTitle">{lang}wbb.alexthill.who_wrote.title{/lang}</h2>
+    <h2 class="boxTitle">{lang}wbb.thread.who_wrote.title{/lang}</h2>
     <div class="boxContent">
         <ul class="inlineList commaSeparated">
             {assign var=counter value=1}
@@ -79,8 +79,8 @@
             {/foreach}
         </ul>
         {if $whoWroteByName|count >= 3}
-            <button id="whoWroteSelectBtn" class="button small">{lang}wbb.alexthill.who_wrote.multiSelect{/lang}</button>
-            <a id="whoWroteShowPostsBtn" class="button small disabled" style="display:none;" data-base-link="{link controller='ThreadUserPosts' application='wbb' id=$threadID}{/link}">{lang}wbb.alexthill.who_wrote.showPosts{/lang}</a>
+            <button id="whoWroteSelectBtn" class="button small">{lang}wbb.thread.who_wrote.multiSelect{/lang}</button>
+            <a id="whoWroteShowPostsBtn" class="button small disabled" style="display:none;" data-base-link="{link controller='ThreadUserPosts' application='wbb' id=$threadID}{/link}">{lang}wbb.thread.who_wrote.showPosts{/lang}</a>
             <ul id="whoWroteSelectList" style="display:none;">
                 {foreach from=$whoWroteByName key=$username item=$userID}
                     <li><input type="checkbox" value="{@$userID}" id="whoWroteCheck{@$userID}"><label for="whoWroteCheck{@$userID}">{$username}</label></li>

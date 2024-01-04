@@ -38,7 +38,7 @@ class ThreadUserPostsPage extends ThreadPage {
             foreach($users as $user) {
                 $id = intval($user);
                 if ($id !== 0) {
-                    $ids = $id;
+                    $ids[] = $id;
                 }
             }
             $this->userIDs = array_unique($ids);
@@ -59,6 +59,7 @@ class ThreadUserPostsPage extends ThreadPage {
         parent::assignVariables();
         
         $userList = UserProfileRuntimeCache::getInstance()->getObjects($this->userIDs);
+        $userList = array_filter($userList, function($el) { return !is_null($el); });
         
         WCF::getTPL()->assign([
             'whoWroteShownUsers' => $userList,

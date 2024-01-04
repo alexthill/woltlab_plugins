@@ -12,7 +12,7 @@
                 <categoryname>board.thread.who_wrote</categoryname>
                 <optiontype>integer</optiontype>
                 <defaultvalue>16</defaultvalue>
-                <validationpattern><![CDATA[\b[0-9]+\b]]></validationpattern>
+                <minvalue>0</minvalue>
             </option>
         </options>
     </import>

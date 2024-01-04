@@ -6,7 +6,7 @@
         <packagename language="de">Wer hat in einem Thema geantwortet</packagename>
         <packagedescription language="de">Zeige im Themen-Footer die Anzahl der geschriebenen Beiträge pro Benutzer</packagedescription>
 		<version>6.0.0 Beta 3</version>
-		<date>2023-12-31</date>
+		<date>2024-01-04</date>
 	</packageinformation>
 
 	<authorinformation>
@@ -31,6 +31,9 @@
 	</instructions>
     
     <instructions  type="update" fromversion="6.0.0 Beta 2">
+        <instruction type="language" />
 		<instruction type="file" application="wbb">files_wbb.tar</instruction>
+		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="option" />
 	</instructions>
 </package>
