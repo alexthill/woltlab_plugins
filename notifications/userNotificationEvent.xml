@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/userNotificationEvent.xsd">
+	<import>
+		<event>
+			<name>registrationOpens</name>
+			<objecttype>com.woltlab.calendar.event</objecttype>
+			<classname>calendar\system\user\notification\event\RegistrationOpensNotificationEvent</classname>
+			<preset>1</preset>
+		</event>
+		<event>
+			<name>participationUnregisterNoSelection</name>
+			<objecttype>com.woltlab.calendar.event</objecttype>
+			<classname>calendar\system\user\notification\event\UnregisterNoSelectionNotificationEvent</classname>
+			<preset>1</preset>
+		</event>
+		<event>
+			<name>participationUnregister</name>
+			<objecttype>com.woltlab.calendar.event.date.participation</objecttype>
+			<classname>calendar\system\user\notification\event\UnregisterNotificationEvent</classname>
+			<preset>1</preset>
+		</event>
+		<event>
+			<name>participationMaybeUnregister</name>
+			<objecttype>com.woltlab.calendar.event.date.participation</objecttype>
+			<classname>calendar\system\user\notification\event\MaybeUnregisterNotificationEvent</classname>
+			<preset>1</preset>
+		</event>
+	</import>
+</data>

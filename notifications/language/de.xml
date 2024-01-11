@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="https://www.woltlab.com" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.woltlab.com https://www.woltlab.com/XSD/tornado/language.xsd" languagecode="de" languagename="Deutsch" countrycode="de">
+    <category name="calendar.event">
+        <item name="calendar.event.registrationOpens.notification.title"><![CDATA[Anmeldung eröffnet]]></item>
+        <item name="calendar.event.registrationOpens.notification.message"><![CDATA[<strong>{$author}</strong> hat die Anmeldung zum Termin <strong>{$event->subject}</strong> ({$event->getFirstEventDate()->getFormattedTimeFrame()}) eröffnet.]]></item>
+		<item name="calendar.event.registrationOpens.notification.mail.plaintext"><![CDATA[{@$author} hat die Anmeldung zum Termin „{@$eventDate->getTitle()}“ ({$eventDate->getFormattedTimeFrame()}) [URL:{@$eventDate->getLink()}] eröffnet:]]></item>
+		<item name="calendar.event.registrationOpens.notification.mail.html"><![CDATA[<p><strong>{$author}</strong> hat die Anmeldung zum Termin <a href="{$eventDate->getLink()}">{$eventDate->getTitle()}</a> ({$eventDate->getFormattedTimeFrame()}) eröffnet:</p>]]></item>
+        <item name="calendar.event.unregister.notification.title"><![CDATA[Ein Teilnehmer hat sich abgemeldet]]></item>
+        <item name="calendar.event.unregister.notification.title.stacked"><![CDATA[{#$count} Teilnehmer haben sich abgemeldet]]></item>
+        <item name="calendar.event.unregister.notification.message"><![CDATA[<strong>{$author}</strong> hat sich vom Termin <strong>{$eventDate->getTitle()}</strong> ({$eventDate->getFormattedTimeFrame()}) abgemeldet.]]></item>
+		<item name="calendar.event.unregister.notification.message.stacked"><![CDATA[{@'wcf.user.notification.stacked.authorList'|language} haben sich vom Termin <strong>{$eventDate->getTitle()}</strong> ({$eventDate->getFormattedTimeFrame()}) abgemeldet.]]></item>
+        <item name="calendar.event.maybeUnregister.notification.title"><![CDATA[Ein unentschlossener Teilnehmer hat sich abgemeldet]]></item>
+        <item name="calendar.event.maybeUnregister.notification.title.stacked"><![CDATA[{#$count} unentschlossene Teilnehmer haben sich abgemeldet]]></item>
+        <item name="calendar.event.maybeUnregister.notification.message"><![CDATA[<strong>{$author}</strong> (unentschlossenen) hat sich vom Termin <strong>{$eventDate->getTitle()}</strong> ({$eventDate->getFormattedTimeFrame()}) abgemeldet.]]></item>
+		<item name="calendar.event.maybeUnregister.notification.message.stacked"><![CDATA[{@'wcf.user.notification.stacked.authorList'|language} (unentschlossenen) haben sich vom Termin <strong>{$eventDate->getTitle()}</strong> ({$eventDate->getFormattedTimeFrame()}) abgemeldet.]]></item>
+        <item name="calendar.event.unregisterNoSelection.notification.message"><![CDATA[Ein Teilnehmer hat die Teilnahme am Termin <strong>{$event->subject}</strong> ({$event->getFirstEventDate()->getFormattedTimeFrame()}) aufgehoben.]]></item>
+		<item name="calendar.event.unregisterNoSelection.notification.message.stacked"><![CDATA[{#$count} Teilnehmer haben die Teilnahme am Termin <strong>{$event->subject}</strong> ({$event->getFirstEventDate()->getFormattedTimeFrame()}) aufgehoben.]]></item>
+    </category>
+    <category name="wcf.user.notification">
+        <item name="wcf.user.notification.com.woltlab.calendar.event.registrationOpens"><![CDATA[Eröffnung der Anmeldung eines Termins]]></item>
+        <item name="wcf.user.notification.com.woltlab.calendar.event.participationUnregisterNoSelection"><![CDATA[Teilnehmer hat die Teilnahme an {if LANGUAGE_USE_INFORMAL_VARIANT}deinem{else}Ihrem{/if} Termin auf "keine Auswahl" gesetzt.]]></item>
+        <item name="wcf.user.notification.com.woltlab.calendar.event.date.participation.participationUnregister"><![CDATA[Teilnehmer hat sich von {if LANGUAGE_USE_INFORMAL_VARIANT}deinem{else}Ihrem{/if} Termin abgemeldet]]></item>
+        <item name="wcf.user.notification.com.woltlab.calendar.event.date.participation.participationMaybeUnregister"><![CDATA[Unentschlossener Teilnehmer hat sich von {if LANGUAGE_USE_INFORMAL_VARIANT}deinem{else}Ihrem{/if} Termin abgemeldet]]></item>
+    </category>
+</language>
