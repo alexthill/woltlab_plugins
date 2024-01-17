@@ -33,7 +33,7 @@ class RegistrationOpensNotificationEvent extends AbstractUserNotificationEvent {
             'template' => 'email_notification_event',
             'application' => 'calendar',
             'variables' => [
-                'languageVariablePrefix' => 'calendar.event.eventDate.notification',
+                'languageVariablePrefix' => 'calendar.event.registrationOpens.notification',
                 'eventDate' => $eventDate,
                 'author' => $this->author,
             ],
