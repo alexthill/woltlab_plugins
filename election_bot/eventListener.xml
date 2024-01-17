@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/eventListener.xsd">
+    <import>
+        <eventlistener name="electionBotThreadAdd">
+            <eventclassname>wbb\form\ThreadAddForm</eventclassname>
+            <eventname>assignVariables,readFormParameters,saved,validate</eventname>
+            <listenerclassname>wbb\system\event\listener\ElectionBotThreadAddListener</listenerclassname>
+            <environment>user</environment>
+        </eventlistener>
+        <eventlistener name="electionBotThreadPage">
+            <eventclassname>wbb\page\ThreadPage</eventclassname>
+            <eventname>assignVariables</eventname>
+            <listenerclassname>wbb\system\event\listener\ElectionBotThreadPageListener</listenerclassname>
+            <environment>user</environment>
+        </eventlistener>
+        <eventlistener name="electionBotPostAction">
+            <eventclassname>wbb\data\post\PostAction</eventclassname>
+            <eventname>validateAction,finalizeAction</eventname>
+            <listenerclassname>wbb\system\event\listener\ElectionBotPostActionListener</listenerclassname>
+            <environment>user</environment>
+        </eventlistener>
+    </import>
+</data>

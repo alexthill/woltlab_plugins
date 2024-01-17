@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/language.xsd" languagecode="de">
+    <category name="wbb.electionbot">
+		<item name="wbb.electionbot.deadlineOverPost.title"><![CDATA[<h2>Deadline abgelaufen</h2>]]></item>
+		<item name="wbb.electionbot.vote"><![CDATA[{if !$valid}Ungültiger {/if}VOTE:{$vote}]]></item>
+		<item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {$election->phase}]]></item>
+		<item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {$h}:{$m}:{$s}]]></item>
+		<item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
+		<item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
+		<item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde vorzeitig beendet.]]></item>
+		<item name="wbb.electionbot.message.start"><![CDATA[Neue Wahl wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+		<item name="wbb.electionbot.form.title"><![CDATA[Wahl]]></item>
+		<item name="wbb.electionbot.form.title2"><![CDATA[Wahl-Bot]]></item>
+		<item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
+		<item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe Wahl-Tab für mehr Details)]]></item>
+		<item name="wbb.electionbot.form.end"><![CDATA[Laufende Wahl vorzeitig beenden.]]></item>
+		<item name="wbb.electionbot.form.start"><![CDATA[Neue Wahl mit Deadline starten]]></item>
+		<item name="wbb.electionbot.form.enable"><![CDATA[Wahl-Bot für dieses Thema aktivieren]]></item>
+		<item name="wbb.electionbot.form.name"><![CDATA[Name der Wahl]]></item>
+		<item name="wbb.electionbot.form.name.error.invalid"><![CDATA[{if LANGUAGE_USE_INFORMAL_VARIANT}Du hast{else}Sie haben{/if} einen ungültigen Namen eingegeben. Der Name darf nicht mehr als 255 Zeichen lang sein.]]></item>
+		<item name="wbb.electionbot.form.deadline"><![CDATA[Deadline für die Wahl]]></item>
+		<item name="wbb.electionbot.form.deadline.description"><![CDATA[Die Deadline muss in der Zukunft liegen.]]></item>
+		<item name="wbb.electionbot.form.deadline.error.invalid"><![CDATA[{if LANGUAGE_USE_INFORMAL_VARIANT}Du hast{else}Sie haben{/if} ein ungültiges Datum eingegeben. Die Deadline darf nicht in der Vergangenheit liegen.]]></item>
+		<item name="wbb.electionbot.form.deadlineChange"><![CDATA[Deadline ändern]]></item>
+		<item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
+		<item name="wbb.electionbot.form.extension"><![CDATA[Automatische Verlängerung]]></item>
+		<item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Wahl verlängert werden soll. [0 für keine automatische Verlängerung]]]></item>
+		<item name="wbb.electionbot.form.extension.error.invalid"><![CDATA[{if LANGUAGE_USE_INFORMAL_VARIANT}Du hast{else}Sie haben{/if} ein ungültiges Verlängerung eingegeben. Die Verlängerung muss eine postive Zahl sein und darf nicht mehr als 527.040 betragen.]]></item>
+    </category>
+
+    <category name="wcf.acl.option">
+		<item name="wcf.acl.option.category.com.woltlab.wbb.board.user.electionbot"><![CDATA[Wahl-Bot]]></item>
+        <item name="wcf.acl.option.com.woltlab.wbb.board.canUseElection"><![CDATA[Kann an einer Wahl teilnehmen]]></item>
+        <item name="wcf.acl.option.com.woltlab.wbb.board.canStartElection"><![CDATA[Kann eine Wahl erstellen]]></item>
+    </category>
+
+    <category name="wcf.acp.option">
+        <item name="wcf.acp.option.category.board.electionbot"><![CDATA[Wahl-Bot]]></item>
+        <item name="wcf.acp.option.category.board.electionbot.general"><![CDATA[Allgemein]]></item>
+        <item name="wcf.acp.option.wbb_election_bot_user_id"><![CDATA[Bot-Benutzer-ID]]></item>
+        <item name="wcf.acp.option.wbb_election_bot_user_id.description"><![CDATA[Die UserID des Benutzers, der bei Ablauf einer Deadline automatisch posten soll.]]></item>
+    </category>
+
+    <category name="wcf.editor">
+        <item name="wcf.editor.button.vote"><![CDATA[Abstimmen]]></item>
+    </category>
+</language>

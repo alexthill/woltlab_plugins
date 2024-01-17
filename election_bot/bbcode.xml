@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/bbcode.xsd">
+    <import>
+        <bbcode name="v">
+            <buttonlabel>wcf.editor.button.vote</buttonlabel>
+            <classname>wbb\system\bbcode\VoteBBCode</classname>
+            <wysiwygicon>check-to-slot</wysiwygicon>
+            <attributes>
+                <attribute name="0">
+                    <validationpattern><![CDATA[^\d+$]]></validationpattern>
+                    <required>0</required>
+                </attribute>
+                <attribute name="1">
+                    <validationpattern><![CDATA[^\d+$]]></validationpattern>
+                    <required>0</required>
+                </attribute>
+            </attributes>
+        </bbcode>
+    </import>
+</data>

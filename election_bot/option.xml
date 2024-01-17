@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/option.xsd">
+    <import>
+        <categories>
+			<category name="board.electionbot">
+				<parent>board</parent>
+			</category>
+			<category name="board.electionbot.general">
+				<parent>board.electionbot</parent>
+			</category>
+        </categories>
+
+        <options>
+            <option name="wbb_election_bot_user_id">
+                <categoryname>board.electionbot.general</categoryname>
+                <optiontype>integer</optiontype>
+                <defaultvalue>1</defaultvalue>
+                <minvalue>1</minvalue>
+            </option>
+        </options>
+    </import>
+</data>
