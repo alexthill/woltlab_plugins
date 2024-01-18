@@ -19,6 +19,13 @@ use wcf\system\WCF;
 class VoteList extends DatabaseObjectList {
 
     public $className = Vote::class;
+    
+    public static function getElectionVotes(int $electionID, int $phase): VoteList {
+        $list = new VoteList();
+        $list->getConditionBuilder()->add('electionID = ? AND phase = ?', [$electionID, $phase]);
+        $list->readObjects();
+        return $list;
+    }
 
     public static function getLastElectionVotes(int $electionID, int $phase, string $exceptVoter = ''): VoteList {
         $list = new VoteList();
@@ -48,5 +55,16 @@ class VoteList extends DatabaseObjectList {
 
     public function getVoteCount(): VoteCount {
         return new VoteCount($this);
+    }
+    
+    public function generateHistoryHtml(int $threadID): string {
+        $lines = [];
+        foreach ($this as $vote) {
+            $lines[] = WCF::getLanguage()->getDynamicVariable(
+                'wbb.electionbot.votehistory.line',
+                ['vote' => $vote, 'threadID' => $threadID],
+            );
+        }
+        return implode('<br/>', $lines);
     }
 }

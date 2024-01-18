@@ -51,14 +51,17 @@ class ElectionBotCronjob extends AbstractCronjob {
         foreach ($electionsByThread as $threadID => $elections) {
             $html = WCF::getLanguage()->get('wbb.electionbot.deadlineOverPost.title');
             foreach ($elections as $election) {
-                $label = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votecount.title', ['election' => $election]);
-                $voteCount = VoteList::getLastElectionVotes($election->electionID, $election->phase)->getVoteCount();
-                if ($voteCount->hasNoVotes()) {
+                $voteList = VoteList::getElectionVotes($election->electionID, $election->phase);
+                $label1 = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votecount.title', ['election' => $election]);
+                $label2= WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votehistory.title', ['election' => $election]);
+                if (count($voteList) === 0) {
                     $voteCountHtml = WCF::getLanguage()->get('wbb.electionbot.votecount.empty');
+                    $voteHistoryHtml = $voteCountHtml;
                 } else {
-                    $voteCountHtml = $voteCount->generateHtml();
+                    $voteCountHtml = $voteList->getVoteCount()->generateHtml();
+                    $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
                 }
-                $html .= "<h3>$label</h3><p>$voteCountHtml</p>";
+                $html .= "<h3>$label1</h3><p>$voteCountHtml</p><h3>$label2</h3><p>$voteHistoryHtml</p>";
             }
             
             $htmlInputProcessor = new HtmlInputProcessor();

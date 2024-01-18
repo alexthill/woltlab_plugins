@@ -2,6 +2,8 @@
 
 namespace wbb\data\election;
 
+use wcf\system\WCF;
+
 /**
  * Represents a vote count.
  *
@@ -22,10 +24,6 @@ class VoteCount {
         }
     }
 
-    public function hasNoVotes(): bool {
-        return count($this->items) === 0;
-    }
-
     public function addVote(Vote $vote) {
         if (!isset($this->items[$vote->voted])) {
             $this->items[$vote->voted] = ['count' => 0, 'votes' => []];
@@ -39,11 +37,13 @@ class VoteCount {
     }
 
     public function generateHtmlWithNewVote(string $newVoter, string $newVoted, int $newCount): string {
-        if (!isset($this->items[$newVoted])) {
-            $this->items[$newVoted] = ['count' => 0, 'votes' => []];
+        if ($newVoter !== '') {
+            if (!isset($this->items[$newVoted])) {
+                $this->items[$newVoted] = ['count' => 0, 'votes' => []];
+            }
+            $this->items[$newVoted]['count'] += $newCount;
         }
-        $this->items[$newVoted]['count'] += $newCount;
-        $this->sortByCount();
+        $this->sortItems();
         
         $html = '';
         $i = false;
@@ -66,10 +66,20 @@ class VoteCount {
             }
             $i = true;
         }
+        
+        if (isset($this->items[''])) {
+            if ($html !== '') {
+                $html .= '<br/><br/>';
+            }
+            $unvote = WCF::getLanguage()->get('wbb.electionbot.votecount.unvote');
+            $unvoteUsers = implode(', ') . $this->items['']['votes'];
+            $html .= "$unvote: $unvoteUsers";
+        }
+        
         return $html;
     }
 
-    protected function sortByCount() {
+    protected function sortItems() {
         uasort($this->items, function ($a, $b) {
             $a = $a['count'];
             $b = $b['count'];

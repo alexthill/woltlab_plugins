@@ -6,6 +6,9 @@
 		<item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {$election->phase}]]></item>
 		<item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {$h}:{$m}:{$s}]]></item>
 		<item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
+		<item name="wbb.electionbot.votecount.unvote"><![CDATA[Stimme zurückgezogen]]></item>
+		<item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {$election->phase}]]></item>
+		<item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {$vote->voted}</a> ({time time=$vote->time type='plainTime'})]]></item>
 		<item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
 		<item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde vorzeitig beendet.]]></item>
 		<item name="wbb.electionbot.message.start"><![CDATA[Neue Wahl wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
