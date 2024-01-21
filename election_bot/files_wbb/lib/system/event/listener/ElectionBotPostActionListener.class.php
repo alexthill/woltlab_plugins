@@ -24,13 +24,13 @@ use wcf\util\StringUtil;
  */
 class ElectionBotPostActionListener implements IParameterizedEventListener {
 
-    protected $elections;
+    protected array $electionData = [];
+    
+    protected array $votes = [];
+    
+    protected array $voteValues = [];
 
-    protected $electionData = [];
-    
-    protected $votes = [];
-    
-    protected $voteValues = [];
+    private $elections;
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if ($eventObj->getActionName() === 'quickReply') {
@@ -233,10 +233,10 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $el->textContent = '---- ' . $this->elections[$electionID]->name . ' ----';
             $container->appendChild($el);
             foreach ($msgs as $msg) {
+                $fragment = $doc->createDocumentFragment();
+                $fragment->appendXML($msg);
                 $container->appendChild($doc->createElement('br'));
-                $el = $doc->createElement('span');
-                $el->textContent = $msg;
-                $container->appendChild($el);
+                $container->appendChild($fragment);
             }
             $body->appendChild($container);
         }

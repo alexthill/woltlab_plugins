@@ -12,7 +12,7 @@ use wcf\system\WCF;
  */
 class VoteCount {
 
-    private $items = [];
+    private array $items = [];
 
     public function __construct(VoteList $list) {
         $votes = [];
@@ -24,7 +24,7 @@ class VoteCount {
         }
     }
 
-    public function addVote(Vote $vote) {
+    public function addVote(Vote $vote): void {
         if (!isset($this->items[$vote->voted])) {
             $this->items[$vote->voted] = ['count' => 0, 'votes' => []];
         }
@@ -46,43 +46,35 @@ class VoteCount {
         $this->sortItems();
         
         $html = '';
-        $i = false;
         foreach ($this->items as $voted => $item) {
             if ($voted === '') continue;
             
-            if ($i) $html .= '<br/>';
-            $html .= $voted . ' (' . $item['count'] . '): ';
-            $j = false;
-            foreach ($item['votes'] as $vote) {
-                if ($j) $html .= ', ';
-                $html .= $vote->voter;
-                if ($vote->count !== 1) $html .= '*' . $vote->count;
-                $j = true;
+            if ($html !== '') $html .= '<br/>';
+            $voters = array_map(function ($vote) {
+                return htmlspecialchars($vote->voter) . ($vote->count === 1 ? '' : '*' . $vote->count);
+            }, $item['votes']);
+            if ($newVoter !== '' && $newVoted === $voted) {
+                $voters[] = '<span style="text-decoration: underline dotted;">' . htmlspecialchars($newVoter) . '</span>'
+                     . ($newCount === 1 ? '' : '*' . $newCount);
             }
-            if ($voted === $newVoted) {
-                if ($j) $html .= ', ';
-                $html .= '<span style="text-decoration: underline dotted;">' . $newVoter . '</span>';
-                if ($newCount !== 1) $html .= '*' . $newCount;
-            }
-            $i = true;
+            $html .= htmlspecialchars($voted) . ' (' . $item['count'] . '): ' . implode(', ', $voters);
         }
-        
         if (isset($this->items[''])) {
             if ($html !== '') {
                 $html .= '<br/><br/>';
             }
-            if ($newVoter !== '' && $newVoted === '') {
-                $this->items['']['votes'][] = '<span style="text-decoration: underline dotted;">' . $newVoter . '</span>';
-            }
             $unvote = WCF::getLanguage()->get('wbb.electionbot.votecount.unvote');
-            $unvoteUsers = implode(', ', $this->items['']['votes']);
-            $html .= "$unvote: $unvoteUsers";
+            $voters = array_map(function ($vote) { return htmlspecialchars($vote->voter); }, $this->items['']['votes']);
+            if ($newVoter !== '' && $newVoted === '') {
+                $voters[] = '<span style="text-decoration: underline dotted;">' . htmlspecialchars($newVoter) . '</span>';
+            }
+            $html .= WCF::getLanguage()->get('wbb.electionbot.votecount.unvote') . ': ' . implode(', ', $voters);
         }
         
         return $html;
     }
 
-    protected function sortItems() {
+    protected function sortItems(): void {
         uasort($this->items, function ($a, $b) {
             $a = $a['count'];
             $b = $b['count'];

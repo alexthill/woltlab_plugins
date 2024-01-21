@@ -13,17 +13,17 @@ use wcf\util\StringUtil;
  */
 class ElectionOptions {
 
-    public $start = false;
+    public bool $start = false;
 
-    public $end = false;
+    public bool $end = false;
 
-    public $changeDeadline = false;
+    public bool $changeDeadline = false;
 
-    public $deadline = null;
+    public ?\DateTime $deadline = null;
 
-    public $addVotes = [];
+    public array $addVotes = [];
 
-    public $addVoteValues = [];
+    public array $addVoteValues = [];
 
     public static function fromParameters(array $parameters): ElectionOptions {
         $options = new ElectionOptions();
@@ -84,6 +84,10 @@ class ElectionOptions {
                 $msg = WCF::getLanguage()->get('wbb.electionbot.form.addVote.error.emptyVoter');
                 $errors[] = $this->createError($id, 'electionAddVote', $msg, $i);
             }
+            if (mb_strlen($vote->voter, 'UTF-8') > 255 || mb_strlen($vote->voted, 'UTF-8') > 255) {
+                $msg = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.form.addVote.error.tooLong', ['maxLength' => 255]);
+                $errors[] = $this->createError($id, 'electionAddVote', $msg, $i);
+            }
             if ($vote->count < VOTE::MIN_COUNT || $vote->count > VOTE::MAX_COUNT) {
                 $msg = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.form.addVote.error.countOutsideRange',
@@ -105,6 +109,10 @@ class ElectionOptions {
             $vote->count = intval($vote->count ?? 1);
             if ($vote->voter === '') {
                 $msg = WCF::getLanguage()->get('wbb.electionbot.form.addVote.error.emptyVoter');
+                $errors[] = $this->createError($id, 'electionAddVoteValue', $msg, $i);
+            }
+            if (mb_strlen($vote->voter, 'UTF-8') > 255) {
+                $msg = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.form.addVote.error.tooLong', ['maxLength' => 255]);
                 $errors[] = $this->createError($id, 'electionAddVoteValue', $msg, $i);
             }
             if ($vote->count < VOTE::MIN_COUNT || $vote->count > VOTE::MAX_COUNT) {

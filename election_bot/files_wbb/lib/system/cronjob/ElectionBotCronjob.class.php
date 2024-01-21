@@ -50,18 +50,22 @@ class ElectionBotCronjob extends AbstractCronjob {
         }
         foreach ($electionsByThread as $threadID => $elections) {
             $html = WCF::getLanguage()->get('wbb.electionbot.deadlineOverPost.title');
-            foreach ($elections as $election) {
-                $voteList = VoteList::getElectionVotes($election->electionID, $election->phase);
-                $label1 = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votecount.title', ['election' => $election]);
-                $label2= WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votehistory.title', ['election' => $election]);
-                if (count($voteList) === 0) {
-                    $voteCountHtml = WCF::getLanguage()->get('wbb.electionbot.votecount.empty');
-                    $voteHistoryHtml = $voteCountHtml;
-                } else {
-                    $voteCountHtml = $voteList->getVoteCount()->generateHtml();
-                    $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
+            try {
+                foreach ($elections as $election) {
+                    $voteList = VoteList::getElectionVotes($election->electionID, $election->phase);
+                    $label1 = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votecount.title', ['election' => $election]);
+                    $label2= WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votehistory.title', ['election' => $election]);
+                    if (count($voteList) === 0) {
+                        $voteCountHtml = WCF::getLanguage()->get('wbb.electionbot.votecount.empty');
+                        $voteHistoryHtml = $voteCountHtml;
+                    } else {
+                        $voteCountHtml = $voteList->getVoteCount()->generateHtml();
+                        $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
+                    }
+                    $html .= "<h3>$label1</h3><p>$voteCountHtml</p><h3>$label2</h3><p>$voteHistoryHtml</p>";
                 }
-                $html .= "<h3>$label1</h3><p>$voteCountHtml</p><h3>$label2</h3><p>$voteHistoryHtml</p>";
+            } catch (\Exception $e) {
+                $html .= str_replace("\n", '<br/>', $e);
             }
             
             $htmlInputProcessor = new HtmlInputProcessor();

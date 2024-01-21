@@ -49,10 +49,10 @@
     </li>
 </template>
 <template id="electionAddTemplateVote">
-    <span>{lang}wbb.electionbot.form.addVote.description{/lang} <input type="text" data-name="voter"> <input type="text" data-name="voted"> <input type="number" class="short" value="1" data-name="count"></span>
+    <span>{lang}wbb.electionbot.form.addVote.description{/lang} <input type="text" data-name="voter" maxlength="255"> <input type="text" data-name="voted" maxlength="255"> <input type="number" class="short" value="1" data-name="count"></span>
 </template>
 <template id="electionAddTemplateVoteValue">
-    <span>{lang}wbb.electionbot.form.addVoteValue.description{/lang} <input type="text" data-name="voter"> <input type="number" class="short" value="1" data-name="count"></span>
+    <span>{lang}wbb.electionbot.form.addVoteValue.description{/lang} <input type="text" data-name="voter" maxlength="255"> <input type="number" class="short" value="1" data-name="count"></span>
 </template>
 
 <script data-relocate="true">
