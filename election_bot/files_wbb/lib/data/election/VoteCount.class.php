@@ -71,8 +71,11 @@ class VoteCount {
             if ($html !== '') {
                 $html .= '<br/><br/>';
             }
+            if ($newVoter !== '' && $newVoted === '') {
+                $this->items['']['votes'][] = '<span style="text-decoration: underline dotted;">' . $newVoter . '</span>';
+            }
             $unvote = WCF::getLanguage()->get('wbb.electionbot.votecount.unvote');
-            $unvoteUsers = implode(', ') . $this->items['']['votes'];
+            $unvoteUsers = implode(', ', $this->items['']['votes']);
             $html .= "$unvote: $unvoteUsers";
         }
         

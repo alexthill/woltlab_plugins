@@ -2,7 +2,9 @@
 <language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/language.xsd" languagecode="de">
     <category name="wbb.electionbot">
 		<item name="wbb.electionbot.deadlineOverPost.title"><![CDATA[<h2>Deadline abgelaufen</h2>]]></item>
-		<item name="wbb.electionbot.vote"><![CDATA[{if !$valid}Ungültiger {/if}VOTE:{$vote}]]></item>
+		<item name="wbb.electionbot.vote"><![CDATA[VOTE:{$vote}]]></item>
+		<item name="wbb.electionbot.vote.invalid"><![CDATA[Ungültiger VOTE:{$vote}]]></item>
+		<item name="wbb.electionbot.vote.unvote"><![CDATA[UNVOTE]]></item>
 		<item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {$election->phase}]]></item>
 		<item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {$h}:{$m}:{$s}]]></item>
 		<item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
@@ -12,6 +14,8 @@
 		<item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
 		<item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde vorzeitig beendet.]]></item>
 		<item name="wbb.electionbot.message.start"><![CDATA[Neue Wahl wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+		<item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {$vote->voted}{if $vote->count !== 0} mit Stimmwert {#$vote->count}{/if}.]]></item>
+		<item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
 		<item name="wbb.electionbot.form.title"><![CDATA[Wahl]]></item>
 		<item name="wbb.electionbot.form.title2"><![CDATA[Wahl-Bot]]></item>
 		<item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
@@ -29,6 +33,13 @@
 		<item name="wbb.electionbot.form.extension"><![CDATA[Automatische Verlängerung]]></item>
 		<item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Wahl verlängert werden soll. [0 für keine automatische Verlängerung]]]></item>
 		<item name="wbb.electionbot.form.extension.error.invalid"><![CDATA[{if LANGUAGE_USE_INFORMAL_VARIANT}Du hast{else}Sie haben{/if} ein ungültiges Verlängerung eingegeben. Die Verlängerung muss eine postive Zahl sein und darf nicht mehr als 527.040 betragen.]]></item>
+		<item name="wbb.electionbot.form.addVote"><![CDATA[Stimme hinzufügen]]></item>
+		<item name="wbb.electionbot.form.addVote.description"><![CDATA[Von/Auf/Wert]]></item>
+		<item name="wbb.electionbot.form.addVote.error.invalid"><![CDATA[Irgendetwas ist falsch oder so.]]></item>
+		<item name="wbb.electionbot.form.addVote.error.countOutsideRange"><![CDATA[Der Stimmwert muss zwischen {$min} und {$max} liegen.]]></item>
+		<item name="wbb.electionbot.form.addVote.error.emptyVoter"><![CDATA[Das Feld "von" muss ausgefüllt werden.]]></item>
+		<item name="wbb.electionbot.form.addVoteValue"><![CDATA[Stimmwert ändern]]></item>
+		<item name="wbb.electionbot.form.addVoteValue.description"><![CDATA[Von/Wert]]></item>
     </category>
 
     <category name="wcf.acl.option">

@@ -18,17 +18,13 @@ class VoteBBCode extends AbstractBBCode {
      * @inheriDoc
      */
     public function getParsedTag(array $openingTag, $content, array $closingTag, BBCodeParser $parser) : string {
-        $content = StringUtil::trim($content);
-        if (strlen($content) > 1 && $content[0] === '!') {
-            $content = substr($content, 1);
-        }
-        $content = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.vote', [
-            'valid' => count($openingTag['attributes']) && $openingTag['attributes'][0] == '1',
-            'vote' => $content
-        ]);
+        $content = WCF::getLanguage()->getDynamicVariable(
+            'wbb.electionbot.vote.invalid',
+            ['vote' => StringUtil::trim($content)],
+        );
         switch ($parser->getOutputType() == 'text/html') {
             case 'text/html':
-                return '<span class="electionBotVote"><u>' . $content . '</u></span>';
+                return '<u>' . $content . '</u>';
             case 'text/simplified-html':
                 return '<u>' . $content . '</u>';
             default:

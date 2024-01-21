@@ -64,7 +64,7 @@ return [
             DatabaseTablePrimaryIndex::create()
                 ->columns(['voteID']),
         ]),
-    DatabaseTable::create('wbb1_election_custom_count')
+    DatabaseTable::create('wbb1_election_voter')
         ->columns([
             NotNullInt10DatabaseTableColumn::create('electionID'),
             NotNullVarchar255DatabaseTableColumn::create('voter'),

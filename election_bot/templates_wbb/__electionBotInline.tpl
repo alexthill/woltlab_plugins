@@ -5,6 +5,14 @@
         <section class="section electionBotSection" data-id="{$id}">
             <h2 class="sectionTitle">{$election->name}</h2>
             
+            <dl>
+                <dt><button class="electionAddBtn button small" data-add-name="Vote" data-election-id="{$id}">{lang}wbb.electionbot.form.addVote{/lang}</button></dt>
+                <dd><ul class="electionAddContainerVote"></ul></dd>
+            </dl>
+            <dl>
+                <dt><button class="electionAddBtn button small" data-add-name="VoteValue" data-election-id="{$id}">{lang}wbb.electionbot.form.addVoteValue{/lang}</button></dt>
+                <dd><ul class="electionAddContainerVoteValue"></ul></dd>
+            </dl>
             {if $election->isActive}
             <dl>
                 <dt>{lang}wbb.electionbot.form.deadlineDisplay{/lang} {time time=$election->deadline type='plainTime'}</dt>
@@ -19,6 +27,7 @@
                 <dt></dt>
                 <dd>
                     <label><input type="checkbox" name="electionStart" id="showDeadlineChanger{$id}"> {lang}wbb.electionbot.form.start{/lang}</label>
+                </dd>
             {/if}
                 <dd>
                     <input type="datetime" id="electionDeadline{$id}" name="electionDeadline" value="{time time=$election->deadlineObj type='machine'}" class="medium" data-enable-if-checked="showDeadlineChanger{$id}">
@@ -28,6 +37,24 @@
         </section>
     {/foreach}
 </div>
+
+<template id="electionAddTemplate">
+    <li>
+        <input type="hidden" name="electionAdd" data-collector="">
+        <div>
+            <button class="electionAddRemoveBtn button small" title="{lang}wcf.global.button.delete{/lang}" aria-label="{lang}wcf.global.button.delete{/lang}">
+                <fa-icon name="xmark" size="16" solid="" aria-hidden="true" translate="no"></fa-icon>
+            </button>
+        </div>
+    </li>
+</template>
+<template id="electionAddTemplateVote">
+    <span>{lang}wbb.electionbot.form.addVote.description{/lang} <input type="text" data-name="voter"> <input type="text" data-name="voted"> <input type="number" class="short" value="1" data-name="count"></span>
+</template>
+<template id="electionAddTemplateVoteValue">
+    <span>{lang}wbb.electionbot.form.addVoteValue.description{/lang} <input type="text" data-name="voter"> <input type="number" class="short" value="1" data-name="count"></span>
+</template>
+
 <script data-relocate="true">
     require(['WoltLabSuite/Core/Event/Handler', 'WoltLabSuite/Core/Component/Ckeditor/Event', 'WoltLabSuite/Core/Dom/Util'], function (EventHandler, CkeditorEvent, DomUtil) {
         'use strict';
@@ -53,6 +80,24 @@
             }
             el.disabled = !checkbox.checked;
         }
+        
+        const addTemplate = document.getElementById('electionAddTemplate');
+        for (const addBtn of container.querySelectorAll('.electionAddBtn')) {
+            const name = addBtn.dataset.addName;
+            const electionId = addBtn.dataset.electionId;
+            const addContainer = container.querySelector('.electionAddContainer' + name);
+            const subTemplate = document.getElementById('electionAddTemplate' + name);
+            addBtn.addEventListener('click', () => {
+                const newNode = addTemplate.content.cloneNode(true).firstElementChild;
+                const subNode = subTemplate.content.cloneNode(true).firstElementChild;
+                addContainer.appendChild(newNode);
+                newNode.querySelector('input[name="electionAdd"]').name += name;
+                newNode.querySelector('div').prepend(subNode);
+                newNode.querySelector('.electionAddRemoveBtn').addEventListener('click', () => {
+                    addContainer.removeChild(newNode);
+                });
+            });
+        }
 
         let sendData = false;
         CkeditorEvent.listenToCkeditor(ckeditor5).collectMetaData((payload) => {
@@ -69,7 +114,20 @@
                             sendData = true;
                         }
                     } else {
-                        sectionData[el.name] = el.value;
+                        if (el.dataset.hasOwnProperty('collector')) {
+                            const value = {};
+                            for (const subEl of el.parentElement.querySelectorAll('input[data-name]')) {
+                                value[subEl.dataset.name] = subEl.value;
+                            }
+                            el.value = JSON.stringify(value);
+                        }
+                        if (!sectionData.hasOwnProperty(el.name)) {
+                            sectionData[el.name] = el.value;
+                        } else if (Array.isArray(sectionData[el.name])) {
+                            sectionData[el.name].push(el.value);
+                        } else {
+                            sectionData[el.name] = [sectionData[el.name], el.value];
+                        }
                         sendData = true;
                     }
                 }
@@ -91,11 +149,11 @@
             const errors = JSON.parse(data.returnValues.realErrorMessage);
             data.returnValues.realErrorMessage = '{jslang}wbb.electionbot.form.error{/jslang}';
             for (const error of errors) {
-                const el = container.querySelector('.electionBotSection[data-id="' + error.id + '"] input[name="' + error.field + '"]');
-                if (el === null) {
-                    console.error('cannot find input element with name ' + error.field + ' for election ' + error.id);
-                } else {
+                const el = container.querySelectorAll('.electionBotSection[data-id="' + error.id + '"] input[name="' + error.field + '"]')[error.n];
+                if (el) {
                     innerError(el, error.msg);
+                } else {
+                    console.error('cannot find input element ' + error.n + ' with name ' + error.field + ' for election ' + error.id);
                 }
             }
         });
