@@ -9,7 +9,7 @@ use wcf\system\event\listener\IParameterizedEventListener;
 use wcf\system\WCF;
 
 /**
- * Listener for adding election options to the quick reply on a thread page.
+ * Listener for adding election options to the quick reply on a thread page and for voting.
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
@@ -17,14 +17,12 @@ use wcf\system\WCF;
 class ElectionBotThreadPageListener implements IParameterizedEventListener {
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
-        if (!$eventObj->thread->canReply() || !$eventObj->board->getPermission('canStartElection')) {
-            return;
+        if ($eventObj->thread->canReply() && ($eventObj->board->getPermission('canStartElection') || $eventObj->board->getPermission('canUseElection'))) {
+            $elections = ElectionList::getThreadElections($eventObj->thread->threadID);
+            foreach ($elections as $election) {
+                $election->setDeadlineObj();
+            }
+            WCF::getTPL()->assign(['electionBotElections' => $elections]);
         }
-        
-        $elections = ElectionList::getThreadElections($eventObj->thread->threadID);
-        foreach ($elections as $election) {
-            $election->setDeadlineObj();
-        }
-        WCF::getTPL()->assign(['electionBotElections' => $elections]);
     }
 }

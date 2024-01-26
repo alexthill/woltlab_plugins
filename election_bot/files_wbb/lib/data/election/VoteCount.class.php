@@ -13,15 +13,21 @@ use wcf\system\WCF;
 class VoteCount {
 
     private array $items = [];
-
-    public function __construct(VoteList $list) {
+    
+    public static function fromUniqueVotes(array $votes): static {
+        $voteCount = new VoteCount();
+        foreach ($votes as $vote) {
+            $voteCount->addVote($vote);
+        }
+        return $voteCount;
+    }
+    
+    public static function fromVoteList(VoteList $list): static {
         $votes = [];
         foreach ($list as $vote) {
             $votes[$vote->voter] = $vote;
         }
-        foreach ($votes as $vote) {
-            $this->addVote($vote);
-        }
+        return VoteCount::fromUniqueVotes($votes);
     }
 
     public function addVote(Vote $vote): void {

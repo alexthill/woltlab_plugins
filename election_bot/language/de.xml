@@ -5,16 +5,25 @@
 		<item name="wbb.electionbot.vote"><![CDATA[VOTE:{@$vote}]]></item>
 		<item name="wbb.electionbot.vote.invalid"><![CDATA[Ungültiger VOTE:{@$vote}]]></item>
 		<item name="wbb.electionbot.vote.unvote"><![CDATA[UNVOTE]]></item>
-		<item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {#$election->phase}]]></item>
+		<item name="wbb.electionbot.vote.insert"><![CDATA[Abstimmen]]></item>
+		<item name="wbb.electionbot.vote.insert.for"><![CDATA[Abstimmen für]]></item>
+		<item name="wbb.electionbot.vote.insert.for.description"><![CDATA[Feld leer lassen, um auf niemanden zu stimmen.]]></item>
+		<item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
 		<item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {@$h}:{@$m}:{@$s}]]></item>
 		<item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
 		<item name="wbb.electionbot.votecount.unvote"><![CDATA[Stimme zurückgezogen]]></item>
-		<item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {#$election->phase}]]></item>
+		<item name="wbb.electionbot.votecount.insert"><![CDATA[Stand einfügen]]></item>
+		<item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>
+		<item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zur angegebenen Phase (einschließlich).]]></item>
+		<item name="wbb.electionbot.votecount.insert.election"><![CDATA[Für Wahl]]></item>
+		<item name="wbb.electionbot.votecount.insert.election.error.doesNotExists"><![CDATA[Die angegebene Wahl existiert nicht.]]></item>
+		<item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
 		<item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='plainTime'})]]></item>
+		<item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
 		<item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
 		<item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde beendet.]]></item>
 		<item name="wbb.electionbot.message.start"><![CDATA[Neue Wahl wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
-		<item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 0} mit Stimmwert {#$vote->count}{/if}.]]></item>
+		<item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
 		<item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
 		<item name="wbb.electionbot.form.title"><![CDATA[Wahl]]></item>
 		<item name="wbb.electionbot.form.title2"><![CDATA[Wahl-Bot]]></item>
@@ -57,6 +66,13 @@
     </category>
 
     <category name="wcf.editor">
-        <item name="wcf.editor.button.vote"><![CDATA[Abstimmen]]></item>
+        <item name="wcf.editor.button.election"><![CDATA[Wahl]]></item>
+        <item name="wcf.editor.button.election.vote"><![CDATA[Abstimmen]]></item>
+        <item name="wcf.editor.button.election.votecount"><![CDATA[Stand]]></item>
+        <item name="wcf.editor.button.election.votehistory"><![CDATA[Verlauf]]></item>
     </category>
+
+    <delete>
+        <item name="wcf.editor.button.vote"/>
+    </delete>
 </language>
