@@ -4,7 +4,7 @@ namespace wbb\action;
 
 use wbb\data\election\ElectionList;
 use wbb\data\election\VoteList;
-use wcf\system\exception\ValidateActionException;
+use wcf\system\exception\IllegalLinkException;
 use wcf\system\form\builder\data\processor\CustomFormDataProcessor;
 use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\Psr15DialogForm;
@@ -32,7 +32,10 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
 
     public function handle(ServerRequestInterface $request): ResponseInterface {
         $params = $request->getQueryParams();
-        $elections = ElectionList::getThreadElections($params['threadID'] ?? 0);
+        if (!isset($params['threadID'])) {
+            throw new IllegalLinkException();
+        }
+        $elections = ElectionList::getThreadElections($params['threadID']);
         if (count($elections) === 0) {
             return new JsonResponse([
                 'message' => WCF::getLanguage()->getDynamicVariable(
@@ -42,9 +45,11 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             ], 400);
         }
         
+        // TODO: check permissions here
+        
         $history = !empty($params['history']);
-        $title = WCF::getLanguage()->get($history ? 'wbb.electionbot.votehistory.insert' : 'wbb.electionbot.votecount.insert');
-        $dialogForm = $this->getDialogForm($title, $elections);
+        $formTitle = $history ? 'wbb.electionbot.votehistory.insert' : 'wbb.electionbot.votecount.insert';
+        $dialogForm = $this->getForm($formTitle, $elections);
         
         if ($request->getMethod() === 'GET') {
             return $dialogForm->toResponse();
@@ -94,8 +99,8 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
         }
     }
 
-    protected function getDialogForm($title, array $elections): IFormDocument {
-        $form = new Psr15DialogForm(static::FORM_ID, $title);
+    protected function getForm(string $title, array $elections): Psr15DialogForm {
+        $form = new Psr15DialogForm(static::FORM_ID, WCF::getLanguage()->get($title));
         
         $maxPhase = 0;
         foreach ($elections as $election) {
@@ -115,13 +120,13 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
         $form->appendChildren([
             $electionIdFormField,
             IntegerFormField::create('phase')
-                ->label(WCF::getLanguage()->get('wbb.electionbot.votecount.insert.phase'))
+                ->label('wbb.electionbot.votecount.insert.phase')
                 ->value($maxPhase)
                 ->minimum(0)
                 ->maximum($maxPhase)
                 ->required(),
             CheckboxFormField::create('all')
-                ->label(WCF::getLanguage()->get('wbb.electionbot.votecount.insert.all')),
+                ->label('wbb.electionbot.votecount.insert.all'),
         ]);
         $form->getDataHandler()->addProcessor(
             new CustomFormDataProcessor('electionID',
@@ -131,7 +136,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                 }
             )
         );
-
+        $form->markRequiredFields(false);
         return $form->build();
     }
 }
