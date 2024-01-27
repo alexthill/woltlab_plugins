@@ -2,7 +2,8 @@
 
 use wcf\system\database\table\DatabaseTable;
 use wcf\system\database\table\column\DefaultTrueBooleanDatabaseTableColumn;
-use wcf\system\database\table\column\NotNullInt10DatabaseTableColumn;
+use wcf\system\database\table\column\IntDatabaseTableColumn;
+use wcf\system\database\table\column\NotNullIntDatabaseTableColumn;
 use wcf\system\database\table\column\NotNullVarchar255DatabaseTableColumn;
 use wcf\system\database\table\column\ObjectIdDatabaseTableColumn;
 use wcf\system\database\table\index\DatabaseTableForeignKey;
@@ -13,11 +14,11 @@ return [
     DatabaseTable::create('wbb1_election')
         ->columns([
             ObjectIdDatabaseTableColumn::create('electionID'),
-            NotNullInt10DatabaseTableColumn::create('threadID'),
+            NotNullIntDatabaseTableColumn::create('threadID'),
             NotNullVarchar255DatabaseTableColumn::create('name'),
-            NotNullInt10DatabaseTableColumn::create('deadline'),
-            NotNullInt10DatabaseTableColumn::create('extension'),
-            NotNullInt10DatabaseTableColumn::create('phase'),
+            NotNullIntDatabaseTableColumn::create('deadline'),
+            NotNullIntDatabaseTableColumn::create('extension'),
+            NotNullIntDatabaseTableColumn::create('phase'),
             DefaultTrueBooleanDatabaseTableColumn::create('isActive'),
         ])
         ->foreignKeys([
@@ -34,14 +35,14 @@ return [
     DatabaseTable::create('wbb1_election_vote')
         ->columns([
             ObjectIdDatabaseTableColumn::create('voteID'),
-            NotNullInt10DatabaseTableColumn::create('electionID'),
-            NotNullInt10DatabaseTableColumn::create('userID'),
-            NotNullInt10DatabaseTableColumn::create('postID'),
+            NotNullIntDatabaseTableColumn::create('electionID'),
+            IntDatabaseTableColumn::create('userID')->length(10),
+            IntDatabaseTableColumn::create('postID')->length(10),
             NotNullVarchar255DatabaseTableColumn::create('voter'),
             NotNullVarchar255DatabaseTableColumn::create('voted'),
-            NotNullInt10DatabaseTableColumn::create('time'),
-            NotNullInt10DatabaseTableColumn::create('phase'),
-            NotNullInt10DatabaseTableColumn::create('count'),
+            NotNullIntDatabaseTableColumn::create('time'),
+            NotNullIntDatabaseTableColumn::create('phase'),
+            NotNullIntDatabaseTableColumn::create('count'),
         ])
         ->foreignKeys([
             DatabaseTableForeignKey::create()
@@ -53,12 +54,12 @@ return [
                 ->columns(['userID'])
                 ->referencedTable('wcf1_user')
                 ->referencedColumns(['userID'])
-                ->onDelete('CASCADE'),
+                ->onDelete('SET NULL'),
             DatabaseTableForeignKey::create()
                 ->columns(['postID'])
                 ->referencedTable('wbb1_post')
                 ->referencedColumns(['postID'])
-                ->onDelete('CASCADE'),
+                ->onDelete('SET NULL'),
         ])
         ->indices([
             DatabaseTablePrimaryIndex::create()
@@ -66,9 +67,9 @@ return [
         ]),
     DatabaseTable::create('wbb1_election_voter')
         ->columns([
-            NotNullInt10DatabaseTableColumn::create('electionID'),
+            NotNullIntDatabaseTableColumn::create('electionID'),
             NotNullVarchar255DatabaseTableColumn::create('voter'),
-            NotNullInt10DatabaseTableColumn::create('count'),
+            NotNullIntDatabaseTableColumn::create('count'),
         ])
         ->foreignKeys([
             DatabaseTableForeignKey::create()
