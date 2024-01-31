@@ -32,4 +32,8 @@ class Election extends DatabaseObject {
         }
         return $this->nextDeadline;
     }
+
+    public function canVote(): bool {
+        return $this->isActive && $this->deadline > TIME_NOW;
+    }
 }

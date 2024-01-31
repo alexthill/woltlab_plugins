@@ -5,15 +5,12 @@ namespace wbb\action;
 use wbb\data\election\ElectionList;
 use wbb\data\election\VoteList;
 use wcf\system\exception\IllegalLinkException;
-use wcf\system\form\builder\data\processor\CustomFormDataProcessor;
 use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\Psr15DialogForm;
 use wcf\system\form\builder\field\CheckboxFormField;
-use wcf\system\form\builder\field\HiddenFormField;
 use wcf\system\form\builder\field\IntegerFormField;
 use wcf\system\form\builder\field\IFormField;
-use wcf\system\form\builder\field\validation\FormFieldValidationError;
-use wcf\system\form\builder\field\validation\FormFieldValidator;
+use wcf\system\form\builder\field\SingleSelectionFormField;
 use wcf\system\WCF;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ServerRequestInterface;
@@ -60,8 +57,13 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             }
 
             $data = $dialogForm->getData()['data'];
-            $electionID = $data['electionID'];
-            $election = $elections[$electionID];
+            if (isset($data['electionID'])) {
+                $electionID = intval($data['electionID']);
+                $election = $elections[$electionID];
+            } else {
+                $election = array_values($elections)[0];
+                $electionID = $election->electionID;
+            }
             $html = '';
             if ($history) {
                 $voteHistory = VoteList::getElectionVotes($electionID, $data['phase'], !$data['all'])
@@ -102,40 +104,30 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
     protected function getForm(string $title, array $elections): Psr15DialogForm {
         $form = new Psr15DialogForm(static::FORM_ID, WCF::getLanguage()->get($title));
         
+        $minPhase = 0;
         $maxPhase = 0;
         foreach ($elections as $election) {
+            $minPhase = min($minPhase, $election->phase);
             $maxPhase = max($maxPhase, $election->phase);
         }
         
-        $electionIdFormField = HiddenFormField::create('electionID')
-            ->value(array_values($elections)[0]->electionID)
-            ->required();
-        $electionIdFormField->addValidator(new FormFieldValidator('electionID', function (IFormField $formField) use ($elections) {
-            if (!array_key_exists($formField->getValue(), $elections)) {
-                $formField->addValidationError(
-                    new FormFieldValidationError('electionID', 'wbb.electionbot.votecount.insert.election.error.doesNotExists')
-                );
-            }
-        }));
+        if (count($elections) > 1) {
+            $form->appendChild(
+                SingleSelectionFormField::create('electionID')
+                    ->label('wbb.electionbot.votecount.insert.election')
+                    ->options(array_map(fn($election) => $election->name, $elections))
+            );
+        }
         $form->appendChildren([
-            $electionIdFormField,
             IntegerFormField::create('phase')
                 ->label('wbb.electionbot.votecount.insert.phase')
                 ->value($maxPhase)
-                ->minimum(0)
+                ->minimum($minPhase)
                 ->maximum($maxPhase)
                 ->required(),
             CheckboxFormField::create('all')
                 ->label('wbb.electionbot.votecount.insert.all'),
         ]);
-        $form->getDataHandler()->addProcessor(
-            new CustomFormDataProcessor('electionID',
-                static function (IFormDocument $document, array $parameters) {
-                    $parameters['data']['electionID'] = intval($parameters['data']['electionID']);
-                    return $parameters;
-                }
-            )
-        );
         $form->markRequiredFields(false);
         return $form->build();
     }

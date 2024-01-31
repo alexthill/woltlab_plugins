@@ -24,6 +24,8 @@ use wcf\util\StringUtil;
  */
 class ElectionBotPostActionListener implements IParameterizedEventListener {
 
+    protected ?int $threadID;
+
     protected array $electionData = [];
 
     protected array $votes = [];
@@ -39,9 +41,9 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
     }
 
     protected function validateAction(PostAction $eventObj): void {
-        if (isset($_POST['parameters'])
-            && isset($_POST['parameters']['data'])
-            && isset($_POST['parameters']['data']['electionBot'])
+        $this->threadID = $eventObj->thread->threadID;
+        
+        if (isset($_POST['parameters']['data']['electionBot'])
             && is_array($_POST['parameters']['data']['electionBot'])
         ) {
             if (!$eventObj->thread->board->getPermission('canStartElection')) {
@@ -50,15 +52,19 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $this->processElectionBotForm($eventObj);
         }
         
-        if (!$eventObj->thread->board->getPermission('canUseElection') || WCF::getUser() === null) {
+        if (!$eventObj->thread->board->getPermission('canUseElection')) {
             return;
         }
         
-        $elections = $this->getElections($eventObj);
+        $elections = $this->getElections();
         $defaultElectionID = 0;
+        $activeElectionCount = 0;
         foreach ($elections as $electionID => $election) {
-            if ($election->isActive && $election->deadline > TIME_NOW) {
-                $defaultElectionID = $electionID;
+            if ($election->canVote()) {
+                if ($defaultElectionID === 0) {
+                    $defaultElectionID = $electionID;
+                }
+                $activeElectionCount += 1;
             }
         }
         if ($defaultElectionID === 0) return;
@@ -70,12 +76,15 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $el = $els->item($i);
             if ($el->getAttribute('data-name') !== 'v') continue;
             
+            $electionID = $this->parseVoteBBCodeAttrs($el->getAttribute('data-attributes'));
+            $valid = $electionID !== false;
+            $electionID = $electionID ?: $defaultElectionID;
+            $electionName = $valid && $activeElectionCount > 1 ? $elections[$electionID]->name : null;
             $content = StringUtil::trim($el->textContent);
-            $valid = true;
-            if (DOMUtil::hasParent($el, 'woltlab-quote') || DOMUtil::hasParent($el, 'woltlab-spoiler')) {
+            if (!$valid || DOMUtil::hasParent($el, 'woltlab-quote') || DOMUtil::hasParent($el, 'woltlab-spoiler')) {
                 $el->textContent = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.vote.invalid',
-                    ['vote' => $content],
+                    ['vote' => $content, 'election' => $electionName],
                 );
                 $valid = false;
             } else if (strlen($content)) {
@@ -84,14 +93,17 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                 }
                 $el->textContent = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.vote',
-                    ['vote' => $content],
+                    ['vote' => $content, 'election' => $electionName],
                 );
             } else {
-                $el->textContent = WCF::getLanguage()->get('wbb.electionbot.vote.unvote');
+                $el->textContent = WCF::getLanguage()->getDynamicVariable(
+                    'wbb.electionbot.vote.unvote',
+                    ['vote' => $content, 'election' => $electionName],
+                );
             }
             DOMUtil::replaceElement($el, $doc->createElement('u'));
-            if ($valid && !isset($this->votes[$defaultElectionID])) {
-                $this->votes[$defaultElectionID] = $content;
+            if ($valid && !isset($this->votes[$electionID])) {
+                $this->votes[$electionID] = $content;
             }
         }
         
@@ -149,7 +161,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         }
         
         $postID = $eventObj->getReturnValues()['returnValues']['objectID'];
-        $elections = $this->getElections($eventObj);
+        $elections = $this->getElections();
         
         WCF::getDB()->beginTransaction();
         try {
@@ -205,16 +217,16 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         }
     }
 
-    protected function getElections(PostAction $eventObj): array {
+    protected function getElections(): array {
         if ($this->elections === null) {
-            $this->elections = ElectionList::getThreadElections($eventObj->thread->threadID);
+            $this->elections = ElectionList::getThreadElections($this->threadID);
         }
         return $this->elections;
     }
 
     protected function processElectionBotForm(PostAction $eventObj): void {
         $parameters = $_POST['parameters']['data']['electionBot'];
-        $elections = $this->getElections($eventObj);
+        $elections = $this->getElections();
         $allMsgs = [];
         $errors = [];
         foreach ($elections as $id => $election) {
@@ -234,7 +246,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                 if ($form->hasValidationErrors()) {
                     $errors[] = ['id' => 0, 'html' => $form->getHtml()];
                 } else {
-                    $data = ElectionAction::extractFormData($form, $eventObj->thread->threadID);
+                    $data = ElectionAction::extractFormData($form, $threadID);
                     $allMsgs[0] = [WCF::getLanguage()->getDynamicVariable('wbb.electionbot.message.create', $data)];
                     $this->electionData[0] = $data;
                 }
@@ -309,5 +321,29 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         ];
         
         return $msgs;
+    }
+    
+    /**
+     * parses the encoded attributes of a vote bbcode and returns
+     * the election id if it is a valid id
+     * 0 if there is no first attributes
+     * or false if there is an id but it is not a valid one
+     */
+    protected function parseVoteBBCodeAttrs(string $attrs): int|bool {
+        if ($attrs === '') {
+            return 0;
+        }
+        $attrs = json_decode(base64_decode($attrs));
+        if (!is_array($attrs) || count($attrs) === 0) {
+            return 0;
+        }
+        $firstAttr = intval($attrs[0]);
+        if ($firstAttr === 0) {
+            return 0;
+        }
+        if (isset($this->getElections()[$firstAttr])) {
+            return $firstAttr;
+        }
+        return false;
     }
 }

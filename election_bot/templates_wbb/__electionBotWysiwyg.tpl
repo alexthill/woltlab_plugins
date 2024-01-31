@@ -2,6 +2,18 @@
 
 {if $board->getPermission('canUseElection')}
 <template id="electionVoteDialog">
+    {if $electionBotElections|count > 1}<dl>
+        <dt>
+            <label for="electionVoteDialogElection">{lang}wbb.electionbot.votecount.insert.election{/lang}</label>
+        </dt>
+        <dd>
+            <select id="electionVoteDialogElection">
+            {foreach from=$electionBotElections item=$election}
+                <option value="{@$election->electionID}">{$election->name}</option>
+            {/foreach}
+            </select>
+        </dd>
+    </dl>{/if}
     <dl>
         <dt>
             <label for="electionVoteDialogInput">{lang}wbb.electionbot.vote.insert.for{/lang}</label>
@@ -41,7 +53,12 @@ require([
             });
             dialog.addEventListener('primary', () => {
                 const ckeditor = Ckeditor.getCkeditor(ckeditorEl);
-                ckeditor.insertText('[v]' + input.value.trim() + '[/v]');
+                const electionSelect = dialog.content.querySelector('#electionVoteDialogElection');
+                if (electionSelect) {
+                    ckeditor.insertText('[v=\'' + electionSelect.value + '\']' + input.value.trim() + '[/v]');
+                } else {
+                    ckeditor.insertText('[v]' + input.value.trim() + '[/v]');
+                }
             });
             dialog.show('{jslang}wbb.electionbot.vote.insert{/jslang}');
             return true;
@@ -120,7 +137,7 @@ require([
                     id: '!' + item.username,
                     text: item.username,
                     icon: item.avatarTag,
-                    objectId: item.userID,
+                    objectId: 0,
                     type: 'v',
                 }));
             },

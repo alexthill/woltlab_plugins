@@ -3,9 +3,9 @@
     <import>
         <category name="wbb.electionbot">
             <item name="wbb.electionbot.deadlineOverPost.title"><![CDATA[<h2>Deadline abgelaufen</h2>]]></item>
-            <item name="wbb.electionbot.vote"><![CDATA[VOTE:{@$vote}]]></item>
-            <item name="wbb.electionbot.vote.invalid"><![CDATA[Ungültiger VOTE:{@$vote}]]></item>
-            <item name="wbb.electionbot.vote.unvote"><![CDATA[UNVOTE]]></item>
+            <item name="wbb.electionbot.vote"><![CDATA[{if $election|isset}{$election} {/if}VOTE: {@$vote}]]></item>
+            <item name="wbb.electionbot.vote.invalid"><![CDATA[{if $election|isset}{$election} {/if}Ungültiger VOTE: {@$vote}]]></item>
+            <item name="wbb.electionbot.vote.unvote"><![CDATA[{if $election|isset}{$election} {/if}UNVOTE]]></item>
             <item name="wbb.electionbot.vote.insert"><![CDATA[Abstimmen]]></item>
             <item name="wbb.electionbot.vote.insert.for"><![CDATA[Abstimmen für]]></item>
             <item name="wbb.electionbot.vote.insert.for.description"><![CDATA[Feld leer lassen, um auf niemanden zu stimmen.]]></item>
@@ -17,13 +17,12 @@
             <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>
             <item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zur angegebenen Phase (einschließlich).]]></item>
             <item name="wbb.electionbot.votecount.insert.election"><![CDATA[Für Wahl]]></item>
-            <item name="wbb.electionbot.votecount.insert.election.error.doesNotExists"><![CDATA[Die angegebene Wahl existiert nicht.]]></item>
             <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='plainTime'})]]></item>
             <item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
             <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
             <item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde beendet.]]></item>
-            <item name="wbb.electionbot.message.start"><![CDATA[Neue Wahl wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+            <item name="wbb.electionbot.message.start"><![CDATA[Nächste Phase wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
             <item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
             <item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
             <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>
@@ -32,8 +31,7 @@
             <item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
             <item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe Wahl-Tab für mehr Details)]]></item>
             <item name="wbb.electionbot.form.end"><![CDATA[Laufende Wahl beenden.]]></item>
-            <item name="wbb.electionbot.form.start"><![CDATA[Neue Wahl mit Deadline starten]]></item>
-            <item name="wbb.electionbot.form.enable"><![CDATA[Wahl-Bot für dieses Thema aktivieren]]></item>
+            <item name="wbb.electionbot.form.start"><![CDATA[Nächste Phase mit Deadline starten]]></item>
             <item name="wbb.electionbot.form.create"><![CDATA[Wahl erstellen]]></item>
             <item name="wbb.electionbot.form.name"><![CDATA[Name der Wahl]]></item>
             <item name="wbb.electionbot.form.name.description"><![CDATA[Fülle dieses Feld aus, um eine Wahl zu erstellen.]]></item>
@@ -72,4 +70,8 @@
             <item name="wcf.editor.button.election.votehistory"><![CDATA[Verlauf]]></item>
         </category>
     </import>
+    <delete>
+        <item name="wbb.electionbot.votecount.insert.election.error.doesNotExists"/>
+        <item name="wbb.electionbot.form.enable"/>
+    </delete>
 </language>
