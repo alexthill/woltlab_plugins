@@ -25,9 +25,9 @@ use wcf\util\StringUtil;
 class ElectionBotPostActionListener implements IParameterizedEventListener {
 
     protected array $electionData = [];
-    
+
     protected array $votes = [];
-    
+
     protected array $voteValues = [];
 
     private $elections;
@@ -144,6 +144,10 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
     }
 
     protected function finalizeAction(PostAction $eventObj): void {
+        if (count($this->votes) === 0 && count($this->electionData) === 0) {
+            return;
+        }
+        
         $postID = $eventObj->getReturnValues()['returnValues']['objectID'];
         $elections = $this->getElections($eventObj);
         
@@ -164,6 +168,11 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             }
             
             foreach ($this->electionData as $electionID => $data) {
+                if ($electionID === 0) {
+                    $electionAction = new ElectionAction([], 'create', $data);
+                    $electionAction->executeAction();
+                    continue;
+                }
                 if (count($data['data'])) {
                     $electionAction = new ElectionAction([$electionID], 'update', ['data' => $data['data']]);
                     $electionAction->executeAction();
@@ -195,7 +204,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             throw $exception;
         }
     }
-    
+
     protected function getElections(PostAction $eventObj): array {
         if ($this->elections === null) {
             $this->elections = ElectionList::getThreadElections($eventObj->thread->threadID);
@@ -205,17 +214,30 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
 
     protected function processElectionBotForm(PostAction $eventObj): void {
         $parameters = $_POST['parameters']['data']['electionBot'];
-        $electionMsgs = [];
+        $elections = $this->getElections($eventObj);
+        $allMsgs = [];
         $errors = [];
-        foreach ($this->getElections($eventObj) as $election) {
-            $id = $election->electionID;
+        foreach ($elections as $id => $election) {
             if (!isset($parameters[$id]) || !is_array($parameters[$id])) continue;
             
             $options = ElectionOptions::fromParameters($parameters[$id]);
             $options->validate($election, $errors);
             
             if (count($errors) === 0) {
-                $electionMsgs[$election->electionID] = $this->processOptions($election, $options);
+                $allMsgs[$election->electionID] = $this->processOptions($election, $options);
+            }
+        }
+        
+        if (isset($parameters[0])) {
+            $form = ElectionAction::validateCreateForm($parameters[0]);
+            if ($form !== null) {
+                if ($form->hasValidationErrors()) {
+                    $errors[] = ['id' => 0, 'html' => $form->getHtml()];
+                } else {
+                    $data = ElectionAction::extractFormData($form, $eventObj->thread->threadID);
+                    $allMsgs[0] = [WCF::getLanguage()->getDynamicVariable('wbb.electionbot.message.create', $data)];
+                    $this->electionData[0] = $data;
+                }
             }
         }
         
@@ -225,12 +247,14 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         
         $doc = $eventObj->getHtmlInputProcessor()->getHtmlInputNodeProcessor()->getDocument();
         $body = $doc->getElementsByTagName('body')->item(0);
-        foreach ($electionMsgs as $electionID => $msgs) {
+        foreach ($allMsgs as $electionID => $msgs) {
             if (count($msgs) === 0) continue;
             
+            $name = $electionID ? $elections[$electionID]->name : $this->electionData[0]['data']['name'];
+            $name = htmlspecialchars($name);
             $container = $doc->createElement('p');
             $el = $doc->createElement('span');
-            $el->textContent = '---- ' . $this->elections[$electionID]->name . ' ----';
+            $el->textContent = "---- $name ----";
             $container->appendChild($el);
             foreach ($msgs as $msg) {
                 $fragment = $doc->createDocumentFragment();

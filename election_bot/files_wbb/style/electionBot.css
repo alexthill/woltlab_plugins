@@ -3,3 +3,24 @@ span[data-mention^="!"]::before {
 	font-weight: bold;
 	padding-right: 4px;
 }
+
+#electionBot_text .electionBotSection {
+	margin-top: 10px;
+}
+.electionBotSection h2 {
+	cursor: pointer;
+}
+.electionBotSection h2 .toggle {
+	user-select: none;
+	display: inline-block;
+	transition: transform 0.25s;
+	margin-right: 0.5em;
+	font-family: Consolas, 'Courier New', monospace;
+	transform: rotate(90deg);
+}
+.electionBotSection.collapsed h2 .toggle {
+	transform: rotate(0deg);
+}
+.electionBotSection.collapsed > dl {
+	display: none;
+}

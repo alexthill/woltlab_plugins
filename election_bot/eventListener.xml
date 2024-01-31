@@ -9,7 +9,7 @@
         </eventlistener>
         <eventlistener name="electionBotThreadAdd">
             <eventclassname>wbb\form\ThreadAddForm</eventclassname>
-            <eventname>assignVariables,readFormParameters,saved,validate</eventname>
+            <eventname>assignVariables,saved,validate</eventname>
             <listenerclassname>wbb\system\event\listener\ElectionBotThreadAddListener</listenerclassname>
             <environment>user</environment>
         </eventlistener>

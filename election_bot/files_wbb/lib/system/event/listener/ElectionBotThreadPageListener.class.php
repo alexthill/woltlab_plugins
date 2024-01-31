@@ -2,9 +2,8 @@
 
 namespace wbb\system\event\listener;
 
+use wbb\data\election\ElectionAction;
 use wbb\data\election\ElectionList;
-use wbb\data\election\ElectionOptions;
-use wbb\page\ThreadPage;
 use wcf\system\event\listener\IParameterizedEventListener;
 use wcf\system\WCF;
 
@@ -17,12 +16,16 @@ use wcf\system\WCF;
 class ElectionBotThreadPageListener implements IParameterizedEventListener {
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
-        if ($eventObj->thread->canReply() && ($eventObj->board->getPermission('canStartElection') || $eventObj->board->getPermission('canUseElection'))) {
+        if (!$eventObj->thread->canReply()) return;
+
+        $canStartElection = $eventObj->board->getPermission('canStartElection') ;
+        if ($canStartElection || $eventObj->board->getPermission('canUseElection')) {
             $elections = ElectionList::getThreadElections($eventObj->thread->threadID);
-            foreach ($elections as $election) {
-                $election->setDeadlineObj();
-            }
-            WCF::getTPL()->assign(['electionBotElections' => $elections]);
+            $createForm = $canStartElection ? ElectionAction::getCreateForm() : null;
+            WCF::getTPL()->assign([
+                'electionBotElections' => $elections,
+                'electionBotCreateForm' => $createForm,
+            ]);
         }
     }
 }

@@ -6,12 +6,12 @@
             <h2 class="sectionTitle">{$election->name}</h2>
             
             <dl>
-                <dt><button class="electionAddBtn button small" data-add-name="Vote" data-election-id="{$id}">{lang}wbb.electionbot.form.addVote{/lang}</button></dt>
-                <dd><ul class="electionAddContainerVote"></ul></dd>
+                <dt><button class="electionAddBtn button small" data-add-name="Vote" data-election-id="{@$id}">{lang}wbb.electionbot.form.addVote{/lang}</button></dt>
+                <dd><ul id="electionAddContainerVote{@$id}"></ul></dd>
             </dl>
             <dl>
-                <dt><button class="electionAddBtn button small" data-add-name="VoteValue" data-election-id="{$id}">{lang}wbb.electionbot.form.addVoteValue{/lang}</button></dt>
-                <dd><ul class="electionAddContainerVoteValue"></ul></dd>
+                <dt><button class="electionAddBtn button small" data-add-name="VoteValue" data-election-id="{@$id}">{lang}wbb.electionbot.form.addVoteValue{/lang}</button></dt>
+                <dd><ul id="electionAddContainerVoteValue{@$id}"></ul></dd>
             </dl>
             {if $election->isActive}
             <dl>
@@ -21,21 +21,23 @@
                 </dd>
             </dl>
             <dl>
-                <dt><label><input type="checkbox" name="electionChangeDeadline" id="showDeadlineChanger{$id}"> {lang}wbb.electionbot.form.deadlineChange{/lang}</label></dt>
+                <dt><label><input type="checkbox" name="electionChangeDeadline" id="showDeadlineChanger{@$id}"> {lang}wbb.electionbot.form.deadlineChange{/lang}</label></dt>
             {else}
             <dl>
                 <dt></dt>
                 <dd>
-                    <label><input type="checkbox" name="electionStart" id="showDeadlineChanger{$id}"> {lang}wbb.electionbot.form.start{/lang}</label>
+                    <label><input type="checkbox" name="electionStart" id="showDeadlineChanger{@$id}"> {lang}wbb.electionbot.form.start{/lang}</label>
                 </dd>
             {/if}
                 <dd>
-                    <input type="datetime" id="electionDeadline{$id}" name="electionDeadline" value="{time time=$election->deadlineObj type='machine'}" class="medium" data-enable-if-checked="showDeadlineChanger{$id}">
-                    <small>{lang}wbb.electionbot.form.deadline.description{/lang}</small>
+                    <input type="datetime" id="electionDeadline{@$id}" name="electionDeadline" value="{time time=$election->getNextDeadline() type='machine'}" class="medium" data-enable-if-checked="showDeadlineChanger{@$id}">
                 </dd>
             </dl>
         </section>
     {/foreach}
+    <div id="electionCreateFormOuter">
+        {@$electionBotCreateForm->getHtml()}
+    </div>
 </div>
 
 <template id="electionAddTemplate">
@@ -62,7 +64,8 @@
         const wysiwygId = '{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if}';
         const ckeditor5 = document.getElementById(wysiwygId);
         const container = document.getElementById('electionBot_' + wysiwygId);
-        let sections = container.querySelectorAll('.electionBotSection');
+        // sections needs to be a live HTMLCollection
+        const sections = container.getElementsByClassName('electionBotSection');
         
         for (const el of container.querySelectorAll('[data-enable-if-checked]')) {
             const checkbox = document.getElementById(el.dataset.enableIfChecked);
@@ -85,7 +88,7 @@
         for (const addBtn of container.querySelectorAll('.electionAddBtn')) {
             const name = addBtn.dataset.addName;
             const electionId = addBtn.dataset.electionId;
-            const addContainer = container.querySelector('.electionAddContainer' + name);
+            const addContainer = document.getElementById('electionAddContainer' + name + electionId);
             const subTemplate = document.getElementById('electionAddTemplate' + name);
             addBtn.addEventListener('click', () => {
                 const newNode = addTemplate.content.cloneNode(true).firstElementChild;
@@ -98,11 +101,29 @@
                 });
             });
         }
+        
+        function initSectionToggle(section, hidden = true) {
+            const title = section.querySelector('.sectionTitle');
+            if (!title) return;
+            const toggle = document.createElement('span');
+            toggle.textContent = '>';
+            toggle.className = 'toggle';
+            title.prepend(toggle);
+            title.addEventListener('click', () => {
+                section.classList.toggle('collapsed');
+            });
+            if (hidden) {
+                section.classList.add('collapsed');
+            }
+        }
+        for (const section of sections) {
+            initSectionToggle(section);
+        }
 
-        let sendData = false;
+        let sectionsWithSentData;
         CkeditorEvent.listenToCkeditor(ckeditor5).collectMetaData((payload) => {
             const data = {};
-            sendData = false;
+            sectionsWithSentData = [];
             for (const section of sections) {
                 const sectionData = {};
                 for (const el of section.querySelectorAll('input[name]')) {
@@ -111,7 +132,6 @@
                     if (el.type === 'checkbox') {
                         if (el.checked) {
                             sectionData[el.name] = 1;
-                            sendData = true;
                         }
                     } else {
                         if (el.dataset.hasOwnProperty('collector')) {
@@ -128,18 +148,22 @@
                         } else {
                             sectionData[el.name] = [sectionData[el.name], el.value];
                         }
-                        sendData = true;
                     }
                 }
-                data[section.dataset.id] = sectionData;
+                if (Object.keys(sectionData).length !== 0) {
+                    data[section.dataset.id] = sectionData;
+                    sectionsWithSentData.push(section);
+                }
             }
-            if (sendData) {
+            if (Object.keys(data).length !== 0) {
                 payload.metaData.electionBot = data;
             }
         }).reset((payload) => {
-            if (sendData) {
-                container.textContent = '{jslang}wbb.electionbot.form.reloadPage{/jslang}';
-                sections = [];
+            for (const section of sectionsWithSentData) {
+                if (section.dataset.id !== '0') {
+                    const header = section.querySelector('h2').textContent.substring(1);
+                    section.textContent = header + ': {jslang}wbb.electionbot.form.reloadPage{/jslang}';
+                }
             }
         });
 
@@ -149,11 +173,17 @@
             const errors = JSON.parse(data.returnValues.realErrorMessage);
             data.returnValues.realErrorMessage = '{jslang}wbb.electionbot.form.error{/jslang}';
             for (const error of errors) {
-                const el = container.querySelectorAll('.electionBotSection[data-id="' + error.id + '"] input[name="' + error.field + '"]')[error.n];
-                if (el) {
-                    innerError(el, error.msg);
+                if (error.id === 0) {
+                    const outer = document.getElementById('electionCreateFormOuter');
+                    outer.innerHTML = error.html;
+                    initSectionToggle(outer.querySelector('.electionBotSection'), false);
                 } else {
-                    console.error('cannot find input element ' + error.n + ' with name ' + error.field + ' for election ' + error.id);
+                    const el = container.querySelectorAll('.electionBotSection[data-id="' + error.id + '"] input[name="' + error.field + '"]')[error.n];
+                    if (el) {
+                        innerError(el, error.msg);
+                    } else {
+                        console.error('cannot find input element ' + error.n + ' with name ' + error.field + ' for election ' + error.id);
+                    }
                 }
             }
         });
