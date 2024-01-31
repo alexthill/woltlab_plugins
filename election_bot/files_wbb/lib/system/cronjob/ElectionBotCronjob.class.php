@@ -42,7 +42,7 @@ class ElectionBotCronjob extends AbstractCronjob {
         
         $electionsByThread = [];
         foreach ($list as $election) {
-            if (array_key_exists($election->electionID, $electionsByThread)) {
+            if (array_key_exists($election->threadID, $electionsByThread)) {
                 $electionsByThread[$election->threadID][] = $election;
             } else {
                 $electionsByThread[$election->threadID] = [$election];
@@ -54,7 +54,7 @@ class ElectionBotCronjob extends AbstractCronjob {
                 foreach ($elections as $election) {
                     $voteList = VoteList::getElectionVotes($election->electionID, $election->phase);
                     $label1 = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votecount.title', ['election' => $election]);
-                    $label2= WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votehistory.title', ['election' => $election]);
+                    $label2 = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.votehistory.title', ['election' => $election]);
                     if (count($voteList) === 0) {
                         $voteCountHtml = WCF::getLanguage()->get('wbb.electionbot.votecount.empty');
                         $voteHistoryHtml = $voteCountHtml;
