@@ -29,7 +29,7 @@ class ElectionAction extends AbstractDatabaseObjectAction {
      */
     public $className = ElectionEditor::class;
 
-    public static function getCreateForm(): IFormDocument {
+    public static function getCreateForm(int $defaultPhase = 0): IFormDocument {
         $form = FormDocument::create('electionCreateForm')
             ->prefix('election')
             ->ajax();
@@ -54,9 +54,15 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->label('wbb.electionbot.form.extension')
                         ->description('wbb.electionbot.form.extension.description')
                         ->required()
-                        ->value(1440)
+                        ->value(1440) // minutes in day
                         ->minimum(0)
-                        ->maximum(1440 * 366),
+                        ->maximum(1440 * 366), // one leap year worth of minutes
+                    IntegerFormField::create('phase')
+                        ->label('wbb.electionbot.form.phase')
+                        ->required()
+                        ->value($defaultPhase)
+                        ->minimum(0)
+                        ->maximum(10000), // arbitrary limit
                 ])
         );
         $form->markRequiredFields(false);
@@ -86,7 +92,6 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         }
         $data = $form->getData();
         $data['data']['threadID'] = $threadID;
-        $data['data']['phase'] = 0;
         $data['data']['isActive'] = 1;
         $data['data']['extension'] = $data['data']['extension'] * 60;
         return $data;

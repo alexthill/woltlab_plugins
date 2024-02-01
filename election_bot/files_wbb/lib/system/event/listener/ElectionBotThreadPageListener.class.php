@@ -21,7 +21,14 @@ class ElectionBotThreadPageListener implements IParameterizedEventListener {
         $canStartElection = $eventObj->board->getPermission('canStartElection') ;
         if ($canStartElection || $eventObj->board->getPermission('canUseElection')) {
             $elections = ElectionList::getThreadElections($eventObj->thread->threadID);
-            $createForm = $canStartElection ? ElectionAction::getCreateForm() : null;
+            $createForm = null;
+            if ($canStartElection) {
+                $maxPhase = 0;
+                foreach ($elections as $election) {
+                    $maxPhase = max($maxPhase, $election->phase);
+                }
+                $createForm = ElectionAction::getCreateForm($maxPhase);
+            }
             WCF::getTPL()->assign([
                 'electionBotElections' => $elections,
                 'electionBotCreateForm' => $createForm,

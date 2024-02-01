@@ -40,6 +40,7 @@
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
             <item name="wbb.electionbot.form.extension"><![CDATA[Verlängerung der Deadline]]></item>
             <item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Phase verlängert werden soll.]]></item>
+            <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Phase]]></item>
             <item name="wbb.electionbot.form.addVote"><![CDATA[Stimme hinzufügen]]></item>
             <item name="wbb.electionbot.form.addVote.description"><![CDATA[Von/Auf/Wert:]]></item>
             <item name="wbb.electionbot.form.addVote.error.invalid"><![CDATA[Irgendetwas ist falsch oder so.]]></item>
