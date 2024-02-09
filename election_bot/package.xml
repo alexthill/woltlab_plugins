@@ -38,4 +38,8 @@
 		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
 		<instruction type="eventListener" />
 	</instructions>
+
+	<instructions type="uninstall">
+        <instruction type="database" application="wbb">acp/database/uninstall_com.alexthill.election_bot.php</instruction>
+	</instructions>
 </package>
