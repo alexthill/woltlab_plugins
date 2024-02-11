@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.alexthill.election_bot">
-	<packageinformation>
+    <packageinformation>
         <packagename>Election Bot</packagename>
         <packagedescription>Election Bot</packagedescription>
         <packagename language="de">Wahl-Bot</packagename>
         <packagedescription language="de">Wahl-Bot</packagedescription>
-		<version>6.0.0 Beta 6</version>
-		<date>2024-01-31</date>
-	</packageinformation>
+        <version>6.0.0 Beta 7</version>
+        <date>2024-02-11</date>
+    </packageinformation>
 
-	<authorinformation>
-		<author>Alex Thill</author>
-		<authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
-	</authorinformation>
+    <authorinformation>
+        <author>Alex Thill</author>
+        <authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
+    </authorinformation>
 
     <requiredpackages>
         <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
         <requiredpackage minversion="6.0.0">com.woltlab.wbb</requiredpackage>
     </requiredpackages>
 
-	<instructions type="install">
+    <instructions type="install">
         <instruction type="language" />
-		<instruction type="file" application="wbb">files_wbb.tar</instruction>
-		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="file" application="wbb">files_wbb.tar</instruction>
+        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
         <instruction type="database" application="wbb">acp/database/install_com.alexthill.election_bot.php</instruction>
-		<instruction type="aclOption" />
-		<instruction type="bbcode" />
-		<instruction type="cronjob" />
-		<instruction type="eventListener" />
-		<instruction type="option" />
-		<instruction type="templateListener" />
-	</instructions>
+        <instruction type="aclOption" />
+        <instruction type="bbcode" />
+        <instruction type="cronjob" />
+        <instruction type="eventListener" />
+        <instruction type="option" />
+        <instruction type="templateListener" />
+    </instructions>
 
-    <instructions  type="update" fromversion="6.0.0 Beta 5">
+    <instructions  type="update" fromversion="6.0.0 Beta 6">
         <instruction type="language" />
-		<instruction type="file" application="wbb">files_wbb.tar</instruction>
-		<instruction type="template" application="wbb">templates_wbb.tar</instruction>
-		<instruction type="eventListener" />
-	</instructions>
+        <instruction type="file" application="wbb">files_wbb.tar</instruction>
+        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
+    </instructions>
 
-	<instructions type="uninstall">
+    <instructions type="uninstall">
         <instruction type="database" application="wbb">acp/database/uninstall_com.alexthill.election_bot.php</instruction>
-	</instructions>
+    </instructions>
 </package>

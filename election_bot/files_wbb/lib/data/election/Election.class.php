@@ -13,12 +13,18 @@ use wcf\data\DatabaseObject;
  * @property-read   int         $electionID     unique id of the election
  * @property-read   int         $threadID       id of the thread this election is associated with
  * @property-read   string      $name           user given name of the election
+ * @property-read   string      $name0          user given name for pahse 0 of the election
  * @property-read   int         $deadline       time when the election ends
  * @property-read   int         $extension      time the election should be extended when a new election starts
  * @property-read   string      $phase          the how many election this is 
  * @property-read   bool        $isActive       if currently an election is active
+ * @property-read   bool        $silenceBetweenPhases   if users are forbidden to post between phases
  */
 class Election extends DatabaseObject {
+
+    const MAX_VOTER_LENGTH = 100;
+
+    const MAX_VOTED_LENGTH = 100;
 
     private ?\DateTimeImmutable $nextDeadline = null;
 

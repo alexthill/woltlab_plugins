@@ -35,6 +35,7 @@
             <item name="wbb.electionbot.form.create"><![CDATA[Wahl erstellen]]></item>
             <item name="wbb.electionbot.form.name"><![CDATA[Name der Wahl]]></item>
             <item name="wbb.electionbot.form.name.description"><![CDATA[Fülle dieses Feld aus, um eine Wahl zu erstellen.]]></item>
+            <item name="wbb.electionbot.form.name0"><![CDATA[Name der Wahl für Phase 0]]></item>
             <item name="wbb.electionbot.form.deadline"><![CDATA[Deadline]]></item>
             <item name="wbb.electionbot.form.deadlineChange"><![CDATA[Deadline ändern]]></item>
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
@@ -49,6 +50,20 @@
             <item name="wbb.electionbot.form.addVote.error.emptyVoter"><![CDATA[Das Feld "von" muss ausgefüllt werden.]]></item>
             <item name="wbb.electionbot.form.addVoteValue"><![CDATA[Stimmwert ändern]]></item>
             <item name="wbb.electionbot.form.addVoteValue.description"><![CDATA[Von/Wert:]]></item>
+            <item name="wbb.electionbot.form.participant.edit"><![CDATA[Teilmehmer bearbeiten]]></item>
+            <item name="wbb.electionbot.form.participant.add"><![CDATA[Teilmehmer hinzufügen]]></item>
+            <item name="wbb.electionbot.form.participant.marker"><![CDATA[Farbliche Markierung]]></item>
+            <item name="wbb.electionbot.form.participant.extra"><![CDATA[Zusätzlicher Text]]></item>
+            <item name="wbb.electionbot.form.participant.active"><![CDATA[Aktiver Teilnehmer]]></item>
+            <item name="wbb.electionbot.form.participants"><![CDATA[Teilnehmerliste]]></item>
+            <item name="wbb.electionbot.form.participants.strict"><![CDATA[Akzeptiere nur Teilmehmer, die einem Benutzernamen entsprechen]]></item>
+            <item name="wbb.electionbot.form.participants.description"><![CDATA[Ein Teilmehmer pro Zeile. Leerzeilen und Zeilen, die mit # beginnen, werden ignoriert. Ebenso Leerzeichen am Zeilenanfang und -ende.<br>Die Teilnehmerliste kann auch nach Erstellung des Themas noch bearbeitet werden.]]></item>
+            <item name="wbb.electionbot.form.participants.error.invalid"><![CDATA[Nicht alle Namen sind gültig. Siehe Textfeld.]]></item>
+            <item name="wbb.electionbot.form.participants.error.tooMany"><![CDATA[Die maximale Teilnehmeranzahl von {#$maxCount} wurde überschritten.]]></item>
+            <item name="wbb.electionbot.form.participants.inline.valid"><![CDATA[Valide Namen:]]></item>
+            <item name="wbb.electionbot.form.participants.inline.notFound"><![CDATA[Nicht existierende Namen:]]></item>
+            <item name="wbb.electionbot.form.participants.inline.tooLong"><![CDATA[Zu lange Namen (maximale Länge ist {#$maxLength}):]]></item>
+            <item name="wbb.electionbot.form.silence"><![CDATA[Ruhe zwischen den Phasen der Wahl]]></item>
         </category>
 
         <category name="wcf.acl.option">
@@ -71,8 +86,4 @@
             <item name="wcf.editor.button.election.votehistory"><![CDATA[Verlauf]]></item>
         </category>
     </import>
-    <delete>
-        <item name="wbb.electionbot.votecount.insert.election.error.doesNotExists"/>
-        <item name="wbb.electionbot.form.enable"/>
-    </delete>
 </language>

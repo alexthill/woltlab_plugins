@@ -6,11 +6,12 @@ use wcf\data\AbstractDatabaseObjectAction;
 use wcf\system\form\builder\FormDocument;
 use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\container\FormContainer;
+use wcf\system\form\builder\field\BooleanFormField;
 use wcf\system\form\builder\field\CheckboxFormField;
 use wcf\system\form\builder\field\DateFormField;
 use wcf\system\form\builder\field\IntegerFormField;
 use wcf\system\form\builder\field\TextFormField;
-use wcf\system\form\builder\field\dependency\NonEmptyFormFieldDependency;
+use wcf\system\form\builder\field\dependency\ValueFormFieldDependency;
 use wcf\util\StringUtil;
 
 /**
@@ -44,6 +45,20 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->description('wbb.electionbot.form.name.description')
                         ->minimumLength(1)
                         ->maximumLength(255),
+                    IntegerFormField::create('phase')
+                        ->label('wbb.electionbot.form.phase')
+                        ->required()
+                        ->value($defaultPhase)
+                        ->minimum(0)
+                        ->maximum(10000), // arbitrary limit
+                    TextFormField::create('name0')
+                        ->label('wbb.electionbot.form.name0')
+                        ->minimumLength(1)
+                        ->maximumLength(255)
+                        ->addDependency(ValueFormFieldDependency::create('phase')
+                            ->fieldId('phase')
+                            ->values(['0'])
+                        ),
                     DateFormField::create('deadline')
                         ->label('wbb.electionbot.form.deadline')
                         ->required()
@@ -56,13 +71,9 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->required()
                         ->value(1440) // minutes in day
                         ->minimum(0)
-                        ->maximum(1440 * 366), // one leap year worth of minutes
-                    IntegerFormField::create('phase')
-                        ->label('wbb.electionbot.form.phase')
-                        ->required()
-                        ->value($defaultPhase)
-                        ->minimum(0)
-                        ->maximum(10000), // arbitrary limit
+                        ->maximum(1440 * 365), // minutes in year
+                    BooleanFormField::create('silenceBetweenPhases')
+                        ->label('wbb.electionbot.form.silence'),
                 ])
         );
         $form->markRequiredFields(false);
@@ -94,6 +105,9 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         $data['data']['threadID'] = $threadID;
         $data['data']['isActive'] = 1;
         $data['data']['extension'] = $data['data']['extension'] * 60;
+        if (!isset($data['data']['name0'])) {
+            $data['data']['name0'] = '';
+        }
         return $data;
     }
 }

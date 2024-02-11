@@ -9,7 +9,6 @@ use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\Psr15DialogForm;
 use wcf\system\form\builder\field\CheckboxFormField;
 use wcf\system\form\builder\field\IntegerFormField;
-use wcf\system\form\builder\field\IFormField;
 use wcf\system\form\builder\field\SingleSelectionFormField;
 use wcf\system\WCF;
 use Laminas\Diactoros\Response\JsonResponse;

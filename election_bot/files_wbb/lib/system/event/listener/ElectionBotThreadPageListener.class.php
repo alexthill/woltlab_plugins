@@ -4,6 +4,7 @@ namespace wbb\system\event\listener;
 
 use wbb\data\election\ElectionAction;
 use wbb\data\election\ElectionList;
+use wbb\data\election\ParticipantList;
 use wcf\system\event\listener\IParameterizedEventListener;
 use wcf\system\WCF;
 
@@ -15,24 +16,33 @@ use wcf\system\WCF;
  */
 class ElectionBotThreadPageListener implements IParameterizedEventListener {
 
+    private ?array $elections = null;
+
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if (!$eventObj->thread->canReply()) return;
-
+        
+        $threadID = $eventObj->thread->threadID;
         $canStartElection = $eventObj->board->getPermission('canStartElection') ;
         if ($canStartElection || $eventObj->board->getPermission('canUseElection')) {
-            $elections = ElectionList::getThreadElections($eventObj->thread->threadID);
-            $createForm = null;
-            if ($canStartElection) {
-                $maxPhase = 0;
-                foreach ($elections as $election) {
-                    $maxPhase = max($maxPhase, $election->phase);
-                }
-                $createForm = ElectionAction::getCreateForm($maxPhase);
+            WCF::getTPL()->assign(['electionBotElections' => $this->getElections($threadID)]);
+        }
+        if ($canStartElection) {
+            $maxPhase = 0;
+            foreach ($this->getElections($threadID) as $election) {
+                $maxPhase = max($maxPhase, $election->phase);
             }
+            $createForm = ElectionAction::getCreateForm($maxPhase);
             WCF::getTPL()->assign([
-                'electionBotElections' => $elections,
                 'electionBotCreateForm' => $createForm,
+                'electionBotParticipants' => ParticipantList::getThreadParticipants($threadID),
             ]);
         }
+    }
+
+    protected function getElections(int $threadID): array {
+        if ($this->elections === null) {
+            $this->elections = ElectionList::getThreadElections($threadID);
+        }
+        return $this->elections;
     }
 }
