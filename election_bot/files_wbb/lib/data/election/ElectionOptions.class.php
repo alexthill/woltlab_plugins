@@ -88,10 +88,10 @@ class ElectionOptions {
                 $msg = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.form.addVote.error.tooLong', ['maxLength' => 255]);
                 $errors[] = $this->createError($id, 'electionAddVote', $msg, $i);
             }
-            if ($vote->count < VOTE::MIN_COUNT || $vote->count > VOTE::MAX_COUNT) {
+            if ($vote->count < Vote::MIN_COUNT || $vote->count > Vote::MAX_COUNT) {
                 $msg = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.form.addVote.error.countOutsideRange',
-                    ['min' => VOTE::MIN_COUNT, 'max' => VOTE::MAX_COUNT],
+                    ['min' => Vote::MIN_COUNT, 'max' => Vote::MAX_COUNT],
                 );
                 $errors[] = $this->createError($id, 'electionAddVote', $msg, $i);
             }
@@ -135,3 +135,4 @@ class ElectionOptions {
         ];
     }
 }
+
