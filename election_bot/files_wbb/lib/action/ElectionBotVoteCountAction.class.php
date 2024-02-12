@@ -3,6 +3,7 @@
 namespace wbb\action;
 
 use wbb\data\election\ElectionList;
+use wbb\data\election\ParticipantList;
 use wbb\data\election\VoteList;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\form\builder\IFormDocument;
@@ -17,7 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Handles the form for displaying vote counts
+ * Handles the form for inserting vote counts.
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
@@ -31,7 +32,8 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
         if (!isset($params['threadID'])) {
             throw new IllegalLinkException();
         }
-        $elections = ElectionList::getThreadElections($params['threadID']);
+        $threadID = $params['threadID'];
+        $elections = ElectionList::getThreadElections($threadID);
         if (count($elections) === 0) {
             return new JsonResponse([
                 'message' => WCF::getLanguage()->getDynamicVariable(
@@ -66,7 +68,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             $html = '';
             if ($history) {
                 $voteHistory = VoteList::getElectionVotes($electionID, $data['phase'], !$data['all'])
-                    ->generateMultiHistoryHtml($params['threadID']);
+                    ->generateMultiHistoryHtml($threadID);
                 ksort($voteHistory);
                 foreach ($voteHistory as $phase => $voteHistory) {
                     $title = WCF::getLanguage()->getDynamicVariable(
@@ -76,6 +78,10 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                     $html .= "<p><u>$title</u><br/>{$voteHistory}";
                 }
             } else {
+                $participants = null;
+                if ($data['color']) {
+                    $participants = ParticipantList::getThreadParticipants($threadID);
+                }
                 if ($data['all']) {
                     $voteCounts = VoteList::getAllVoteCounts($electionID, $data['phase']);
                     ksort($voteCounts);
@@ -84,6 +90,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                     $voteCounts = [$data['phase'] => $voteCount];
                 }
                 foreach ($voteCounts as $phase => $voteCount) {
+                    $voteCount->participants($participants);
                     $title = WCF::getLanguage()->getDynamicVariable(
                         'wbb.electionbot.votecount.title',
                         ['election' => $election, 'phase' => $phase],
@@ -124,6 +131,8 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                 ->minimum($minPhase)
                 ->maximum($maxPhase)
                 ->required(),
+            CheckboxFormField::create('color')
+                ->label('wbb.electionbot.votecount.insert.color'),
             CheckboxFormField::create('all')
                 ->label('wbb.electionbot.votecount.insert.all'),
         ]);
@@ -131,3 +140,4 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
         return $form->build();
     }
 }
+

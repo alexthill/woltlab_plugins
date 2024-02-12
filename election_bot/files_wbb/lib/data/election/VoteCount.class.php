@@ -2,7 +2,9 @@
 
 namespace wbb\data\election;
 
+use wbb\data\election\ParticipantList;
 use wcf\system\WCF;
+use wcf\util\StringUtil;
 
 /**
  * Represents a vote count.
@@ -12,8 +14,10 @@ use wcf\system\WCF;
  */
 class VoteCount {
 
+    public array $participants = [];
+
     private array $items = [];
-    
+
     public static function fromUniqueVotes(array $votes): static {
         $voteCount = new VoteCount();
         foreach ($votes as $vote) {
@@ -21,7 +25,7 @@ class VoteCount {
         }
         return $voteCount;
     }
-    
+
     public static function fromVoteList(VoteList $list): static {
         $votes = [];
         foreach ($list as $vote) {
@@ -30,12 +34,35 @@ class VoteCount {
         return VoteCount::fromUniqueVotes($votes);
     }
 
+    public function participants(?ParticipantList $participants): static {
+        $this->participants = [];
+        if ($participants !== null) {
+            foreach ($participants as $participant) {
+                $this->participants[$participant->name] = $participant;
+            }
+        }
+        return $this;
+    }
+
     public function addVote(Vote $vote): void {
         if (!isset($this->items[$vote->voted])) {
             $this->items[$vote->voted] = ['count' => 0, 'votes' => []];
         }
         $this->items[$vote->voted]['count'] += $vote->count;
         $this->items[$vote->voted]['votes'][] = $vote;
+    }
+
+    public function decorateName(string $name): string {
+        if (array_key_exists($name, $this->participants)) {
+            $participant = $this->participants[$name];
+            $class = $participant->getMarkerClass();
+            $name = StringUtil::encodeHTML($name);
+            if (!$participant->active) {
+                $name = "<s>$name</s>";
+            }
+            return $class === '' ? $name : "<mark class=\"$class\">$name</mark>";
+        }
+        return StringUtil::encodeHTML($name);
     }
 
     public function generateHtml(): string {
@@ -56,25 +83,27 @@ class VoteCount {
             if ($voted === '') continue;
             
             if ($html !== '') $html .= '<br/>';
-            $voters = array_map(function ($vote) {
-                return htmlspecialchars($vote->voter) . ($vote->count === 1 ? '' : '*' . $vote->count);
-            }, $item['votes']);
+            $voters = array_map(
+                fn($v) => $this->decorateName($v->voter) . ($v->count === 1 ? '' : '*' . $v->count),
+                $item['votes'],
+            );
             if ($newVoter !== '' && $newVoted === $voted) {
-                $voters[] = '<span style="text-decoration: underline dotted;">' . htmlspecialchars($newVoter) . '</span>'
-                     . ($newCount === 1 ? '' : '*' . $newCount);
+                $voters[] = "<u>{$this->decorateName($newVoter)}</u>"
+                    . ($newCount === 1 ? '' : '*' . $newCount);
             }
-            $html .= htmlspecialchars($voted) . ' (' . $item['count'] . '): ' . implode(', ', $voters);
+            $html .= "{$this->decorateName($voted)} ({$item['count']}): " . implode(', ', $voters);
         }
         if (isset($this->items[''])) {
             if ($html !== '') {
                 $html .= '<br/><br/>';
             }
             $unvote = WCF::getLanguage()->get('wbb.electionbot.votecount.unvote');
-            $voters = array_map(function ($vote) { return htmlspecialchars($vote->voter); }, $this->items['']['votes']);
+            $voters = array_map(fn($vote) => $this->decorateName($vote->voter), $this->items['']['votes']);
             if ($newVoter !== '' && $newVoted === '') {
-                $voters[] = '<span style="text-decoration: underline dotted;">' . htmlspecialchars($newVoter) . '</span>';
+                $voters[] = "<u>{$this->decorateName($newVoter)}</u>";
             }
-            $html .= WCF::getLanguage()->get('wbb.electionbot.votecount.unvote') . ': ' . implode(', ', $voters);
+            $html .= WCF::getLanguage()->get('wbb.electionbot.votecount.unvote')
+                . ': ' . implode(', ', $voters);
         }
         
         return $html;
@@ -91,3 +120,4 @@ class VoteCount {
         });
     }
 }
+

@@ -16,6 +16,7 @@
             <item name="wbb.electionbot.votecount.insert"><![CDATA[Stand einfügen]]></item>
             <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>
             <item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zur angegebenen Phase (einschließlich).]]></item>
+            <item name="wbb.electionbot.votecount.insert.color"><![CDATA[Teilnehmer farblich markieren.]]></item>
             <item name="wbb.electionbot.votecount.insert.election"><![CDATA[Für Wahl]]></item>
             <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='custom' format='j. M y G:i'})]]></item>
