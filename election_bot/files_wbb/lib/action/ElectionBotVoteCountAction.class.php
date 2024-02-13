@@ -18,7 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Handles the form for inserting vote counts.
+ * Handles the form for displaying vote counts
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
@@ -42,16 +42,16 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                 ),
             ], 400);
         }
-        
+
         // TODO: check permissions here
-        
+
         $history = !empty($params['history']);
         $formTitle = $history ? 'wbb.electionbot.votehistory.insert' : 'wbb.electionbot.votecount.insert';
         $dialogForm = $this->getForm($formTitle, $elections);
-        
+
         if ($request->getMethod() === 'GET') {
             return $dialogForm->toResponse();
-        } elseif ($request->getMethod() === 'POST') {
+        } else if ($request->getMethod() === 'POST') {
             $response = $dialogForm->validateRequest($request);
             if ($response !== null) {
                 return $response;
@@ -80,13 +80,14 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             } else {
                 $participants = null;
                 if ($data['color']) {
-                    $participants = ParticipantList::getThreadParticipants($threadID);
+                    $participants = ParticipantList::forThread($threadID);
                 }
                 if ($data['all']) {
                     $voteCounts = VoteList::getAllVoteCounts($electionID, $data['phase']);
                     ksort($voteCounts);
                 } else {
-                    $voteCount = VoteList::getLastElectionVotes($electionID, $data['phase'])->getVoteCount();
+                    $voteCount = VoteList::getLastElectionVotes($electionID, $data['phase'])
+                        ->getVoteCount();
                     $voteCounts = [$data['phase'] => $voteCount];
                 }
                 foreach ($voteCounts as $phase => $voteCount) {
@@ -109,14 +110,14 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
 
     protected function getForm(string $title, array $elections): Psr15DialogForm {
         $form = new Psr15DialogForm(static::FORM_ID, WCF::getLanguage()->get($title));
-        
+
         $minPhase = 0;
         $maxPhase = 0;
         foreach ($elections as $election) {
             $minPhase = min($minPhase, $election->phase);
             $maxPhase = max($maxPhase, $election->phase);
         }
-        
+
         if (count($elections) > 1) {
             $form->appendChild(
                 SingleSelectionFormField::create('electionID')

@@ -52,19 +52,6 @@ class VoteCount {
         $this->items[$vote->voted]['votes'][] = $vote;
     }
 
-    public function decorateName(string $name): string {
-        if (array_key_exists($name, $this->participants)) {
-            $participant = $this->participants[$name];
-            $class = $participant->getMarkerClass();
-            $name = StringUtil::encodeHTML($name);
-            if (!$participant->active) {
-                $name = "<s>$name</s>";
-            }
-            return $class === '' ? $name : "<mark class=\"$class\">$name</mark>";
-        }
-        return StringUtil::encodeHTML($name);
-    }
-
     public function generateHtml(): string {
         return $this->generateHtmlWithNewVote('', '', 0);
     }
@@ -77,11 +64,11 @@ class VoteCount {
             $this->items[$newVoted]['count'] += $newCount;
         }
         $this->sortItems();
-        
+
         $html = '';
         foreach ($this->items as $voted => $item) {
             if ($voted === '') continue;
-            
+
             if ($html !== '') $html .= '<br/>';
             $voters = array_map(
                 fn($v) => $this->decorateName($v->voter) . ($v->count === 1 ? '' : '*' . $v->count),
@@ -105,8 +92,15 @@ class VoteCount {
             $html .= WCF::getLanguage()->get('wbb.electionbot.votecount.unvote')
                 . ': ' . implode(', ', $voters);
         }
-        
+
         return $html;
+    }
+
+    protected function decorateName(string $name): string {
+        if (array_key_exists($name, $this->participants)) {
+            return $this->participants[$name]->decorateName();
+        }
+        return StringUtil::encodeHTML($name);
     }
 
     protected function sortItems(): void {

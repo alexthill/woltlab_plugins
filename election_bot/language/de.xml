@@ -58,6 +58,7 @@
             <item name="wbb.electionbot.form.participant.active"><![CDATA[Aktiver Teilnehmer]]></item>
             <item name="wbb.electionbot.form.participants"><![CDATA[Teilnehmerliste]]></item>
             <item name="wbb.electionbot.form.participants.strict"><![CDATA[Akzeptiere nur Teilmehmer, die einem Benutzernamen entsprechen]]></item>
+            <item name="wbb.electionbot.form.participants.post"><![CDATA[Erstelle einen Post mit der Teilnehmerliste]]></item>
             <item name="wbb.electionbot.form.participants.description"><![CDATA[Ein Teilmehmer pro Zeile. Leerzeilen und Zeilen, die mit # beginnen, werden ignoriert. Ebenso Leerzeichen am Zeilenanfang und -ende.<br>Die Teilnehmerliste kann auch nach Erstellung des Themas noch bearbeitet werden.]]></item>
             <item name="wbb.electionbot.form.participants.error.invalid"><![CDATA[Nicht alle Namen sind gültig. Siehe Textfeld.]]></item>
             <item name="wbb.electionbot.form.participants.error.tooMany"><![CDATA[Die maximale Teilnehmeranzahl von {#$maxCount} wurde überschritten.]]></item>

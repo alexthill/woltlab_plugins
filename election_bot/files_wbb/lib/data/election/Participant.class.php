@@ -3,6 +3,7 @@
 namespace wbb\data\election;
 
 use wcf\data\DatabaseObject;
+use wcf\util\StringUtil;
 
 /**
  * Represents a participant in the elections of a thread
@@ -52,4 +53,17 @@ class Participant extends DatabaseObject {
     public function getMarkerClass(): string {
         return Participant::colorToMarkerClass($this->color);
     }
+
+    /**
+     * Decorate the name with HTML markup according the participant's properties.
+     */
+    public function decorateName(): string {
+        $class = $this->getMarkerClass();
+        $name = StringUtil::encodeHTML($this->name);
+        if (!$this->active) {
+            $name = "<s>$name</s>";
+        }
+        return $class === '' ? $name : "<mark class=\"$class\">$name</mark>";
+    }
 }
+

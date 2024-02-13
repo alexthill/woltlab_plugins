@@ -16,33 +16,26 @@ use wcf\system\WCF;
  */
 class ElectionBotThreadPageListener implements IParameterizedEventListener {
 
-    private ?array $elections = null;
-
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if (!$eventObj->thread->canReply()) return;
-        
-        $threadID = $eventObj->thread->threadID;
+
         $canStartElection = $eventObj->board->getPermission('canStartElection') ;
         if ($canStartElection || $eventObj->board->getPermission('canUseElection')) {
-            WCF::getTPL()->assign(['electionBotElections' => $this->getElections($threadID)]);
-        }
-        if ($canStartElection) {
-            $maxPhase = 0;
-            foreach ($this->getElections($threadID) as $election) {
-                $maxPhase = max($maxPhase, $election->phase);
-            }
-            $createForm = ElectionAction::getCreateForm($maxPhase);
-            WCF::getTPL()->assign([
-                'electionBotCreateForm' => $createForm,
-                'electionBotParticipants' => ParticipantList::getThreadParticipants($threadID),
-            ]);
-        }
-    }
+            $threadID = $eventObj->thread->threadID;
+            $elections = ElectionList::getThreadElections($threadID);
+            WCF::getTPL()->assign(['electionBotElections' => $elections]);
 
-    protected function getElections(int $threadID): array {
-        if ($this->elections === null) {
-            $this->elections = ElectionList::getThreadElections($threadID);
+            if ($canStartElection) {
+                $maxPhase = 0;
+                foreach ($elections as $election) {
+                    $maxPhase = max($maxPhase, $election->phase);
+                }
+                WCF::getTPL()->assign([
+                    'electionBotCreateForm' => ElectionAction::getCreateForm($maxPhase),
+                    'electionBotParticipants' => ParticipantList::forThread($threadID),
+                ]);
+            }
         }
-        return $this->elections;
     }
 }
+

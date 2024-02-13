@@ -29,13 +29,13 @@ class ParticipantList extends DatabaseObjectList {
     private array $tooLong = [];
 
     private array $notFound = [];
-    
+
     private bool $validated = true;
 
     /**
      * get all participants of given thread
      */
-    public static function getThreadParticipants(int $threadID): static {
+    public static function forThread(int $threadID): static {
         $list = new ParticipantList();
         $list->getConditionBuilder()->add('threadID = ?', [$threadID]);
         $list->readObjects();
@@ -63,6 +63,22 @@ class ParticipantList extends DatabaseObjectList {
         $list->names = array_unique($list->names);
         $list->validated = false;
         return $list;
+    }
+
+    /**
+     * Generate a formatted HTML list containing all the participants.
+     */
+    public function generateHtmlList(): string {
+        $html = '<h2>' . WCF::getLanguage()->get('wbb.electionbot.form.participants') . '</h2>';
+        $html .= '<ol>';
+        foreach ($this as $participant) {
+            $html .= "<li>{$participant->decorateName()}</li>";
+            if ($participant->extra !== '') {
+                $html .= " - {$participant->extra}";
+            }
+        }
+        $html .= '</ol>';
+        return $html;
     }
 
     /**
@@ -144,3 +160,4 @@ class ParticipantList extends DatabaseObjectList {
         }
     }
 }
+

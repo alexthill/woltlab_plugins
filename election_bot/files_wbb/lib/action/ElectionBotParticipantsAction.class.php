@@ -5,6 +5,9 @@ namespace wbb\action;
 use wbb\data\election\Election;
 use wbb\data\election\Participant;
 use wbb\data\election\ParticipantAction;
+use wbb\data\election\ParticipantList;
+use wbb\data\post\PostAction;
+use wbb\data\post\PostList;
 use wbb\data\thread\Thread;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\exception\PermissionDeniedException;
@@ -36,48 +39,72 @@ class ElectionBotParticipantsAction implements RequestHandlerInterface {
         if (!isset($params['threadID'])) {
             throw new IllegalLinkException();
         }
-        $threadID = $params['threadID'];
-        if (!(new Thread($threadID))->getBoard()->getPermission('canStartElection')) {
+        $thread = new Thread($params['threadID']);
+        if ($thread->threadID === 0) {
+            throw new IllegalLinkException();
+        }
+        if (!$thread->getBoard()->getPermission('canStartElection')) {
             throw new PermissionDeniedException();
         }
-        
+
         $objectId = intval($params['objectId'] ?? 0);
-        $participant = $objectId === 0 ? null : new Participant($objectId);
-        if ($objectId !== 0 && $participant->participantID === 0) {
+        $participant = $objectId > 0 ? new Participant($objectId) : null;
+        if ($participant !== null && $participant->participantID === 0) {
             throw new IllegalLinkException();
         }
         $dialogForm = $this->getForm($participant);
-        
+
         if ($request->getMethod() === 'GET') {
             return $dialogForm->toResponse();
-        } elseif ($request->getMethod() === 'POST') {
+        } else if ($request->getMethod() === 'POST') {
             $response = $dialogForm->validateRequest($request);
             if ($response !== null) {
                 return $response;
             }
 
             $data = $dialogForm->getData()['data'];
-            
+
             if ($objectId === 0) {
-                $data['threadID'] = $threadID;
+                $data['threadID'] = $thread->threadID;
                 $action = new ParticipantAction([], 'create', ['data' => $data]);
                 $returnValues = $action->executeAction();
                 $data['objectId'] = $returnValues['returnValues']->participantID;
                 $data['color'] = Participant::colorToMarkerClass($data['color']);
-                return new JsonResponse(['result' => ['action' => 'add', 'data' => $data]]);
-            }
-            if ($data['delete']) {
+                $result = ['action' => 'add', 'data' => $data];
+            } else if ($data['delete']) {
+                $actionName = 'delete';
                 $action = new ParticipantAction([$objectId], 'delete', []);
                 $action->executeAction();
-                return new JsonResponse(['result' => ['action' => 'delete']]);
+                $result = ['action' => 'delete'];
+            } else {
+                $actionName = 'update';
+                unset($data['delete']);
+                $action = new ParticipantAction([$objectId], 'update', ['data' => $data]);
+                $action->executeAction();
+                $data['color'] = Participant::colorToMarkerClass($data['color']);
+                $result = ['action' => 'update', 'data' => $data];
             }
-            unset($data['delete']);
-            $action = new ParticipantAction([$objectId], 'update', ['data' => $data]);
-            $action->executeAction();
-            $data['color'] = Participant::colorToMarkerClass($data['color']);
-            return new JsonResponse(['result' => ['action' => 'update', 'data' => $data]]);
+
+            $this->updateParticipantPost($thread->threadID);
+            return new JsonResponse(['result' => $result]);
         } else {
             throw new \LogicException('Unreachable');
+        }
+    }
+
+    protected function updateParticipantPost(int $threadID): void {
+        $postList = new PostList();
+        $postList->sqlOffset = 1;
+        $postList->sqlLimit = 1;
+        $postList->getConditionBuilder()->add('threadID = ?', [$threadID]);
+        $postList->readObjects();
+        $post = $postList->getSingleObject();
+        if ($post !== null && $post->userID === WBB_ELECTION_BOT_USER_ID) {
+            $participants = ParticipantList::forThread($threadID);
+            $postAction = new PostAction([$post], 'update', ['data' => [
+                'message' => $participants->generateHtmlList(),
+            ]]);
+            $postAction->executeAction();
         }
     }
 
@@ -126,3 +153,4 @@ class ElectionBotParticipantsAction implements RequestHandlerInterface {
         return $form;
     }
 }
+
