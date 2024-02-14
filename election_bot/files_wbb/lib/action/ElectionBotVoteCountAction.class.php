@@ -6,7 +6,6 @@ use wbb\data\election\ElectionList;
 use wbb\data\election\ParticipantList;
 use wbb\data\election\VoteList;
 use wcf\system\exception\IllegalLinkException;
-use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\Psr15DialogForm;
 use wcf\system\form\builder\field\CheckboxFormField;
 use wcf\system\form\builder\field\IntegerFormField;
@@ -51,7 +50,8 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
 
         if ($request->getMethod() === 'GET') {
             return $dialogForm->toResponse();
-        } else if ($request->getMethod() === 'POST') {
+        }
+        if ($request->getMethod() === 'POST') {
             $response = $dialogForm->validateRequest($request);
             if ($response !== null) {
                 return $response;
@@ -65,6 +65,15 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                 $election = array_values($elections)[0];
                 $electionID = $election->electionID;
             }
+            if ($data['phase'] > $election->phase) {
+                return new JsonResponse([
+                    'message' => WCF::getLanguage()->getDynamicVariable(
+                        'wbb.electionbot.votecount.error.phase',
+                        ['currentPhase' => $election->phase],
+                    ),
+                ], 400);
+            }
+
             $html = '';
             if ($history) {
                 $voteHistory = VoteList::getElectionVotes($electionID, $data['phase'], !$data['all'])
@@ -103,9 +112,8 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             return new JsonResponse([
                 'result' => ['html' => $html],
             ]);
-        } else {
-            throw new \LogicException('Unreachable');
         }
+        throw new \LogicException('Unreachable');
     }
 
     protected function getForm(string $title, array $elections): Psr15DialogForm {
@@ -122,7 +130,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             $form->appendChild(
                 SingleSelectionFormField::create('electionID')
                     ->label('wbb.electionbot.votecount.insert.election')
-                    ->options(array_map(fn($election) => $election->name, $elections))
+                    ->options(array_map(fn($election) => $election->getFullTitle(), $elections))
             );
         }
         $form->appendChildren([

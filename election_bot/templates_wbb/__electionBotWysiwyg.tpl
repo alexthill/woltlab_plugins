@@ -9,7 +9,7 @@
         <dd>
             <select id="electionVoteDialogElection">
             {foreach from=$electionBotElections item=$election}
-                <option value="{@$election->electionID}">{$election->name}</option>
+                <option value="{@$election->electionID}">{@$election->getTitle()}</option>
             {/foreach}
             </select>
         </dd>

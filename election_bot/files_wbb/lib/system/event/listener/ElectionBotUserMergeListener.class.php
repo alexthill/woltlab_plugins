@@ -1,6 +1,6 @@
 <?php
 
-namespace wbb\system\event\listener;
+namespace wcf\system\event\listener;
 
 /**
  * Updates election bot information during user merging.

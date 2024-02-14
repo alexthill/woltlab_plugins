@@ -32,7 +32,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
 
     protected array $voteValues = [];
 
-    private $elections;
+    private ?array $elections;
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if ($eventObj->getActionName() === 'quickReply') {
@@ -80,8 +80,12 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $electionID = $this->parseVoteBBCodeAttrs($el->getAttribute('data-attributes'));
             $valid = $electionID !== false;
             $electionID = $electionID ?: $defaultElectionID;
-            $electionName = $valid && $activeElectionCount > 1 ? $elections[$electionID]->name : null;
+            $electionName = null;
+            if ($valid && $activeElectionCount > 1) {
+                $electionName = $elections[$electionID]->getTitle(-1, false);
+            }
             $content = StringUtil::trim($el->textContent);
+
             if (!$valid || DOMUtil::hasParent($el, 'woltlab-quote') || DOMUtil::hasParent($el, 'woltlab-spoiler')) {
                 $el->textContent = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.vote.invalid',
@@ -163,7 +167,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
 
         $postID = $eventObj->getReturnValues()['returnValues']['objectID'];
         $elections = $this->getElections();
-        
+
         WCF::getDB()->beginTransaction();
         try {
             foreach ($this->votes as $electionID => $voted) {
@@ -201,7 +205,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                         'phase' => $data['data']['phase'] ?? $elections[$electionID]->phase,
                         'count' => $vote->count,
                     ]]);
-                    $vote = $voteAction->executeAction();
+                    $voteAction->executeAction();
                 }
                 foreach ($data['addVoteValues'] as $vote) {
                     $sql = "INSERT INTO wbb1_election_voter (electionID, voter, count)
@@ -218,6 +222,9 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         }
     }
 
+    /**
+     * @return Election[]
+     */
     protected function getElections(): array {
         if ($this->elections === null) {
             $this->elections = ElectionList::getThreadElections($this->threadID);
@@ -228,17 +235,13 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
     protected function processElectionBotForm(PostAction $eventObj): void {
         $parameters = $_POST['parameters']['data']['electionBot'];
         $elections = $this->getElections();
-        $allMsgs = [];
         $errors = [];
-        foreach ($elections as $id => $election) {
+        foreach ($this->getElections() as $id => $election) {
             if (!isset($parameters[$id]) || !is_array($parameters[$id])) continue;
 
             $options = ElectionOptions::fromParameters($parameters[$id]);
             $options->validate($election, $errors);
-
-            if (count($errors) === 0) {
-                $allMsgs[$election->electionID] = $this->processOptions($election, $options);
-            }
+            $this->processOptions($election, $options);
         }
 
         if (isset($parameters[0])) {
@@ -248,8 +251,10 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                     $errors[] = ['id' => 0, 'html' => $form->getHtml()];
                 } else {
                     $data = ElectionAction::extractFormData($form, $this->threadID);
-                    $allMsgs[0] = [WCF::getLanguage()->getDynamicVariable('wbb.electionbot.message.create', $data)];
                     $this->electionData[0] = $data;
+                    $this->electionData[0]['msgs'] = [WCF::getLanguage()->getDynamicVariable(
+                        'wbb.electionbot.message.create', $data
+                    )];
                 }
             }
         }
@@ -260,16 +265,22 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
 
         $doc = $eventObj->getHtmlInputProcessor()->getHtmlInputNodeProcessor()->getDocument();
         $body = $doc->getElementsByTagName('body')->item(0);
-        foreach ($allMsgs as $electionID => $msgs) {
-            if (count($msgs) === 0) continue;
+        foreach ($this->electionData as $electionID => $data) {
+            if (count($data['msgs']) === 0) continue;
 
-            $name = $electionID ? $elections[$electionID]->name : $this->electionData[0]['data']['name'];
-            $name = htmlspecialchars($name);
+            if ($electionID === 0) {
+                $name = $data['data']['name'];
+                $name0 = $data['data']['name0'] ?? '';
+                if ($name0 !== '') {
+                    $name = "$name0/$name";
+                }
+                $name = StringUtil::encodeHTML($name);
+            } else {
+                $name = $elections[$electionID]->getTitle($data['data']['phase'] ?? -1);
+            }
             $container = $doc->createElement('p');
-            $el = $doc->createElement('span');
-            $el->textContent = "---- $name ----";
-            $container->appendChild($el);
-            foreach ($msgs as $msg) {
+            $container->appendChild($doc->createTextNode("---- $name ----"));
+            foreach ($data['msgs'] as $msg) {
                 $fragment = $doc->createDocumentFragment();
                 $fragment->appendXML($msg);
                 $container->appendChild($doc->createElement('br'));
@@ -279,7 +290,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         }
     }
 
-    protected function processOptions(Election $election, ElectionOptions $options): array {
+    protected function processOptions(Election $election, ElectionOptions $options): void {
         $data = [];
         $msgs = [];
         if (!$election->isActive && $options->start) {
@@ -319,9 +330,8 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             'data' => $data,
             'addVotes' => $options->addVotes,
             'addVoteValues' => $options->addVoteValues,
+            'msgs' => $msgs,
         ];
-
-        return $msgs;
     }
 
     /**

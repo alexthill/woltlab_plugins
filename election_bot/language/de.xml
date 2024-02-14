@@ -9,16 +9,17 @@
             <item name="wbb.electionbot.vote.insert"><![CDATA[Abstimmen]]></item>
             <item name="wbb.electionbot.vote.insert.for"><![CDATA[Abstimmen für]]></item>
             <item name="wbb.electionbot.vote.insert.for.description"><![CDATA[Feld leer lassen, um auf niemanden zu stimmen.]]></item>
-            <item name="wbb.electionbot.votecount.title"><![CDATA[Stand {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
+            <item name="wbb.electionbot.votecount.title"><![CDATA[Stand {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {@$h}:{@$m}:{@$s}]]></item>
             <item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
             <item name="wbb.electionbot.votecount.unvote"><![CDATA[Stimme zurückgezogen]]></item>
+            <item name="wbb.electionbot.votecount.error.phase"><![CDATA[Die ausgewählte Wahl ist aktuell bei Phase {#$currentPhase}. Es kann kein Stand oder Verlauf für eine höhere Phase generiert werden.]]></item>
             <item name="wbb.electionbot.votecount.insert"><![CDATA[Stand einfügen]]></item>
             <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>
             <item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zur angegebenen Phase (einschließlich).]]></item>
             <item name="wbb.electionbot.votecount.insert.color"><![CDATA[Teilnehmer farblich markieren.]]></item>
             <item name="wbb.electionbot.votecount.insert.election"><![CDATA[Für Wahl]]></item>
-            <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {$election->name} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
+            <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='custom' format='j. M y G:i'})]]></item>
             <item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
             <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>

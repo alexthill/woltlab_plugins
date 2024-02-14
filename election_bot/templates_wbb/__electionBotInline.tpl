@@ -3,7 +3,7 @@
     {foreach from=$electionBotElections item=$election}
         {assign var=id value=$election->electionID}
         <section class="section electionBotSection" data-id="{$id}">
-            <h2 class="sectionTitle">{$election->name}</h2>
+            <h2 class="sectionTitle">{@$election->getFullTitle()}</h2>
             <dl>
                 <dt><button class="electionAddBtn button small" data-add-name="Vote" data-election-id="{@$id}">{lang}wbb.electionbot.form.addVote{/lang}</button></dt>
                 <dd><ul id="electionAddContainerVote{@$id}"></ul></dd>
