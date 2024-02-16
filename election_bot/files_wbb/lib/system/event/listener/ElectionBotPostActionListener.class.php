@@ -32,7 +32,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
 
     protected array $voteValues = [];
 
-    private ?array $elections;
+    private ?array $elections = null;
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if ($eventObj->getActionName() === 'quickReply') {

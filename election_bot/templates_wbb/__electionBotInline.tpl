@@ -1,4 +1,4 @@
-{if !$__wbbThreadQuickReply|empty && $electionBotElections|isset}
+{if !$__wbbThreadQuickReply|empty && $electionBotCreateForm|isset}
 <div class="messageTabMenuContent" id="electionBot_{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if}">
     {foreach from=$electionBotElections item=$election}
         {assign var=id value=$election->electionID}
