@@ -19,7 +19,7 @@
 
     <category name="wcf.acp.option">
         <item name="wcf.acp.option.category.board.thread.who_wrote"><![CDATA[Wer hat in einem Thema geantwortet]]></item>
-        <item name="wcf.acp.option.wbb_who_wrote_count"><![CDATA[Anzahl der Benutzer, die angezeigt werden soll.]]></item>
-        <item name="wcf.acp.option.wbb_who_wrote_count.description"><![CDATA[Restliche Benutzer können per Klick angezeigt werden [0, um immer alle Benutzer anzuzeigen]]]></item>
+        <item name="wcf.acp.option.wbb_who_wrote_count"><![CDATA[Anzahl der Benutzer, die angezeigt werden soll]]></item>
+        <item name="wcf.acp.option.wbb_who_wrote_count.description"><![CDATA[Restliche Benutzer können per Klick angezeigt werden. [0, um immer alle Benutzer anzuzeigen]]]></item>
     </category>
 </language>
