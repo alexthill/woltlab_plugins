@@ -32,8 +32,8 @@ require([
     'WoltLabSuite/Core/Component/Ckeditor',
     'WoltLabSuite/Core/Component/Ckeditor/Event',
     'WoltLabSuite/Core/Component/Dialog',
-    'WoltLabSuite/Core/Ui/User/Search/Input',
-], function (Backend, Ckeditor, CkeditorEvent, Dialog, UserSearchInput) {
+    'WoltLabSuite/Core/Ui/Search/Input',
+], function (Backend, Ckeditor, CkeditorEvent, Dialog, UiSearchInput) {
     'use strict';
 
     const wysiwygId = '{if $wysiwygSelector|isset}{@$wysiwygSelector|encodeJS}{else}text{/if}';
@@ -43,13 +43,18 @@ require([
         if (bbcode === 'v') {
             const dialog = Dialog.dialogFactory().fromId('electionVoteDialog').asPrompt();
             const input = dialog.content.querySelector('#electionVoteDialogInput');
-            new UserSearchInput(input, {
-                callbackSelect(item) {
-                    // some a**** clears the input after this callback, therefore delay the update of the input value
-                    queueMicrotask(() => input.value = item.dataset.label);
+            new UiSearchInput(input, {
+                ajax: {
+                    className: "wbb\\data\\election\\ParticipantAction",
+                    parameters: {
+                        data: {
+                            threadID: document.body.dataset.threadId,
+                        },
+                    },
                 },
-                delay: 200,
-                preventSubmit: false
+                callbackSelect(item) { return true; },
+                delay: 500,
+                minLength: 1,
             });
             dialog.addEventListener('primary', () => {
                 const ckeditor = Ckeditor.getCkeditor(ckeditorEl);
@@ -61,6 +66,7 @@ require([
                 }
             });
             dialog.show('{jslang}wbb.electionbot.vote.insert{/jslang}');
+            input.focus();
             return true;
         }
         if (bbcode === 'votecount' || bbcode === 'votehistory') {
@@ -77,7 +83,8 @@ require([
                 },
                 async ({ response }) => {
                     const json = await response.json();
-                    Dialog.dialogFactory().fromHtml(json.message).asAlert().show('{jslang}wcf.global.error.title{/jslang}');
+                    Dialog.dialogFactory().fromHtml(json.message).asAlert()
+                        .show('{jslang}wcf.global.error.title{/jslang}');
                 }
             );
             return true;
@@ -126,29 +133,34 @@ require([
                 if (query.length > 20) {
                     return [];
                 }
-                const url = new URL(window.WSC_API_URL + 'index.php?editor-get-mention-suggestions/');
+                const url = new URL('{link controller="ElectionBotSuggestions" application="wbb" encode=false}{/link}');
+                url.searchParams.set('threadID', document.body.dataset.threadId);
                 url.searchParams.set('query', query);
                 const result = await Backend.prepareRequest(url.toString())
                     .get()
                     .allowCaching()
                     .disableLoadingIndicator()
                     .fetchAsJson();
-                return result.filter((item) => item.type === 'user').map((item) => ({
-                    id: '!' + item.username,
-                    text: item.username,
-                    icon: item.avatarTag,
+                return result.map((item) => ({
+                    id: '!' + item.label,
+                    text: item.label,
+                    icon: item.icon,
                     objectId: 0,
                     type: 'v',
+                    active: item.active,
                 }));
             },
             itemRenderer: (item) => {
                 const el = document.createElement('span');
                 el.className = 'ckeditor5__mention';
-                el.innerHTML = item.icon + ' ' + item.text;
+                if (!item.active) {
+                    el.style.textDecoration = 'line-through';
+                }
+                el.innerHTML = item.icon + ' '  + item.text;
                 return el;
             },
             marker: '!',
-            minimumCharacters: 3,
+            minimumCharacters: 2,
         };
         const mention = { feeds: [feed] };
         // I dont understand why, but this line is needed for the editor to recognize that `mention` is set

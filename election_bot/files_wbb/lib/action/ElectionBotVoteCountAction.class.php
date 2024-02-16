@@ -84,7 +84,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                         'wbb.electionbot.votehistory.title',
                         ['election' => $election, 'phase' => $phase],
                     );
-                    $html .= "<p><u>$title</u><br/>{$voteHistory}";
+                    $html .= "<p><u>$title</u><br/>{$voteHistory}</p>";
                 }
             } else {
                 $participants = null;
@@ -105,7 +105,7 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                         'wbb.electionbot.votecount.title',
                         ['election' => $election, 'phase' => $phase],
                     );
-                    $html .= "<p><u>$title</u><br/>{$voteCount->generateHtml()}";
+                    $html .= "<p><u>$title</u><br/>{$voteCount->generateHtml()}</p>";
                 }
             }
 
