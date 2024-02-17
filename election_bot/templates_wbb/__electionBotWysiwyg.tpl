@@ -46,11 +46,7 @@ require([
             new UiSearchInput(input, {
                 ajax: {
                     className: "wbb\\data\\election\\ParticipantAction",
-                    parameters: {
-                        data: {
-                            threadID: document.body.dataset.threadId,
-                        },
-                    },
+                    parameters: { data: { threadID: document.body.dataset.threadId } },
                 },
                 callbackSelect(item) { return true; },
                 delay: 500,
@@ -156,7 +152,10 @@ require([
                 if (!item.active) {
                     el.style.textDecoration = 'line-through';
                 }
-                el.innerHTML = item.icon + ' '  + item.text;
+                if (item.icon.length > 0) {
+                    el.innerHTML += item.icon + ' ';
+                }
+                el.appendChild(document.createTextNode(item.text));
                 return el;
             },
             marker: '!',
