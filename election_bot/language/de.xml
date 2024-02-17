@@ -3,6 +3,7 @@
     <import>
         <category name="wbb.electionbot">
             <item name="wbb.electionbot.deadlineOverPost.title"><![CDATA[<h2>Deadline abgelaufen</h2>]]></item>
+            <item name="wbb.electionbot.participantListPost.update"><![CDATA[automatische Aktualisierung]]></item>
             <item name="wbb.electionbot.vote"><![CDATA[{if $election|isset}{$election} {/if}VOTE: {@$vote}]]></item>
             <item name="wbb.electionbot.vote.invalid"><![CDATA[{if $election|isset}{$election} {/if}Ungültiger VOTE: {@$vote}]]></item>
             <item name="wbb.electionbot.vote.unvote"><![CDATA[{if $election|isset}{$election} {/if}UNVOTE]]></item>

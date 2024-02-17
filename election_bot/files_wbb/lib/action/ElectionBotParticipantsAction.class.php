@@ -2,6 +2,10 @@
 
 namespace wbb\action;
 
+use Laminas\Diactoros\Response\JsonResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use wbb\data\election\Election;
 use wbb\data\election\Participant;
 use wbb\data\election\ParticipantAction;
@@ -19,10 +23,6 @@ use wcf\system\form\builder\field\CheckboxFormField;
 use wcf\system\form\builder\field\SelectFormField;
 use wcf\system\form\builder\field\TextFormField;
 use wcf\system\WCF;
-use Laminas\Diactoros\Response\JsonResponse;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Handles the form for displaying vote counts
@@ -30,7 +30,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
  */
-class ElectionBotParticipantsAction implements RequestHandlerInterface {
+final class ElectionBotParticipantsAction implements RequestHandlerInterface {
 
     const FORM_ID = 'electionBotParticipants';
 
@@ -72,12 +72,10 @@ class ElectionBotParticipantsAction implements RequestHandlerInterface {
                 $data['color'] = Participant::colorToMarkerClass($data['color']);
                 $result = ['action' => 'add', 'data' => $data];
             } else if ($data['delete']) {
-                $actionName = 'delete';
                 $action = new ParticipantAction([$objectId], 'delete', []);
                 $action->executeAction();
                 $result = ['action' => 'delete'];
             } else {
-                $actionName = 'update';
                 unset($data['delete']);
                 $action = new ParticipantAction([$objectId], 'update', ['data' => $data]);
                 $action->executeAction();
@@ -92,7 +90,7 @@ class ElectionBotParticipantsAction implements RequestHandlerInterface {
         }
     }
 
-    protected function updateParticipantPost(int $threadID): void {
+    private function updateParticipantPost(int $threadID): void {
         $postList = new PostList();
         $postList->sqlOffset = 1;
         $postList->sqlLimit = 1;
@@ -101,14 +99,23 @@ class ElectionBotParticipantsAction implements RequestHandlerInterface {
         $post = $postList->getSingleObject();
         if ($post !== null && $post->userID === WBB_ELECTION_BOT_USER_ID) {
             $participants = ParticipantList::forThread($threadID);
-            $postAction = new PostAction([$post], 'update', ['data' => [
-                'message' => $participants->generateHtmlList(),
-            ]]);
+            $postAction = new PostAction([$post], 'update', [
+                'isEdit' => true,
+                'showEditNote' => true,
+                'data' => [
+                    'message' => $participants->generateHtmlList(),
+                    'editReason' => WCF::getLanguage()->get('wbb.electionbot.participantListPost.update'),
+                    'editCount' => $post->editCount + 1,
+                    'editor' => WCF::getUser()->username,
+                    'editorID' => WCF::getUser()->userID,
+                    'lastEditTime' => TIME_NOW,
+                ]
+            ]);
             $postAction->executeAction();
         }
     }
 
-    protected function getForm(?Participant $participant): Psr15DialogForm {
+    private function getForm(?Participant $participant): Psr15DialogForm {
         $form = new Psr15DialogForm(
             static::FORM_ID,
             WCF::getLanguage()->get('wbb.electionbot.form.participant.' . (is_null($participant) ? 'add' : 'edit')),
