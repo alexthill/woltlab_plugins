@@ -1,4 +1,4 @@
-rm com.alexthill.electionbot.tar
+rm -f com.alexthill.electionbot.tar
 cd files_wbb
 tar cf ../files_wbb.tar *
 cd ../templates_wbb

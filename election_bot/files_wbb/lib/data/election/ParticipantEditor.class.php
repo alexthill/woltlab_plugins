@@ -9,6 +9,7 @@ use wcf\data\DatabaseObjectEditor;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @method static   Participant     create(array $parameters = [])
  * @method          Participant     getDecoratedObject()

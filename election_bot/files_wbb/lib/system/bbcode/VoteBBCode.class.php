@@ -12,6 +12,7 @@ use wcf\util\StringUtil;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  */
 class VoteBBCode extends AbstractBBCode {
     /**

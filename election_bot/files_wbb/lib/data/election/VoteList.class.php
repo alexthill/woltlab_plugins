@@ -10,6 +10,7 @@ use wcf\system\WCF;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @method      Vote        current()
  * @method      Vote[]      getObjects()

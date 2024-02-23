@@ -7,6 +7,7 @@ namespace wcf\system\event\listener;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  */
 final class ElectionBotUserMergeListener extends AbstractUserMergeListener {
     /**

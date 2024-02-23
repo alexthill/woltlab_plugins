@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.alexthill.notifications">
-	<packageinformation>
+    <packageinformation>
         <packagename>Notifications</packagename>
         <packagedescription>Adds additional notifications to the calendar</packagedescription>
         <packagename language="de">Benachrichtigungen</packagename>
         <packagedescription language="de">Fügt zusätzliche Benachrichtigungen zum Kalender hinzu</packagedescription>
-		<version>6.0.0 Alpha 6</version>
-		<date>2024-01-09</date>
-	</packageinformation>
+        <version>6.0.0</version>
+        <date>2024-01-09</date>
+    </packageinformation>
 
-	<authorinformation>
-		<author>Alex Thill</author>
-		<authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
-	</authorinformation>
+    <authorinformation>
+        <author>Alex Thill</author>
+        <authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
+    </authorinformation>
 
     <requiredpackages>
         <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
         <requiredpackage minversion="6.0.0">com.woltlab.calendar</requiredpackage>
     </requiredpackages>
 
-	<instructions type="install">
-		<instruction type="language" />
-		<instruction type="file" application="calendar">files_calendar.tar</instruction>
-		<instruction type="eventListener" />
-		<instruction type="userNotificationEvent" />
-	</instructions>
+    <instructions type="install">
+        <instruction type="language" />
+        <instruction type="file" application="calendar">files_calendar.tar</instruction>
+        <instruction type="eventListener" />
+        <instruction type="userNotificationEvent" />
+    </instructions>
 
-	<instructions type="update" fromversion="6.0.0 Alpha 5">
-		<instruction type="language" />
-		<instruction type="file" application="calendar">files_calendar.tar</instruction>
-	</instructions>
+    <instructions type="update" fromversion="6.0.0 Alpha 6">
+        <void/>
+    </instructions>
 </package>

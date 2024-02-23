@@ -9,20 +9,21 @@ use wcf\system\event\listener\IParameterizedEventListener;
 
 /**
  * Checks whether someone unsubscribes from a calendar event and sends notifications to the author
- * 
+ *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  */
 class ParticipationChangeActionListener implements IParameterizedEventListener {
-	/**
-	 * @see	wcf\system\event\IEventListener::execute()
-	 */
-	public function execute($eventObj, $className, $eventName, array &$parameters) {
+    /**
+     * @see wcf\system\event\IEventListener::execute()
+     */
+    public function execute($eventObj, $className, $eventName, array &$parameters) {
         $actionName = $eventObj->getActionName();
         $param = $eventObj->getParameters();
-        
+
         if ($actionName !== 'save' || $eventObj->eventDateParticipation === null) return;
-        
+
         $eventDate = $eventObj->getObjects()[0]->getDecoratedObject();
         $prevDecision = $eventObj->eventDateParticipation->decision;
         $eventName = null;
@@ -33,7 +34,7 @@ class ParticipationChangeActionListener implements IParameterizedEventListener {
             } else if ($prevDecision === 'maybe' && $param['decision'] === 'no') {
                 $eventName = 'participationMaybeUnregister';
             }
-            
+
             if ($eventName !== null) {
                 UserNotificationHandler::getInstance()->fireEvent(
                     $eventName,

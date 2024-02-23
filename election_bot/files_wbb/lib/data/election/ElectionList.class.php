@@ -9,6 +9,7 @@ use wcf\data\DatabaseObjectList;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @method      Election        current()
  * @method      Election[]      getObjects()

@@ -13,21 +13,23 @@ use wcf\system\WCF;
  * Shows the thread page but only the posts of certain users.
  *
  * @author  Alex Thill
+ * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  */
 class ThreadUserPostsPage extends ThreadPage {
-    
+
     const SEPERATOR = ',';
-    
+
     /**
      * ids of the users whose posts should be shown
      * @var int[]
      */
     public $userIDs = [];
-    
+
     public function getUsersParam(): string {
         return 'users=' . implode(self::SEPERATOR, $this->userIDs);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -45,28 +47,28 @@ class ThreadUserPostsPage extends ThreadPage {
             sort($this->userIDs);
             UserProfileRuntimeCache::getInstance()->cacheObjectIDs($this->userIDs);
         }
-        
+
         // this must come last because setCanonicalURL is called in ancestor AbstractThreadPage::readParameters
         parent::readParameters();
         
         $this->thread = new ViewableUserPostsThread($this->thread->getDecoratedObject());
     }
-    
+
     /**
      * @inheritDoc
      */
     public function assignVariables() {
         parent::assignVariables();
-        
+
         $userList = UserProfileRuntimeCache::getInstance()->getObjects($this->userIDs);
         $userList = array_filter($userList, function($el) { return !is_null($el); });
-        
+
         WCF::getTPL()->assign([
             'whoWroteShownUsers' => $userList,
             'whoWroteUsersParam' => $this->getUsersParam(),
         ]);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -81,7 +83,7 @@ class ThreadUserPostsPage extends ThreadPage {
             $this->objectList->getConditionBuilder()->add('userID IN (?)', [$this->userIDs]);
         }
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -95,7 +97,7 @@ class ThreadUserPostsPage extends ThreadPage {
             'object' => $this->thread,
         ], $url);
     }
-    
+
     /**
      * @inheritDoc
      */

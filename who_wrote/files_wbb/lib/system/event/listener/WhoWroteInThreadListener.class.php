@@ -8,8 +8,9 @@ use wcf\system\WCF;
 /**
  * Event listener to add variables to whoWrote template
  *
- * @author      Alex Thill
- * @package     com.alexthill.better_search
+ * @author  Alex Thill
+ * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  */
 class WhoWroteInThreadListener implements IParameterizedEventListener {
     /**
@@ -27,7 +28,7 @@ class WhoWroteInThreadListener implements IParameterizedEventListener {
             ORDER BY count DESC, username DESC";
         $statement = WCF::getDB()->prepareStatement($sql);
         $statement->execute([$eventObj->threadID]);
-        
+
         $whoWrote = [];
         $whoWroteByName = [];
         while ($row = $statement->fetchArray()) {
@@ -37,7 +38,7 @@ class WhoWroteInThreadListener implements IParameterizedEventListener {
             }
         }
         ksort($whoWroteByName,  SORT_NATURAL | SORT_FLAG_CASE);
-        
+
         WCF::getTPL()->assign([
             'whoWrote' => $whoWrote,
             'whoWroteByName' => $whoWroteByName

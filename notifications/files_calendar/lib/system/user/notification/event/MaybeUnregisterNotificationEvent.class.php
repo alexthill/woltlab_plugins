@@ -12,21 +12,22 @@ use wcf\system\user\notification\event\AbstractSharedUserNotificationEvent;
  * 
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  *
  * @method  EventDateParticipationUserNotificationObject  getUserNotificationObject()
  */
 class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEvent {
-	/**
-	 * @inheritDoc
-	 */
-	protected $stackable = true;
+    /**
+     * @inheritDoc
+     */
+    protected $stackable = true;
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function prepare() {
-		EventDateRuntimeCache::getInstance()->cacheObjectID($this->getUserNotificationObject()->eventDateID);
-	}
+    /**
+     * @inheritDoc
+     */
+    protected function prepare() {
+        EventDateRuntimeCache::getInstance()->cacheObjectID($this->getUserNotificationObject()->eventDateID);
+    }
 
     /**
      * @inheritDoc
@@ -85,29 +86,29 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
         return false;
     }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getLink(): string {
-		$eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
-		$eventDate->setEvent(EventRuntimeCache::getInstance()->getObject($eventDate->eventID));
-		$this->getUserNotificationObject()->setEventDate($eventDate);
-		
-		return $this->getUserNotificationObject()->getURL();
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getLink(): string {
+        $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
+        $eventDate->setEvent(EventRuntimeCache::getInstance()->getObject($eventDate->eventID));
+        $this->getUserNotificationObject()->setEventDate($eventDate);
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getEventHash(): string {
-		return sha1($this->eventID . '-' . $this->getUserNotificationObject()->eventDateID);
-	}
+        return $this->getUserNotificationObject()->getURL();
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function checkAccess(): bool {
-		$eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
-		return EventRuntimeCache::getInstance()->getObject($eventDate->eventID)->canRead();
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getEventHash(): string {
+        return sha1($this->eventID . '-' . $this->getUserNotificationObject()->eventDateID);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkAccess(): bool {
+        $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
+        return EventRuntimeCache::getInstance()->getObject($eventDate->eventID)->canRead();
+    }
 }

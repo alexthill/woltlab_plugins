@@ -21,6 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  */
 class ElectionBotVoteCountAction implements RequestHandlerInterface {
 

@@ -11,6 +11,7 @@ use wcf\data\ISearchAction;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @method  Participant             create()
  * @method  ParticipantEditor[]     getObjects()

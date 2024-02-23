@@ -9,6 +9,7 @@ use wcf\data\DatabaseObject;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @property-read   int         $voteID         unique id of the vote
  * @property-read   int         $electionID     id of the election

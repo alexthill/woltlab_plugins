@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/eventListener.xsd">
-	<import>
-		<eventlistener name="registrationOpensActionListener">
-			<eventclassname>calendar\data\event\EventAction</eventclassname>
-			<eventname>finalizeAction</eventname>
-			<listenerclassname>calendar\system\event\listener\RegistrationOpensActionListener</listenerclassname>
-			<environment>user</environment>
-		</eventlistener>
-		<eventlistener name="participationChangeActionListener">
-			<eventclassname>calendar\data\event\date\EventDateAction</eventclassname>
-			<eventname>finalizeAction</eventname>
-			<listenerclassname>calendar\system\event\listener\ParticipationChangeActionListener</listenerclassname>
-			<environment>user</environment>
-		</eventlistener>
-	</import>
+    <import>
+        <eventlistener name="registrationOpensActionListener">
+            <eventclassname>calendar\data\event\EventAction</eventclassname>
+            <eventname>finalizeAction</eventname>
+            <listenerclassname>calendar\system\event\listener\RegistrationOpensActionListener</listenerclassname>
+            <environment>user</environment>
+        </eventlistener>
+        <eventlistener name="participationChangeActionListener">
+            <eventclassname>calendar\data\event\date\EventDateAction</eventclassname>
+            <eventname>finalizeAction</eventname>
+            <listenerclassname>calendar\system\event\listener\ParticipationChangeActionListener</listenerclassname>
+            <environment>user</environment>
+        </eventlistener>
+    </import>
 </data>

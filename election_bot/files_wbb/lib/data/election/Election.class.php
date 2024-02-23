@@ -10,6 +10,7 @@ use wcf\util\StringUtil;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  *
  * @property-read   int         $electionID     unique id of the election
  * @property-read   int         $threadID       id of the thread this election is associated with

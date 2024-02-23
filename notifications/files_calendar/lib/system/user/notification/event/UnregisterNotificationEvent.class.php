@@ -12,6 +12,7 @@ use wcf\system\user\notification\event\AbstractSharedUserNotificationEvent;
  * 
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  *
  * @method  EventDateParticipationUserNotificationObject  getUserNotificationObject()
  */
@@ -92,7 +93,7 @@ class UnregisterNotificationEvent extends AbstractSharedUserNotificationEvent {
         $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
         $eventDate->setEvent(EventRuntimeCache::getInstance()->getObject($eventDate->eventID));
         $this->getUserNotificationObject()->setEventDate($eventDate);
-        
+
         return $this->getUserNotificationObject()->getURL();
     }
 

@@ -12,6 +12,7 @@ use wcf\system\user\notification\event\AbstractUserNotificationEvent;
  * 
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  *
  * @method  EventUserNotificationObject getUserNotificationObject()
  */

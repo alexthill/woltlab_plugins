@@ -12,6 +12,7 @@ use wcf\system\WCF;
  * 
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.notifications
  */
 class RegistrationOpensActionListener implements IParameterizedEventListener {
 
@@ -36,7 +37,7 @@ class RegistrationOpensActionListener implements IParameterizedEventListener {
             }
         }
     }
-    
+
     private function getRecipientIDs() {
         $sql = 'SELECT userID
                 FROM   wcf' . WCF_N . '_user
@@ -49,7 +50,8 @@ class RegistrationOpensActionListener implements IParameterizedEventListener {
         while ($row = $statement->fetchArray()) {
             $recipientIDs[] = $row['userID'];
         }
-        
+
         return $recipientIDs;
     }
 }
+

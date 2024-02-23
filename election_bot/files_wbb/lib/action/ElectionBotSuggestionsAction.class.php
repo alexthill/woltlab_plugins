@@ -17,6 +17,7 @@ use wcf\system\exception\PermissionDeniedException;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
+ * @package com.alexthill.election_bot
  */
 class ElectionBotSuggestionsAction implements RequestHandlerInterface {
 
