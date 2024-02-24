@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.alexthill.election_bot">
+<package xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com http://www.woltlab.com/XSD/2019/package.xsd" name="com.xaver.election_bot">
     <packageinformation>
         <packagename>Election Bot</packagename>
         <packagedescription>Election Bot</packagedescription>
@@ -10,8 +10,7 @@
     </packageinformation>
 
     <authorinformation>
-        <author>Alex Thill</author>
-        <authorurl>https://github.com/alexthill/woltlab_plugins</authorurl>
+        <author>Xaver</author>
     </authorinformation>
 
     <requiredpackages>
@@ -23,7 +22,7 @@
         <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
-        <instruction type="database" application="wbb">acp/database/install_com.alexthill.election_bot.php</instruction>
+        <instruction type="database" application="wbb">acp/database/install_com.xaver.election_bot.php</instruction>
         <instruction type="aclOption" />
         <instruction type="bbcode" />
         <instruction type="cronjob" />
@@ -40,6 +39,6 @@
     </instructions>
 
     <instructions type="uninstall">
-        <instruction type="database" application="wbb">acp/database/uninstall_com.alexthill.election_bot.php</instruction>
+        <instruction type="database" application="wbb">acp/database/uninstall_com.xaver.election_bot.php</instruction>
     </instructions>
 </package>

@@ -7,9 +7,9 @@ use wcf\data\DatabaseObjectEditor;
 /**
  * Provides functions to edit a participant.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @method static   Participant     create(array $parameters = [])
  * @method          Participant     getDecoratedObject()

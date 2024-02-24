@@ -10,9 +10,9 @@ use wcf\util\StringUtil;
 /**
  * Parses the [v] bbcode tag.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 class VoteBBCode extends AbstractBBCode {
     /**

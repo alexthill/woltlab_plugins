@@ -15,9 +15,9 @@ use wcf\system\exception\PermissionDeniedException;
 /**
  * Suggests election participants and normal users.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 class ElectionBotSuggestionsAction implements RequestHandlerInterface {
 

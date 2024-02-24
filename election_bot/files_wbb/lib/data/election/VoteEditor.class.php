@@ -7,9 +7,9 @@ use wcf\data\DatabaseObjectEditor;
 /**
  * Provides functions to edit a vote.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @method static   Vote    create(array $parameters = [])
  * @method          Vote    getDecoratedObject()

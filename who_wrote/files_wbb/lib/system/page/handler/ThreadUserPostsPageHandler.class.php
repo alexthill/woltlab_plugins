@@ -5,9 +5,9 @@ namespace wbb\system\page\handler;
 /**
  * Page handler for thread-user-posts.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  */
 class ThreadUserPostsPageHandler extends ThreadPageHandler {
     /**

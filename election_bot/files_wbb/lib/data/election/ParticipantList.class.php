@@ -10,9 +10,9 @@ use wcf\util\StringUtil;
 /**
  * Represents a list of participants.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @method      Participant         current()
  * @method      Participant[]       getObjects()

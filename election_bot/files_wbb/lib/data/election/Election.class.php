@@ -8,9 +8,9 @@ use wcf\util\StringUtil;
 /**
  * Represents an election.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @property-read   int         $electionID     unique id of the election
  * @property-read   int         $threadID       id of the thread this election is associated with

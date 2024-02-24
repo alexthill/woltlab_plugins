@@ -10,9 +10,9 @@ use wcf\system\event\listener\IParameterizedEventListener;
 /**
  * Checks whether someone unsubscribes from a calendar event and sends notifications to the author
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  */
 class ParticipationChangeActionListener implements IParameterizedEventListener {
     /**

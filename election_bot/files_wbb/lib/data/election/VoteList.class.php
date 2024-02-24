@@ -8,9 +8,9 @@ use wcf\system\WCF;
 /**
  * Represents a list of votes.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @method      Vote        current()
  * @method      Vote[]      getObjects()

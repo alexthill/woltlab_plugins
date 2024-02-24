@@ -12,9 +12,9 @@ use wcf\system\WCF;
 /**
  * Shows the thread page but only the posts of certain users.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  */
 class ThreadUserPostsPage extends ThreadPage {
 

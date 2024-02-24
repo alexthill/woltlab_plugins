@@ -10,9 +10,9 @@ use wcf\system\user\notification\event\AbstractSharedUserNotificationEvent;
 /**
  * Notification event for when an undecided event participant changes to not participaing.
  * 
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  *
  * @method  EventDateParticipationUserNotificationObject  getUserNotificationObject()
  */

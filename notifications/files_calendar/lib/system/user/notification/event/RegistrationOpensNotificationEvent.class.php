@@ -8,9 +8,9 @@ use wcf\system\user\notification\event\AbstractUserNotificationEvent;
 /**
  * Notification event for calendar event registration opens.
  * 
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  *
  * @method  EventUserNotificationObject getUserNotificationObject()
  */

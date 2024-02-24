@@ -10,9 +10,9 @@ use wcf\system\WCF;
 /**
  * Checks whether the registration for a calendar event is opened and sends notifications
  * 
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  */
 class RegistrationOpensActionListener implements IParameterizedEventListener {
 

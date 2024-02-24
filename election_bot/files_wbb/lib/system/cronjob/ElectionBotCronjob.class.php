@@ -16,9 +16,9 @@ use wcf\util\StringUtil;
 /**
  * Updates elections where the deadline is over and posts in the thread.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 final class ElectionBotCronjob extends AbstractCronjob {
     /**

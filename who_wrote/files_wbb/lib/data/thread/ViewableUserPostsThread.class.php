@@ -7,9 +7,9 @@ use wcf\system\request\LinkHandler;
 /**
  * This just overwrites some methodes of ViewableThread for use in the ThreadUserPostsPage
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.who_wrote
+ * @package com.xaver.who_wrote
  */
 class ViewableUserPostsThread extends ViewableThread {
 

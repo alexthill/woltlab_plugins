@@ -27,9 +27,9 @@ use wcf\system\WCF;
 /**
  * Handles the form for displaying vote counts
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 final class ElectionBotParticipantsAction implements RequestHandlerInterface {
 

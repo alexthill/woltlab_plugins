@@ -8,9 +8,9 @@ use wcf\system\WCF;
 /**
  * Event listener to add variables to whoWrote template
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.xaver.notifications
  */
 class WhoWroteInThreadListener implements IParameterizedEventListener {
     /**

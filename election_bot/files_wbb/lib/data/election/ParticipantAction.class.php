@@ -9,9 +9,9 @@ use wcf\data\ISearchAction;
 /**
  * Executes participant-related actions.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  *
  * @method  Participant             create()
  * @method  ParticipantEditor[]     getObjects()

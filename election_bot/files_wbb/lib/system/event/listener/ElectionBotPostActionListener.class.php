@@ -19,9 +19,9 @@ use wcf\util\StringUtil;
 /**
  * Listener for adding election options to the quick reply on a thread page.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 class ElectionBotPostActionListener implements IParameterizedEventListener {
 

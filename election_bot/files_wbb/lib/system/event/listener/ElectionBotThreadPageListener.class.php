@@ -11,9 +11,9 @@ use wcf\system\WCF;
 /**
  * Listener for adding election options to the quick reply on a thread page and for voting.
  *
- * @author  Alex Thill
+ * @author  Xaver
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.election_bot
+ * @package com.xaver.election_bot
  */
 class ElectionBotThreadPageListener implements IParameterizedEventListener {
 
