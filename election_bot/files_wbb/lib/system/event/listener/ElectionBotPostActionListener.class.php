@@ -269,24 +269,8 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         foreach ($this->electionData as $electionID => $data) {
             if (count($data['msgs']) === 0) continue;
 
-            if ($electionID === 0) {
-                $name = $data['data']['name'];
-                $name0 = $data['data']['name0'] ?? '';
-                if ($name0 !== '') {
-                    $name = "$name0/$name";
-                }
-                $name = StringUtil::encodeHTML($name);
-            } else {
-                $name = $elections[$electionID]->getTitle($data['data']['phase'] ?? -1);
-            }
-            $container = $doc->createElement('p');
-            $container->appendChild($doc->createTextNode("---- $name ----"));
-            foreach ($data['msgs'] as $msg) {
-                $fragment = $doc->createDocumentFragment();
-                $fragment->appendXML($msg);
-                $container->appendChild($doc->createElement('br'));
-                $container->appendChild($fragment);
-            }
+            $election = $electionID === 0 ? null : $elections[$electionID];
+            $container = Election::processMessages($doc, $election, $data);
             $body->appendChild($container);
         }
     }

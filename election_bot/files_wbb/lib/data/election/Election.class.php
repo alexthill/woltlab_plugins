@@ -30,6 +30,28 @@ class Election extends DatabaseObject {
 
     private ?\DateTimeImmutable $nextDeadline = null;
 
+    public static function processMessages(\DOMDocument $doc, array $data, ?Election $election = null): \DOMElement {
+        if ($election === null) {
+            $name = $data['data']['name'];
+            $name0 = $data['data']['name0'] ?? '';
+            if ($name0 !== '') {
+                $name = "$name0/$name";
+            }
+            $name = StringUtil::encodeHTML($name);
+        } else {
+            $name = $election->getTitle($data['data']['phase'] ?? -1);
+        }
+        $container = $doc->createElement('p');
+        $container->appendChild($doc->createTextNode("---- $name ----"));
+        foreach ($data['msgs'] as $msg) {
+            $fragment = $doc->createDocumentFragment();
+            $fragment->appendXML($msg);
+            $container->appendChild($doc->createElement('br'));
+            $container->appendChild($fragment);
+        }
+        return $container;
+    }
+
     /**
      * gets the deadline or extended deadline if inactive as \DateTimeImmutable object
      */
@@ -75,4 +97,5 @@ class Election extends DatabaseObject {
         return StringUtil::encodeHTML($title);
     }
 }
+
 

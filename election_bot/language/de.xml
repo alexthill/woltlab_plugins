@@ -28,12 +28,11 @@
             <item name="wbb.electionbot.message.start"><![CDATA[Nächste Phase wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
             <item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
             <item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
-            <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>
-            <item name="wbb.electionbot.form.title"><![CDATA[Wahl]]></item>
-            <item name="wbb.electionbot.form.title2"><![CDATA[Wahl-Bot]]></item>
+            <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{if $data['name0']|isset && $data['name0'] !== ''}{$data['name0']}/{/if}{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>
+            <item name="wbb.electionbot.editorTab"><![CDATA[Wahlen]]></item>
             <item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
-            <item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe Wahl-Tab für mehr Details)]]></item>
-            <item name="wbb.electionbot.form.end"><![CDATA[Laufende Wahl beenden.]]></item>
+            <item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe den Tab „Wahlen“ für mehr Details)]]></item>
+            <item name="wbb.electionbot.form.end"><![CDATA[Laufende Wahl beenden]]></item>
             <item name="wbb.electionbot.form.start"><![CDATA[Nächste Phase mit Deadline starten]]></item>
             <item name="wbb.electionbot.form.create"><![CDATA[Wahl erstellen]]></item>
             <item name="wbb.electionbot.form.name"><![CDATA[Name der Wahl]]></item>
@@ -44,13 +43,13 @@
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
             <item name="wbb.electionbot.form.extension"><![CDATA[Verlängerung der Deadline]]></item>
             <item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Phase verlängert werden soll.]]></item>
-            <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Phase]]></item>
+            <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Phase Nummer]]></item>
             <item name="wbb.electionbot.form.addVote"><![CDATA[Stimme hinzufügen]]></item>
             <item name="wbb.electionbot.form.addVote.description"><![CDATA[Von/Auf/Wert:]]></item>
             <item name="wbb.electionbot.form.addVote.error.invalid"><![CDATA[Irgendetwas ist falsch oder so.]]></item>
             <item name="wbb.electionbot.form.addVote.error.tooLong"><![CDATA[Die Eingabe ist länger als die erlaubten {#$maxLength} Zeichen.]]></item>
             <item name="wbb.electionbot.form.addVote.error.countOutsideRange"><![CDATA[Der Stimmwert muss zwischen {#$min} und {#$max} liegen.]]></item>
-            <item name="wbb.electionbot.form.addVote.error.emptyVoter"><![CDATA[Das Feld "von" muss ausgefüllt werden.]]></item>
+            <item name="wbb.electionbot.form.addVote.error.emptyVoter"><![CDATA[Das Feld „Von“ muss ausgefüllt werden.]]></item>
             <item name="wbb.electionbot.form.addVoteValue"><![CDATA[Stimmwert ändern]]></item>
             <item name="wbb.electionbot.form.addVoteValue.description"><![CDATA[Von/Wert:]]></item>
             <item name="wbb.electionbot.form.participant.edit"><![CDATA[Teilmehmer bearbeiten]]></item>
@@ -73,18 +72,18 @@
         <category name="wcf.acl.option">
             <item name="wcf.acl.option.category.com.woltlab.wbb.board.user.electionbot"><![CDATA[Wahl-Bot]]></item>
             <item name="wcf.acl.option.com.woltlab.wbb.board.canUseElection"><![CDATA[Kann an einer Wahl teilnehmen]]></item>
-            <item name="wcf.acl.option.com.woltlab.wbb.board.canStartElection"><![CDATA[Kann eine Wahl erstellen]]></item>
+            <item name="wcf.acl.option.com.woltlab.wbb.board.canStartElection"><![CDATA[Kann Wahlen erstellen und verwalten]]></item>
         </category>
 
         <category name="wcf.acp.option">
             <item name="wcf.acp.option.category.board.electionbot"><![CDATA[Wahl-Bot]]></item>
             <item name="wcf.acp.option.category.board.electionbot.general"><![CDATA[Allgemein]]></item>
             <item name="wcf.acp.option.wbb_election_bot_user_id"><![CDATA[Bot-Benutzer-ID]]></item>
-            <item name="wcf.acp.option.wbb_election_bot_user_id.description"><![CDATA[Die UserID des Benutzers, der bei Ablauf einer Deadline automatisch posten soll.]]></item>
+            <item name="wcf.acp.option.wbb_election_bot_user_id.description"><![CDATA[Die userID des Benutzers, der bei Ablauf einer Deadline automatisch posten soll.]]></item>
         </category>
 
         <category name="wcf.editor">
-            <item name="wcf.editor.button.election"><![CDATA[Wahl]]></item>
+            <item name="wcf.editor.button.election"><![CDATA[Wahlen]]></item>
             <item name="wcf.editor.button.election.vote"><![CDATA[Abstimmen]]></item>
             <item name="wcf.editor.button.election.votecount"><![CDATA[Stand]]></item>
             <item name="wcf.editor.button.election.votehistory"><![CDATA[Verlauf]]></item>

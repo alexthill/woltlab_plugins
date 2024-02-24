@@ -42,12 +42,8 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         if (isset($_POST['electionParticipants'])) {
             $this->electionParticipants = $_POST['electionParticipants'];
         }
-        if (empty($_POST['electionParticipantsStrict'])) {
-            $this->electionParticipantsStrict = false;
-        }
-        if (isset($_POST['electionParticipantsPost'])) {
-            $this->electionParticipantsPost = $_POST['electionParticipantsPost'];
-        }
+        $this->electionParticipantsStrict = !empty($_POST['electionParticipantsStrict']);
+        $this->electionParticipantsPost = !empty($_POST['electionParticipantsPost']);
     }
 
     protected function assignVariables() {
@@ -61,6 +57,18 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         ]);
     }
 
+    protected function save(ThreadAddForm $eventObj) {
+        if ($this->form !== null) {
+            $data = $this->form->getData();
+            $data['msgs'] = [WCF::getLanguage()->getDynamicVariable(
+                'wbb.electionbot.message.create', $data
+            )];
+            $doc = $eventObj->htmlInputProcessor->getHtmlInputNodeProcessor()->getDocument();
+            $doc->getElementsByTagName('body')->item(0)
+                ->appendChild(Election::processMessages($doc, $data));
+        }
+    }
+
     protected function saved(ThreadAddForm $eventObj) {
         $thread = $eventObj->objectAction->getReturnValues()['returnValues'];
         $threadID = $thread->threadID;
@@ -71,7 +79,7 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
             $electionAction->executeAction();
         }
 
-        if ($this->participantList !== null) {
+        if (count($this->participantList)) {
             $this->participantList->save($threadID);
         }
 
@@ -97,11 +105,14 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         }
 
         $this->participantList = ParticipantList::fromNsvInput($this->electionParticipants);
-        $error = $this->participantList->validate($this->electionParticipantsStrict);
-        $this->electionParticipants = $this->participantList->getValidatedInput();
-        if ($error !== '') {
-            throw new UserInputException('electionParticipants', $error);
+        if (count($this->participantList)) {
+            $error = $this->participantList->validate($this->electionParticipantsStrict);
+            $this->electionParticipants = $this->participantList->getValidatedInput();
+            if ($error !== '') {
+                throw new UserInputException('electionParticipants', $error);
+            }
         }
     }
 }
+
 

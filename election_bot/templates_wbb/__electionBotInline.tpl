@@ -65,7 +65,9 @@
                         <td><span class="extra">{$participant->extra}</span></td>
                     </tr>
                 {foreachelse}
-                    <li>{lang}wcf.global.noItems{/lang}</li>
+                    <tr>
+                        <td colspan="3">{lang}wcf.global.noItems{/lang}</td>
+                    </tr>
                 {/foreach}
                 </table>
             </dd>
@@ -294,3 +296,4 @@ require([
 });
 </script>
 {/if}
+
