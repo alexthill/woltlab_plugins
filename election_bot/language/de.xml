@@ -10,22 +10,22 @@
             <item name="wbb.electionbot.vote.insert"><![CDATA[Abstimmen]]></item>
             <item name="wbb.electionbot.vote.insert.for"><![CDATA[Abstimmen für]]></item>
             <item name="wbb.electionbot.vote.insert.for.description"><![CDATA[Feld leer lassen, um auf niemanden zu stimmen.]]></item>
-            <item name="wbb.electionbot.votecount.title"><![CDATA[Stand {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
+            <item name="wbb.electionbot.votecount.title"><![CDATA[Stand {@$election->getTitle()} - Tag {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {@$h}:{@$m}:{@$s}]]></item>
             <item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
             <item name="wbb.electionbot.votecount.unvote"><![CDATA[Stimme zurückgezogen]]></item>
-            <item name="wbb.electionbot.votecount.error.phase"><![CDATA[Die ausgewählte Wahl ist aktuell bei Phase {#$currentPhase}. Es kann kein Stand oder Verlauf für eine höhere Phase generiert werden.]]></item>
+            <item name="wbb.electionbot.votecount.error.phase"><![CDATA[Die ausgewählte Wahl ist aktuell bei Tag {#$currentPhase}. Es kann kein Stand oder Verlauf für einen höheren Tag generiert werden.]]></item>
             <item name="wbb.electionbot.votecount.insert"><![CDATA[Stand einfügen]]></item>
-            <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>
-            <item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zur angegebenen Phase (einschließlich).]]></item>
-            <item name="wbb.electionbot.votecount.insert.color"><![CDATA[Teilnehmer farblich markieren.]]></item>
+            <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Tag Nummer]]></item>
+            <item name="wbb.electionbot.votecount.insert.all"><![CDATA[Alle bis zum angegebenen Tag (einschließlich).]]></item>
+            <item name="wbb.electionbot.votecount.insert.color"><![CDATA[Spieler farblich markieren.]]></item>
             <item name="wbb.electionbot.votecount.insert.election"><![CDATA[Für Wahl]]></item>
-            <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
+            <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {@$election->getTitle()} - Tag {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='custom' format='j. M y G:i'})]]></item>
             <item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
             <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
             <item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde beendet.]]></item>
-            <item name="wbb.electionbot.message.start"><![CDATA[Nächste Phase wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+            <item name="wbb.electionbot.message.start"><![CDATA[Nächster Tag wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
             <item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
             <item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
             <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{if $data['name0']|isset && $data['name0'] !== ''}{$data['name0']}/{/if}{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>
@@ -33,20 +33,20 @@
             <item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
             <item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe den Tab „Wahlen“ für mehr Details)]]></item>
             <item name="wbb.electionbot.form.end"><![CDATA[Laufende Wahl beenden]]></item>
-            <item name="wbb.electionbot.form.start"><![CDATA[Nächste Phase mit Deadline starten]]></item>
+            <item name="wbb.electionbot.form.start"><![CDATA[Nächsten Tag mit Deadline starten]]></item>
             <item name="wbb.electionbot.form.create"><![CDATA[Wahl erstellen]]></item>
             <item name="wbb.electionbot.form.name"><![CDATA[Name der Wahl]]></item>
             <item name="wbb.electionbot.form.name.value"><![CDATA[]]></item>
             <item name="wbb.electionbot.form.name.description"><![CDATA[Fülle dieses Feld aus, um eine Wahl zu erstellen.]]></item>
-            <item name="wbb.electionbot.form.name0"><![CDATA[Name der Wahl für Phase 0]]></item>
+            <item name="wbb.electionbot.form.name0"><![CDATA[Name der Wahl für Tag 0]]></item>
             <item name="wbb.electionbot.form.name0.value"><![CDATA[]]></item>
-            <item name="wbb.electionbot.form.name0.description"><![CDATA[Sollte die Wahl mit Phase 0 starten, wird dieser Name (wenn gesetzt) in Anzeigen für Phase 0 genutzt. Allgemein wird die Wahl dann als „[Name0]/[Name]“ angezeigt.]]></item>
+            <item name="wbb.electionbot.form.name0.description"><![CDATA[Sollte die Wahl mit Tag 0 starten, wird dieser Name (wenn gesetzt) in Anzeigen für Tag 0 genutzt. Allgemein wird die Wahl dann als „[Name0]/[Name]“ angezeigt.]]></item>
             <item name="wbb.electionbot.form.deadline"><![CDATA[Deadline]]></item>
             <item name="wbb.electionbot.form.deadlineChange"><![CDATA[Deadline ändern]]></item>
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
             <item name="wbb.electionbot.form.extension"><![CDATA[Verlängerung der Deadline]]></item>
-            <item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Phase verlängert werden soll.]]></item>
-            <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Phase Nummer]]></item>
+            <item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für den nächsten Tag verlängert werden soll.]]></item>
+            <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Tag Nummer]]></item>
             <item name="wbb.electionbot.form.addVote"><![CDATA[Stimme hinzufügen]]></item>
             <item name="wbb.electionbot.form.addVote.description"><![CDATA[Von/Auf/Wert:]]></item>
             <item name="wbb.electionbot.form.addVote.error.invalid"><![CDATA[Irgendetwas ist falsch oder so.]]></item>
@@ -55,21 +55,21 @@
             <item name="wbb.electionbot.form.addVote.error.emptyVoter"><![CDATA[Das Feld „Von“ muss ausgefüllt werden.]]></item>
             <item name="wbb.electionbot.form.addVoteValue"><![CDATA[Stimmwert ändern]]></item>
             <item name="wbb.electionbot.form.addVoteValue.description"><![CDATA[Von/Wert:]]></item>
-            <item name="wbb.electionbot.form.participant.edit"><![CDATA[Teilmehmer bearbeiten]]></item>
-            <item name="wbb.electionbot.form.participant.add"><![CDATA[Teilmehmer hinzufügen]]></item>
+            <item name="wbb.electionbot.form.participant.edit"><![CDATA[Spieler bearbeiten]]></item>
+            <item name="wbb.electionbot.form.participant.add"><![CDATA[Spieler hinzufügen]]></item>
             <item name="wbb.electionbot.form.participant.marker"><![CDATA[Farbliche Markierung]]></item>
             <item name="wbb.electionbot.form.participant.extra"><![CDATA[Zusätzlicher Text]]></item>
-            <item name="wbb.electionbot.form.participant.active"><![CDATA[Aktiver Teilnehmer]]></item>
-            <item name="wbb.electionbot.form.participants"><![CDATA[Teilnehmerliste]]></item>
-            <item name="wbb.electionbot.form.participants.strict"><![CDATA[Akzeptiere nur Teilmehmer, die einem Benutzernamen entsprechen]]></item>
-            <item name="wbb.electionbot.form.participants.post"><![CDATA[Erstelle einen Post mit der Teilnehmerliste]]></item>
-            <item name="wbb.electionbot.form.participants.description"><![CDATA[Ein Teilmehmer pro Zeile. Leerzeilen und Zeilen, die mit # beginnen, werden ignoriert. Ebenso Leerzeichen am Zeilenanfang und -ende.<br>Die Teilnehmerliste kann auch nach Erstellung des Themas noch bearbeitet werden.]]></item>
+            <item name="wbb.electionbot.form.participant.active"><![CDATA[Aktiver Spieler]]></item>
+            <item name="wbb.electionbot.form.participants"><![CDATA[Spielerliste]]></item>
+            <item name="wbb.electionbot.form.participants.strict"><![CDATA[Akzeptiere nur Spielernamen, die einem Benutzernamen entsprechen]]></item>
+            <item name="wbb.electionbot.form.participants.post"><![CDATA[Erstelle einen Post mit der Spielerliste]]></item>
+            <item name="wbb.electionbot.form.participants.description"><![CDATA[Ein Spieler pro Zeile. Leerzeilen und Zeilen, die mit # beginnen, werden ignoriert. Ebenso Leerzeichen am Zeilenanfang und -ende.<br>Die Liste kann auch nach Erstellung des Themas noch bearbeitet werden.]]></item>
             <item name="wbb.electionbot.form.participants.error.invalid"><![CDATA[Nicht alle Namen sind gültig. Siehe Textfeld.]]></item>
-            <item name="wbb.electionbot.form.participants.error.tooMany"><![CDATA[Die maximale Teilnehmeranzahl von {#$maxCount} wurde überschritten.]]></item>
+            <item name="wbb.electionbot.form.participants.error.tooMany"><![CDATA[Die maximale Spieleranzahl von {#$maxCount} wurde überschritten.]]></item>
             <item name="wbb.electionbot.form.participants.inline.valid"><![CDATA[Valide Namen:]]></item>
             <item name="wbb.electionbot.form.participants.inline.notFound"><![CDATA[Nicht existierende Namen:]]></item>
             <item name="wbb.electionbot.form.participants.inline.tooLong"><![CDATA[Zu lange Namen (maximale Länge ist {#$maxLength}):]]></item>
-            <item name="wbb.electionbot.form.silence"><![CDATA[Ruhe zwischen den Phasen der Wahl]]></item>
+            <item name="wbb.electionbot.form.silence"><![CDATA[Ruhe zwischen den Tagen der Wahl]]></item>
         </category>
 
         <category name="wcf.acl.option">

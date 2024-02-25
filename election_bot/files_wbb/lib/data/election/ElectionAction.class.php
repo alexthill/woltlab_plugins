@@ -76,8 +76,8 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->value(1440) // minutes in day
                         ->minimum(0)
                         ->maximum(1440 * 365), // minutes in year
-                    BooleanFormField::create('silenceBetweenPhases')
-                        ->label('wbb.electionbot.form.silence'),
+                    // BooleanFormField::create('silenceBetweenPhases')
+                        // ->label('wbb.electionbot.form.silence'),
                 ])
         );
         $form->markRequiredFields(false);
