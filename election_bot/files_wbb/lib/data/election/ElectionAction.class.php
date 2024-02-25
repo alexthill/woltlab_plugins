@@ -7,11 +7,11 @@ use wcf\system\form\builder\FormDocument;
 use wcf\system\form\builder\IFormDocument;
 use wcf\system\form\builder\container\FormContainer;
 use wcf\system\form\builder\field\BooleanFormField;
-use wcf\system\form\builder\field\CheckboxFormField;
 use wcf\system\form\builder\field\DateFormField;
 use wcf\system\form\builder\field\IntegerFormField;
 use wcf\system\form\builder\field\TextFormField;
 use wcf\system\form\builder\field\dependency\ValueFormFieldDependency;
+use wcf\system\WCF;
 use wcf\util\StringUtil;
 
 /**
@@ -44,6 +44,7 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                     TextFormField::create('name')
                         ->label('wbb.electionbot.form.name')
                         ->description('wbb.electionbot.form.name.description')
+                        ->value(WCF::getLanguage()->get('wbb.electionbot.form.name.value'))
                         ->minimumLength(1)
                         ->maximumLength(255),
                     IntegerFormField::create('phase')
@@ -54,6 +55,8 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->maximum(10000), // arbitrary limit
                     TextFormField::create('name0')
                         ->label('wbb.electionbot.form.name0')
+                        ->description('wbb.electionbot.form.name0.description')
+                        ->value(WCF::getLanguage()->get('wbb.electionbot.form.name0.value'))
                         ->minimumLength(1)
                         ->maximumLength(255)
                         ->addDependency(ValueFormFieldDependency::create('phase')
@@ -112,3 +115,5 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         return $data;
     }
 }
+
+
