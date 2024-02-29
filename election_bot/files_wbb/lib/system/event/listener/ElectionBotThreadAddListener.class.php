@@ -79,7 +79,7 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
             $electionAction->executeAction();
         }
 
-        if (count($this->participantList)) {
+        if ($this->participantList !== null) {
             $this->participantList->save($threadID);
         }
 
@@ -105,14 +105,17 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         }
 
         $this->participantList = ParticipantList::fromNsvInput($this->electionParticipants);
-        if (count($this->participantList)) {
+        if ($this->participantList->hasNames()) {
             $error = $this->participantList->validate($this->electionParticipantsStrict);
             $this->electionParticipants = $this->participantList->getValidatedInput();
             if ($error !== '') {
                 throw new UserInputException('electionParticipants', $error);
             }
+        } else {
+            $this->participantList = null;
         }
     }
 }
+
 
 

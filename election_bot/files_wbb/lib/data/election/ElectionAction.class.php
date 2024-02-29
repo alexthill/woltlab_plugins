@@ -31,7 +31,9 @@ class ElectionAction extends AbstractDatabaseObjectAction {
      */
     public $className = ElectionEditor::class;
 
-    public static function getCreateForm(int $defaultPhase = 0): IFormDocument {
+    public static function getCreateForm(bool $defaultNames = true, int $defaultPhase = 0): IFormDocument {
+        $nameVal= $defaultNames ? WCF::getLanguage()->get('wbb.electionbot.form.name.value') : '';
+        $name0Val= $defaultNames ? WCF::getLanguage()->get('wbb.electionbot.form.name0.value') : '';
         $form = FormDocument::create('electionCreateForm')
             ->prefix('election')
             ->ajax();
@@ -44,7 +46,7 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                     TextFormField::create('name')
                         ->label('wbb.electionbot.form.name')
                         ->description('wbb.electionbot.form.name.description')
-                        ->value(WCF::getLanguage()->get('wbb.electionbot.form.name.value'))
+                        ->value($nameVal)
                         ->minimumLength(1)
                         ->maximumLength(255),
                     IntegerFormField::create('phase')
@@ -56,7 +58,7 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                     TextFormField::create('name0')
                         ->label('wbb.electionbot.form.name0')
                         ->description('wbb.electionbot.form.name0.description')
-                        ->value(WCF::getLanguage()->get('wbb.electionbot.form.name0.value'))
+                        ->value($name0Val)
                         ->minimumLength(1)
                         ->maximumLength(255)
                         ->addDependency(ValueFormFieldDependency::create('phase')
@@ -76,8 +78,8 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->value(1440) // minutes in day
                         ->minimum(0)
                         ->maximum(1440 * 365), // minutes in year
-                    BooleanFormField::create('silenceBetweenPhases')
-                        ->label('wbb.electionbot.form.silence'),
+                    // BooleanFormField::create('silenceBetweenPhases')
+                        // ->label('wbb.electionbot.form.silence'),
                 ])
         );
         $form->markRequiredFields(false);
@@ -115,5 +117,6 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         return $data;
     }
 }
+
 
 

@@ -32,7 +32,7 @@ class ElectionBotThreadPageListener implements IParameterizedEventListener {
                     $maxPhase = max($maxPhase, $election->phase);
                 }
                 WCF::getTPL()->assign([
-                    'electionBotCreateForm' => ElectionAction::getCreateForm($maxPhase),
+                    'electionBotCreateForm' => ElectionAction::getCreateForm(false, $maxPhase),
                     'electionBotParticipants' => ParticipantList::forThread($threadID),
                 ]);
             }
