@@ -40,7 +40,7 @@
             <item name="wbb.electionbot.form.name.description"><![CDATA[Fülle dieses Feld aus, um eine Wahl zu erstellen.]]></item>
             <item name="wbb.electionbot.form.name0"><![CDATA[Name der Wahl für Tag 0]]></item>
             <item name="wbb.electionbot.form.name0.value"><![CDATA[HD-Wahl]]></item>
-            <item name="wbb.electionbot.form.name0.description"><![CDATA[Sollte die Wahl mit Tag 0 starten, wird dieser Name (wenn gesetzt) in Anzeigen für Tag 0 genutzt. Allgemein wird die Wahl dann als „[Name0]/[Name]“ angezeigt.]]></item>
+            <item name="wbb.electionbot.form.name0.description"><![CDATA[Sollte die Wahl mit Tag 0 starten, wird dieser Name (wenn gesetzt) in Anzeigen für Tag 0 genutzt. Allgemein wird die Wahl dann als „Name0/Name“ angezeigt.]]></item>
             <item name="wbb.electionbot.form.deadline"><![CDATA[Deadline]]></item>
             <item name="wbb.electionbot.form.deadlineChange"><![CDATA[Deadline ändern]]></item>
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
