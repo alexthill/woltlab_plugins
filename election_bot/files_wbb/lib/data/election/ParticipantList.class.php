@@ -66,6 +66,10 @@ class ParticipantList extends DatabaseObjectList {
         return $list;
     }
 
+    public function hasNames() {
+        return count($this->names) !== 0;
+    }
+
     /**
      * Generate a formatted HTML list containing all the participants.
      */
@@ -161,4 +165,5 @@ class ParticipantList extends DatabaseObjectList {
         }
     }
 }
+
 

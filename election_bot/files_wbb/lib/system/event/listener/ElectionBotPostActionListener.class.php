@@ -270,7 +270,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             if (count($data['msgs']) === 0) continue;
 
             $election = $electionID === 0 ? null : $elections[$electionID];
-            $container = Election::processMessages($doc, $election, $data);
+            $container = Election::processMessages($doc, $data, $election);
             $body->appendChild($container);
         }
     }
