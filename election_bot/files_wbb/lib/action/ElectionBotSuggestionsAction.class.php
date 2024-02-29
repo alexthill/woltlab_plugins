@@ -57,7 +57,7 @@ class ElectionBotSuggestionsAction implements RequestHandlerInterface {
             $name = mb_strtolower($participant->name);
             $name = static::utf8ToExtendedAscii($name, $charMap);
             if ($name === $query2) {
-                $scores[$participant->name] = 0;
+                $scores[$participant->participantID] = 0;
             } else {
                 $name = mb_substr($name, 0, $queryLen);
                 $distance = levenshtein($name, $query2);
