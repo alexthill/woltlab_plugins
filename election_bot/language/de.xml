@@ -25,7 +25,7 @@
             <item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
             <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
             <item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde beendet.]]></item>
-            <item name="wbb.electionbot.message.start"><![CDATA[Nächste Phase wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+            <item name="wbb.electionbot.message.start"><![CDATA[Phase {#$phase} wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
             <item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
             <item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
             <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{if $data['name0']|isset && $data['name0'] !== ''}{$data['name0']}/{/if}{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>

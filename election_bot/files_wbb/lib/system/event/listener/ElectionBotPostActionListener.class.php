@@ -295,7 +295,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $data['deadline'] = $options->deadline->getTimestamp();
             $msgs[] = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.message.deadline',
-                ['time' => $options->deadline],
+                ['time' => $options->deadline, 'phase' => $data['phase']],
             );
         }
         foreach ($options->addVotes as $vote) {
