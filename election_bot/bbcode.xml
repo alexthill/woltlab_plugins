@@ -10,5 +10,14 @@
                 </attribute>
             </attributes>
         </bbcode>
+        <bbcode name="v2">
+            <classname>wbb\system\bbcode\VoteBBCode</classname>
+            <attributes>
+                <attribute name="0">
+                    <validationpattern><![CDATA[^\d+$]]></validationpattern>
+                    <required>0</required>
+                </attribute>
+            </attributes>
+        </bbcode>
     </import>
 </data>

@@ -6,7 +6,7 @@
         <packagename language="de">Wahl-Bot</packagename>
         <packagedescription language="de">Wahl-Bot</packagedescription>
         <version>6.0.0</version>
-        <date>2024-02-29</date>
+        <date>2024-04-02</date>
     </packageinformation>
 
     <authorinformation>
@@ -34,6 +34,8 @@
     <instructions  type="update" fromversion="6.0.0 Beta 9">
         <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
+        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="bbcode" />
     </instructions>
 
     <instructions type="uninstall">

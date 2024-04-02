@@ -56,7 +56,6 @@ class VoteList extends DatabaseObjectList {
         }
         $list->objectIDs = $list->indexToObject;
         $list->objects = $objects;
-        
         return $list;
     }
 
@@ -71,7 +70,7 @@ class VoteList extends DatabaseObjectList {
         $statement = WCF::getDB()->prepareStatement($sql);
         $statement->execute();
         $votes = $statement->fetchObjects(($list->objectClassName ?: $list->className));
-        
+
         $votesByPhase = [];
         foreach ($votes as $vote) {
             if (!isset($votesByPhase[$vote->phase])) {
@@ -85,7 +84,7 @@ class VoteList extends DatabaseObjectList {
         }
         return $voteCounts;
     }
-    
+
     public function singlePhase() {
         return $this->singlePhase;
     }
@@ -119,3 +118,4 @@ class VoteList extends DatabaseObjectList {
         return array_map(fn(array $lines): string => implode('<br/>', $lines), $linesByPhase);
     }
 }
+

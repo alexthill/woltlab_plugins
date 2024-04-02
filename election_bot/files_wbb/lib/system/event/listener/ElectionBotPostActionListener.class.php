@@ -58,43 +58,46 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         }
 
         $elections = $this->getElections();
-        $defaultElectionID = 0;
-        $activeElectionCount = 0;
+        $activeElections = [];
         foreach ($elections as $electionID => $election) {
             if ($election->canVote()) {
-                if ($defaultElectionID === 0) {
-                    $defaultElectionID = $electionID;
-                }
-                $activeElectionCount += 1;
+                $activeElections[] = $election;
             }
         }
-        if ($defaultElectionID === 0) return;
+        if (count($activeElections) === 0) return;
 
         $doc = $eventObj->getHtmlInputProcessor()->getHtmlInputNodeProcessor()->getDocument();
         $els = $doc->getElementsByTagName('woltlab-metacode');
         // we need to iterate backwards over the elements because we remove them
-        for ($i = $els->length; --$i >= 0; ) {
+        for ($i = $els->length - 1; $i >= 0; $i--) {
             /** @var \DomElement */
             $el = $els->item($i);
-            if ($el === null || $el->getAttribute('data-name') !== 'v') continue;
+            $tag = $el->getAttribute('data-name');
+            if ($tag !== 'v' && $tag !== 'v2') continue;
 
             $electionID = $this->parseVoteBBCodeAttrs($el->getAttribute('data-attributes'));
             $valid = $electionID !== false;
-            $electionID = $electionID ?: $defaultElectionID;
+            if ($electionID === 0) {
+                $n = $tag === 'v' || count($activeElections) === 1 ? 0 : 1;
+                $electionID = $activeElections[$n]->electionID;
+            }
             $electionName = null;
-            if ($valid && $activeElectionCount > 1) {
+            if ($valid && count($activeElections) > 1) {
                 $electionName = $elections[$electionID]->getTitle(-1, false);
             }
             $content = StringUtil::trim($el->textContent);
 
-            if (!$valid || DOMUtil::hasParent($el, 'woltlab-quote') || DOMUtil::hasParent($el, 'woltlab-spoiler')) {
+            if (!$valid || !$elections[$electionID]->canVote()
+                || DOMUtil::hasParent($el, 'woltlab-quote')
+                || DOMUtil::hasParent($el, 'woltlab-spoiler')
+            ) {
                 $el->textContent = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.vote.invalid',
                     ['vote' => $content, 'election' => $electionName],
                 );
                 $valid = false;
             } else if (strlen($content)) {
-                if (strlen($content) > 1 && $content[0] === '!') {
+                if (strlen($content) && ($content[0] === '!' || $content[0] === '?')) {
                     $content = substr($content, 1);
                 }
                 $el->textContent = WCF::getLanguage()->getDynamicVariable(
@@ -281,10 +284,10 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         if (!$election->isActive && $options->start) {
             $data['phase'] = $election->phase + 1;
             $data['isActive'] = 1;
-            $data['deadline'] = $options->deadline->getTimestamp();  
+            $data['deadline'] = $options->deadline->getTimestamp();
             $msgs[] = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.message.start',
-                ['time' => $options->deadline],
+                ['time' => $options->deadline, 'phase' => $data['phase']],
             );
         }
         if ($election->isActive && $options->end) {
@@ -333,14 +336,10 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         if (!is_array($attrs) || count($attrs) === 0) {
             return 0;
         }
-        $firstAttr = intval($attrs[0]);
-        if ($firstAttr === 0) {
-            return 0;
-        }
-        if (isset($this->getElections()[$firstAttr])) {
-            return $firstAttr;
+        $id = intval($attrs[0]);
+        if ($id === 0 || isset($this->getElections()[$id])) {
+            return $id;
         }
         return false;
     }
 }
-

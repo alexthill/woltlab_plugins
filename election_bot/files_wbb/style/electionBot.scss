@@ -3,6 +3,11 @@ span[data-mention^="!"]::before {
 	font-weight: bold;
 	padding-right: 4px;
 }
+span[data-mention^="?"]::before {
+	content: "?";
+	font-weight: bold;
+	padding-right: 4px;
+}
 
 #electionBot_text .electionBotSection {
 	margin-top: 10px;

@@ -8,7 +8,7 @@ use wcf\system\WCF;
 use wcf\util\StringUtil;
 
 /**
- * Parses the [v] bbcode tag.
+ * Parses the [v] and [v2] bbcode tags.
  *
  * @author  Xaver
  * @license MIT License <https://mit-license.org/>

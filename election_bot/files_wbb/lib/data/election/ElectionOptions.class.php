@@ -6,7 +6,7 @@ use wcf\system\WCF;
 use wcf\util\StringUtil;
 
 /**
- * Represents an election options.
+ * Represents election options.
  *
  * @author  Xaver
  * @license MIT License <https://mit-license.org/>
@@ -60,7 +60,7 @@ class ElectionOptions {
 
     public function validate(Election $election, array &$errors): void {
         $id = $election->electionID;
-        
+
         if ($this->deadline === null) {
             if ($this->changeDeadline || $this->start) {
                 $msg = WCF::getLanguage()->getDynamicVariable('wcf.global.form.error.empty');
@@ -70,7 +70,7 @@ class ElectionOptions {
             $msg = WCF::getLanguage()->get('wbb.electionbot.form.deadline.error.invalid');
             $errors[] = $this->createError($id, 'electionDeadline', $msg);
         }
-        
+
         $i = 0;
         foreach ($this->addVotes as $vote) {
             if ($vote === null) {
@@ -98,7 +98,7 @@ class ElectionOptions {
             }
             $i += 1;
         }
-        
+
         $i = 0;
         foreach ($this->addVoteValues as $vote) {
             if ($vote === null) {
@@ -116,10 +116,10 @@ class ElectionOptions {
                 $msg = WCF::getLanguage()->getDynamicVariable('wbb.electionbot.form.addVote.error.tooLong', ['maxLength' => 255]);
                 $errors[] = $this->createError($id, 'electionAddVoteValue', $msg, $i);
             }
-            if ($vote->count < VOTE::MIN_COUNT || $vote->count > VOTE::MAX_COUNT) {
+            if ($vote->count < Vote::MIN_COUNT || $vote->count > Vote::MAX_COUNT) {
                 $msg = WCF::getLanguage()->getDynamicVariable(
                     'wbb.electionbot.form.addVote.error.countOutsideRange',
-                    ['min' => VOTE::MIN_COUNT, 'max' => VOTE::MAX_COUNT],
+                    ['min' => Vote::MIN_COUNT, 'max' => Vote::MAX_COUNT],
                 );
                 $errors[] = $this->createError($id, 'electionAddVoteValue', $msg, $i);
             }
@@ -136,4 +136,5 @@ class ElectionOptions {
         ];
     }
 }
+
 

@@ -32,6 +32,12 @@ class VoteCount {
         foreach ($list as $vote) {
             $votes[$vote->voter] = $vote;
         }
+        uasort($votes, function (Vote $a, Vote $b) {
+            if ($a->voteID == $b->voteID) {
+                return 0;
+            }
+            return ($a->voteID < $b->voteID) ? -1 : 1;
+        });
         return VoteCount::fromUniqueVotes($votes);
     }
 

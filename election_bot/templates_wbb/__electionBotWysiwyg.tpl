@@ -87,6 +87,7 @@ require([
         }
         return false;
     });
+
     CkeditorEvent.listenToCkeditor(ckeditorEl).setupConfiguration(({ configuration, features }) => {
         const items = [];
         {if $board->getPermission('canUseElection')}
@@ -124,44 +125,43 @@ require([
             console.warn('CKeditor does not support mentions, but support is needed for election bot plugin');
             return;
         }
-        const feed = {
-            feed: async (query) => {
-                if (query.length > 20) {
-                    return [];
-                }
-                const url = new URL('{link controller="ElectionBotSuggestions" application="wbb" encode=false}{/link}');
-                url.searchParams.set('threadID', document.body.dataset.threadId);
-                url.searchParams.set('query', query);
-                const result = await Backend.prepareRequest(url.toString())
-                    .get()
-                    .allowCaching()
-                    .disableLoadingIndicator()
-                    .fetchAsJson();
-                return result.map((item) => ({
-                    id: '!' + item.label,
-                    text: item.label,
-                    icon: item.icon,
-                    objectId: 0,
-                    type: 'v',
-                    active: item.active,
-                }));
-            },
-            itemRenderer: (item) => {
-                const el = document.createElement('span');
-                el.className = 'ckeditor5__mention';
-                if (!item.active) {
-                    el.style.textDecoration = 'line-through';
-                }
-                if (item.icon.length > 0) {
-                    el.innerHTML += item.icon + ' ';
-                }
-                el.appendChild(document.createTextNode(item.text));
-                return el;
-            },
-            marker: '!',
-            minimumCharacters: 2,
-        };
-        const mention = { feeds: [feed] };
+
+        function createFeed(marker, bbcode) {
+            return {
+                feed: async (query) => {
+                    if (query.length > 20) return [];
+                    const url = new URL('{link controller="ElectionBotSuggestions" application="wbb" encode=false}{/link}');
+                    url.searchParams.set('threadID', document.body.dataset.threadId);
+                    url.searchParams.set('query', query);
+                    const result = await Backend.prepareRequest(url.toString())
+                        .get()
+                        .allowCaching()
+                        .disableLoadingIndicator()
+                        .fetchAsJson();
+                    return result.map((item) => ({
+                        id: marker + item.label,
+                        objectId: 0,
+                        type: bbcode,
+                        item,
+                    }));
+                },
+                itemRenderer: ({ item }) => {
+                    const el = document.createElement('span');
+                    el.className = 'ckeditor5__mention';
+                    if (!item.active) {
+                        el.style.textDecoration = 'line-through';
+                    }
+                    if (item.icon.length > 0) {
+                        el.innerHTML += item.icon + ' ';
+                    }
+                    el.appendChild(document.createTextNode(item.label));
+                    return el;
+                },
+                marker,
+                minimumCharacters: 2,
+            };
+        }
+        const mention = { feeds: [createFeed('!', 'v'), createFeed('?', 'v2')] };
         // I dont understand why, but this line is needed for the editor to recognize that `mention` is set
         configuration.mention = mention;
         // WoltLabSuite/Core/Component/Ckeditor/Mention will override `configuration.mention`
@@ -178,3 +178,4 @@ require([
 });
 </script>
 {/if}
+
