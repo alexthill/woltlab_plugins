@@ -74,8 +74,14 @@ class ParticipantList extends DatabaseObjectList {
      * Generate a formatted HTML list containing all the participants.
      */
     public function generateHtmlList(): string {
-        $html = '<h2>' . WCF::getLanguage()->get('wbb.electionbot.form.participants') . '</h2>';
-        $html .= '<ol>';
+        $allCount = count($this);
+        $activeCount = $this->countActive();
+
+        $html = '<h2>' . WCF::getLanguage()->get('wbb.electionbot.form.participants');
+        if ($activeCount != $allCount) {
+            $html .= " ($activeCount/$allCount)";
+        }
+        $html .= '</h2><ol>';
         foreach ($this as $participant) {
             $html .= "<li>{$participant->decorateName()}</li>";
             if ($participant->extra !== '') {
@@ -164,6 +170,20 @@ class ParticipantList extends DatabaseObjectList {
             }
         }
     }
-}
 
+    /**
+     * Count the number of active participants in this list.
+     *
+     * @return  int number of active particpants
+     */
+    public function countActive(): int {
+        $activeCount = 0;
+        foreach ($this as $participant) {
+            if ($participant->active) {
+                $activeCount += 1;
+            }
+        }
+        return $activeCount;
+    }
+}
 
