@@ -140,6 +140,7 @@ require([
                         .fetchAsJson();
                     return result.map((item) => ({
                         id: marker + item.label,
+                        text: item.label,
                         objectId: 0,
                         type: bbcode,
                         item,
