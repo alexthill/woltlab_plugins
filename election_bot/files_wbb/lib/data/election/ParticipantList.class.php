@@ -66,8 +66,8 @@ class ParticipantList extends DatabaseObjectList {
         return $list;
     }
 
-    public function hasNames() {
-        return count($this->names) !== 0;
+    public function countNames(): int {
+        return count($this->names);
     }
 
     /**

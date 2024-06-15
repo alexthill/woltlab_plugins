@@ -159,6 +159,7 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
                 ->placeholder($participant?->name ?? '')
                 ->minimumLength(1)
                 ->maximumLength(Election::MAX_VOTER_LENGTH)
+                ->autoFocus()
                 ->required(),
             SelectFormField::create('color')
                 ->label('wbb.electionbot.form.participant.marker')

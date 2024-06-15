@@ -14,6 +14,7 @@
             <small>{lang}wbb.electionbot.form.participants.description{/lang}</small>
             <label><input type="checkbox" name="electionParticipantsStrict"{if $electionParticipantsStrict} checked{/if}>{lang}wbb.electionbot.form.participants.strict{/lang}</label>
             <label><input type="checkbox" name="electionParticipantsPost"{if $electionParticipantsPost} checked{/if}>{lang}wbb.electionbot.form.participants.post{/lang}</label>
+            <label><input type="checkbox" name="electionParticipantsTitleAdd"{if $electionParticipantsTitleAdd} checked{/if}>{lang}wbb.electionbot.form.participants.titleAdd{/lang}</label>
         </dd>
     </dl>
 </section>

@@ -30,6 +30,8 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
 
     protected bool $electionParticipantsPost = true;
 
+    protected bool $electionParticipantsTitleAdd = true;
+
     protected ?ParticipantList $participantList = null;
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
@@ -44,6 +46,7 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         }
         $this->electionParticipantsStrict = !empty($_POST['electionParticipantsStrict']);
         $this->electionParticipantsPost = !empty($_POST['electionParticipantsPost']);
+        $this->electionParticipantsTitleAdd = !empty($_POST['electionParticipantsTitleAdd']);
     }
 
     protected function assignVariables() {
@@ -52,6 +55,7 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
             'electionParticipants' => $this->electionParticipants,
             'electionParticipantsStrict' => $this->electionParticipantsStrict,
             'electionParticipantsPost' => $this->electionParticipantsPost,
+            'electionParticipantsTitleAdd' => $this->electionParticipantsTitleAdd,
             'maxLength' => Election::MAX_VOTER_LENGTH,
             'maxCount' => ParticipantList::MAX_PARTICIPANTS,
         ]);
@@ -66,6 +70,15 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
             $doc = $eventObj->htmlInputProcessor->getHtmlInputNodeProcessor()->getDocument();
             $doc->getElementsByTagName('body')->item(0)
                 ->appendChild(Election::processMessages($doc, $data));
+
+            if ($this->electionParticipantsTitleAdd && $this->participantList) {
+                $nameCount = $this->participantList->countNames();
+                $newSubject = "{$eventObj->subject} $nameCount/$nameCount";
+                if (\mb_strlen($newSubject) > 255) {
+                    throw new UserInputException('electionParticipants', 'longTitle');
+                }
+                $eventObj->subject = $newSubject;
+            }
         }
     }
 
@@ -105,17 +118,15 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         }
 
         $this->participantList = ParticipantList::fromNsvInput($this->electionParticipants);
-        if ($this->participantList->hasNames()) {
+        if ($this->participantList->countNames() === 0) {
+            $this->participantList = null;
+        } else {
             $error = $this->participantList->validate($this->electionParticipantsStrict);
             $this->electionParticipants = $this->participantList->getValidatedInput();
             if ($error !== '') {
                 throw new UserInputException('electionParticipants', $error);
             }
-        } else {
-            $this->participantList = null;
         }
     }
 }
-
-
 
