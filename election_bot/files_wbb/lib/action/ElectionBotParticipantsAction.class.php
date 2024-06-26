@@ -13,6 +13,7 @@ use wbb\data\election\ParticipantList;
 use wbb\data\post\PostAction;
 use wbb\data\post\PostList;
 use wbb\data\thread\Thread;
+use wbb\system\thread\ThreadHandler;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\exception\PermissionDeniedException;
 use wcf\system\form\builder\IFormDocument;
@@ -25,7 +26,7 @@ use wcf\system\form\builder\field\TextFormField;
 use wcf\system\WCF;
 
 /**
- * Handles the form for displaying vote counts
+ * Handles the form to add, delete or modify an election participant.
  *
  * @author  Xaver
  * @license MIT License <https://mit-license.org/>
@@ -34,6 +35,8 @@ use wcf\system\WCF;
 final class ElectionBotParticipantsAction implements RequestHandlerInterface {
 
     const FORM_ID = 'electionBotParticipants';
+
+    protected ?ParticipantList $participantList = null;
 
     public function handle(ServerRequestInterface $request): ResponseInterface {
         $params = $request->getQueryParams();
@@ -64,31 +67,60 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
             }
 
             $data = $dialogForm->getData()['data'];
+            $updateTitle = true;
 
-            if ($objectId === 0) {
+            if ($objectId === 0 || $participant == null) {
                 $data['threadID'] = $thread->threadID;
                 $action = new ParticipantAction([], 'create', ['data' => $data]);
                 $returnValues = $action->executeAction();
                 $data['objectId'] = $returnValues['returnValues']->participantID;
                 $data['color'] = Participant::colorToMarkerClass($data['color']);
                 $result = ['action' => 'add', 'data' => $data];
+                $updateTitle = true;
             } else if ($data['delete']) {
                 $action = new ParticipantAction([$objectId], 'delete', []);
                 $action->executeAction();
                 $result = ['action' => 'delete'];
+                $updateTitle = true;
             } else {
                 unset($data['delete']);
                 $action = new ParticipantAction([$objectId], 'update', ['data' => $data]);
                 $action->executeAction();
                 $data['color'] = Participant::colorToMarkerClass($data['color']);
                 $result = ['action' => 'update', 'data' => $data];
+                $updateTitle = $participant->active != $data['active'];
             }
 
             $this->updateParticipantPost($thread->threadID);
+            if ($updateTitle) {
+                $this->updateThreadTitle($thread);
+            }
             return new JsonResponse(['result' => $result]);
         } else {
             throw new \LogicException('Unreachable');
         }
+    }
+
+    private function getParticipantList(int $threadID): ParticipantList {
+        if ($this->participantList === null) {
+            $this->participantList = ParticipantList::forThread($threadID);
+        }
+        return $this->participantList;
+    }
+
+    private function updateThreadTitle(Thread $thread) {
+        $title = $thread->getTitle();
+        if (!preg_match('% [0-9]+/[0-9]+$%', $title, $matches)) {
+            return;
+        }
+        $participantList = $this->getParticipantList($thread->threadID);
+        $activeCount = $participantList->countActive();
+        $allCount = count($participantList);
+        $title = substr($title, 0, -strlen($matches[0])) . " $activeCount/$allCount";
+        ThreadHandler::getInstance()->saveEdit(
+            $thread->threadID,
+            ['default' => ['topic' => $title]],
+        );
     }
 
     private function updateParticipantPost(int $threadID): void {
@@ -99,12 +131,11 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
         $postList->readObjects();
         $post = $postList->getSingleObject();
         if ($post !== null && $post->userID === WBB_ELECTION_BOT_USER_ID) {
-            $participants = ParticipantList::forThread($threadID);
             $postAction = new PostAction([$post], 'update', [
                 'isEdit' => true,
                 'showEditNote' => true,
                 'data' => [
-                    'message' => $participants->generateHtmlList(),
+                    'message' => $this->getParticipantList($threadID)->generateHtmlList(),
                     'editReason' => WCF::getLanguage()->get('wbb.electionbot.participantListPost.update'),
                     'editCount' => $post->editCount + 1,
                     'editor' => WCF::getUser()->username,
@@ -128,6 +159,7 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
                 ->placeholder($participant?->name ?? '')
                 ->minimumLength(1)
                 ->maximumLength(Election::MAX_VOTER_LENGTH)
+                ->autoFocus()
                 ->required(),
             SelectFormField::create('color')
                 ->label('wbb.electionbot.form.participant.marker')

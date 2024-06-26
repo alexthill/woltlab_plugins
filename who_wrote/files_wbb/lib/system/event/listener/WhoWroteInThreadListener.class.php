@@ -37,7 +37,7 @@ class WhoWroteInThreadListener implements IParameterizedEventListener {
                 $whoWroteByName[$row['username']] = $row['userID'];
             }
         }
-        ksort($whoWroteByName,  SORT_NATURAL | SORT_FLAG_CASE);
+        ksort($whoWroteByName, SORT_NATURAL | SORT_FLAG_CASE);
 
         WCF::getTPL()->assign([
             'whoWrote' => $whoWrote,
