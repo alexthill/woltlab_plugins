@@ -92,10 +92,17 @@
     </li>
 </template>
 <template id="electionAddTemplateVote">
-    <span>{lang}wbb.electionbot.form.addVote.description{/lang} <input type="text" data-name="voter" maxlength="255"> <input type="text" data-name="voted" maxlength="255"> <input type="number" class="short" value="1" data-name="count"></span>
+    <span>{lang}wbb.electionbot.form.addVote.description{/lang}
+        <input type="text" data-name="voter" maxlength="255" required>
+        <input type="text" data-name="voted" maxlength="255">
+        <input type="number" class="short" data-name="count" value="1" step="any" required>
+    </span>
 </template>
 <template id="electionAddTemplateVoteValue">
-    <span>{lang}wbb.electionbot.form.addVoteValue.description{/lang} <input type="text" data-name="voter" maxlength="255"> <input type="number" class="short" value="1" data-name="count"></span>
+    <span>{lang}wbb.electionbot.form.addVoteValue.description{/lang}
+        <input type="text" data-name="voter" maxlength="255" required>
+        <input type="number" class="short" data-name="count" value="1" step="any" required>
+    </span>
 </template>
 
 <script data-relocate="true">
@@ -180,7 +187,7 @@ require([
         }
         el.disabled = !checkbox.checked;
     }
-    
+
     const addTemplate = document.getElementById('electionAddTemplate');
     for (const addBtn of container.querySelectorAll('.electionAddBtn')) {
         const name = addBtn.dataset.addName;
@@ -198,7 +205,7 @@ require([
             });
         });
     }
-    
+
     function initSectionToggle(section, hidden = true) {
         const title = section.querySelector('.sectionTitle');
         if (!title) return;
@@ -223,7 +230,7 @@ require([
         sectionsWithSentData = [];
         for (const section of sections) {
             if (section.dataset.id === undefined) continue;
-            
+
             const sectionData = {};
             for (const el of section.querySelectorAll('input[name]')) {
                 innerError(el, ''); // resets the innerError if it was set previously
@@ -268,7 +275,7 @@ require([
 
     EventHandler.add('com.woltlab.wcf.ckeditor5', 'handleError_' + wysiwygId, (data) => {
         if (data.returnValues.fieldName !== 'electionBot') return;
-        
+
         const errors = JSON.parse(data.returnValues.realErrorMessage);
         data.returnValues.realErrorMessage = '{jslang}wbb.electionbot.form.error{/jslang}';
         for (const error of errors) {
@@ -296,4 +303,3 @@ require([
 });
 </script>
 {/if}
-

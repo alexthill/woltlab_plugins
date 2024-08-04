@@ -12,6 +12,7 @@ return [
                 ->referencedColumns(['electionID'])
                 ->onDelete('CASCADE')
                 ->drop(),
+        ]),
     PartialDatabaseTable::create('wbb1_election_voter')
         ->foreignKeys([
             DatabaseTableForeignKey::create()

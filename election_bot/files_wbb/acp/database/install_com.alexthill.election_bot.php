@@ -45,7 +45,7 @@ return [
             NotNullVarchar255DatabaseTableColumn::create('voted'),
             NotNullInt10DatabaseTableColumn::create('time'),
             NotNullInt10DatabaseTableColumn::create('phase'),
-            NotNullInt10DatabaseTableColumn::create('count'),
+            FloatDatabaseTableColumn::create('count')->notNull(),
         ])
         ->foreignKeys([
             DatabaseTableForeignKey::create()
@@ -72,7 +72,7 @@ return [
         ->columns([
             NotNullInt10DatabaseTableColumn::create('electionID'),
             NotNullVarchar255DatabaseTableColumn::create('voter'),
-            NotNullInt10DatabaseTableColumn::create('count'),
+            FloatDatabaseTableColumn::create('count')->notNull(),
         ])
         ->foreignKeys([
             DatabaseTableForeignKey::create()
