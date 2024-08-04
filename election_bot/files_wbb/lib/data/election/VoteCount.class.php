@@ -63,7 +63,7 @@ class VoteCount {
         return $this->generateHtmlWithNewVote('', '', 0);
     }
 
-    public function generateHtmlWithNewVote(string $newVoter, string $newVoted, int $newCount): string {
+    public function generateHtmlWithNewVote(string $newVoter, string $newVoted, float $newCount): string {
         if ($newVoter !== '') {
             if (!isset($this->items[$newVoted])) {
                 $this->items[$newVoted] = ['count' => 0, 'votes' => []];

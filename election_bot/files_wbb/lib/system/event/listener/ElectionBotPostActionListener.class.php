@@ -241,11 +241,14 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         $elections = $this->getElections();
         $errors = [];
         foreach ($this->getElections() as $id => $election) {
-            if (!isset($parameters[$id]) || !is_array($parameters[$id])) continue;
-
+            if (!isset($parameters[$id]) || !is_array($parameters[$id])) {
+                continue;
+            }
             $options = ElectionOptions::fromParameters($parameters[$id]);
             $options->validate($election, $errors);
-            $this->processOptions($election, $options);
+            if (count($errors) === 0) {
+                $this->processOptions($election, $options);
+            }
         }
 
         if (isset($parameters[0])) {
@@ -343,3 +346,4 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         return false;
     }
 }
+
