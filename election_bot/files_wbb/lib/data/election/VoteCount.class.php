@@ -72,18 +72,20 @@ class VoteCount {
         }
         $this->sortItems();
 
+        // equal checks of count against numbers are non-strict on purpose
+        // so that they work regardless of whether count is an int or float
         $html = '';
         foreach ($this->items as $voted => $item) {
             if ($voted === '') continue;
 
             if ($html !== '') $html .= '<br/>';
             $voters = array_map(
-                fn($v) => $this->decorateName($v->voter) . ($v->count === 1 ? '' : '*' . $v->count),
+                fn($v) => $this->decorateName($v->voter) . ($v->count == 1 ? '' : '*' . $v->count),
                 $item['votes'],
             );
             if ($newVoter !== '' && $newVoted === $voted) {
                 $voters[] = "<u>{$this->decorateName($newVoter)}</u>"
-                    . ($newCount === 1 ? '' : '*' . $newCount);
+                    . ($newCount == 1 ? '' : '*' . $newCount);
             }
             $html .= "{$this->decorateName($voted)} ({$item['count']}): " . implode(', ', $voters);
         }
@@ -91,8 +93,10 @@ class VoteCount {
             if ($html !== '') {
                 $html .= '<br/><br/>';
             }
-            $unvote = WCF::getLanguage()->get('wbb.electionbot.votecount.unvote');
-            $voters = array_map(fn($vote) => $this->decorateName($vote->voter), $this->items['']['votes']);
+            $voters = array_map(
+                fn($vote) => $this->decorateName($vote->voter),
+                $this->items['']['votes'],
+            );
             if ($newVoter !== '' && $newVoted === '') {
                 $voters[] = "<u>{$this->decorateName($newVoter)}</u>";
             }
@@ -121,4 +125,3 @@ class VoteCount {
         });
     }
 }
-
