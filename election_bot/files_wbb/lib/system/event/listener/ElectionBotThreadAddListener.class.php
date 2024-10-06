@@ -83,14 +83,14 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
     }
 
     protected function saved(ThreadAddForm $eventObj) {
-        $thread = $eventObj->objectAction->getReturnValues()['returnValues'];
-        $threadID = $thread->threadID;
-
-        if ($this->form !== null) {
-            $data = ElectionAction::extractFormData($this->form, $threadID);
-            $electionAction = new ElectionAction([], 'create', $data);
-            $electionAction->executeAction();
+        if ($this->form === null) {
+            return;
         }
+
+        $threadID = $eventObj->objectAction->getReturnValues()['returnValues']->threadID;
+        $data = ElectionAction::extractFormData($this->form, $threadID);
+        $electionAction = new ElectionAction([], 'create', $data);
+        $electionAction->executeAction();
 
         if ($this->participantList !== null) {
             $this->participantList->save($threadID);
@@ -101,7 +101,7 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
             // if WBB_ELECTION_BOT_USER_ID is not a valid userID $user->username will be null
             // in this case we set userID to null and username to 'guest'
             $action = new PostAction([], 'create', ['data' => [
-                'message' => ParticipantList::forThread($threadID)->generateHtmlList(),
+                'message' => ParticipantList::forThread($threadID)->generateHtmlListWithAliases(),
                 'threadID' => $threadID,
                 'time' => TIME_NOW,
                 'userID' => $user->userID ?: null,
@@ -113,7 +113,11 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
 
     protected function validate() {
         $this->form = ElectionAction::validateCreateForm($_POST);
-        if ($this->form !== null && $this->form->hasValidationErrors()) {
+        if ($this->form == null) {
+            return;
+        }
+
+        if ($this->form->hasValidationErrors()) {
             throw new UserInputException('election', 'invalid');
         }
 

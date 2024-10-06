@@ -6,6 +6,7 @@ use wbb\data\election\Election;
 use wbb\data\election\ElectionAction;
 use wbb\data\election\ElectionList;
 use wbb\data\election\ElectionOptions;
+use wbb\data\election\Participant;
 use wbb\data\election\VoteAction;
 use wbb\data\election\VoteList;
 use wbb\data\post\PostAction;
@@ -34,6 +35,8 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
     protected array $voteValues = [];
 
     private ?array $elections = null;
+
+    private ?string $voter = null;
 
     public function execute($eventObj, $className, $eventName, array &$parameters) {
         if ($eventObj->getActionName() === 'quickReply') {
@@ -112,7 +115,8 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             }
             DOMUtil::replaceElement($el, $doc->createElement('u'));
             if ($valid && !isset($this->votes[$electionID])) {
-                $this->votes[$electionID] = $content;
+                $participant = Participant::fromAlias($this->threadID, $content);
+                $this->votes[$electionID] = $participant === null ? $content : $participant->name;
             }
         }
 
@@ -123,7 +127,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         $divider->textContent = '--------';
         $body->appendChild($divider);
 
-        $voter = WCF::getUser()->username;
+        $voter = $this->getVoter();
         foreach ($this->votes as $electionID => $voted) {
             $sql = "SELECT count FROM wbb1_election_voter WHERE electionID = ? AND voter = ?";
             $statement = WCF::getDB()->prepare($sql, 1);
@@ -179,7 +183,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                     'electionId' => $electionID,
                     'userID' => WCF::getUser()->userID,
                     'postID' => $postID,
-                    'voter' => WCF::getUser()->username,
+                    'voter' => $this->getVoter(),
                     'voted' => $voted,
                     'time' => TIME_NOW,
                     'phase' => $elections[$electionID]->phase,
@@ -234,6 +238,14 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $this->elections = ElectionList::getThreadElections($this->threadID);
         }
         return $this->elections;
+    }
+
+    protected function getVoter(): string {
+        if ($this->voter == null) {
+            $participant = Participant::fromAlias($this->threadID, WCF::getUser()->username);
+            $this->voter = $participant === null ? WCF::getUser()->username : $participant->name;
+        }
+        return $this->voter;
     }
 
     protected function processElectionBotForm(PostAction $eventObj): void {
@@ -346,4 +358,3 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         return false;
     }
 }
-

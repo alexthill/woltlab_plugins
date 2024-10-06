@@ -67,38 +67,54 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
             }
 
             $data = $dialogForm->getData()['data'];
-            $updateTitle = true;
-
-            if ($objectId === 0 || $participant == null) {
-                $data['threadID'] = $thread->threadID;
-                $action = new ParticipantAction([], 'create', ['data' => $data]);
-                $returnValues = $action->executeAction();
-                $data['objectId'] = $returnValues['returnValues']->participantID;
-                $data['color'] = Participant::colorToMarkerClass($data['color']);
-                $result = ['action' => 'add', 'data' => $data];
-                $updateTitle = true;
-            } else if ($data['delete']) {
-                $action = new ParticipantAction([$objectId], 'delete', []);
-                $action->executeAction();
-                $result = ['action' => 'delete'];
-                $updateTitle = true;
-            } else {
-                unset($data['delete']);
-                $action = new ParticipantAction([$objectId], 'update', ['data' => $data]);
-                $action->executeAction();
-                $data['color'] = Participant::colorToMarkerClass($data['color']);
-                $result = ['action' => 'update', 'data' => $data];
-                $updateTitle = $participant->active != $data['active'];
-            }
-
-            $this->updateParticipantPost($thread->threadID);
-            if ($updateTitle) {
+            try {
+                WCF::getDB()->beginTransaction();
+                $result = $this->updateParticipant($data, $participant, $thread->threadID);
+                $this->updateParticipantPost($thread->threadID);
                 $this->updateThreadTitle($thread);
+                WCF::getDB()->commitTransaction();
+            } catch (\Exception $exception) {
+                WCF::getDB()->rollBackTransaction();
+                throw $exception;
             }
+
             return new JsonResponse(['result' => $result]);
         } else {
             throw new \LogicException('Unreachable');
         }
+    }
+
+    private function updateParticipant($data, ?Participant $participant, int $threadID): array {
+
+        if ($participant == null) {
+            $aliases = $data['aliases'];
+            unset($data['delete']);
+            unset($data['aliases']);
+            $data['threadID'] = $threadID;
+            $action = new ParticipantAction([], 'create', ['data' => $data]);
+            $participant = $action->executeAction()['returnValues'];
+            $participant->saveAliases($aliases);
+            $data['objectId'] = $participant->participantID;
+            $data['color'] = Participant::colorToMarkerClass($data['color']);
+            $data['aliases'] = implode('/', $participant->getAliases());
+            $result = ['action' => 'add', 'data' => $data];
+        } else if ($data['delete']) {
+            $participant->deleteAliases();
+            $action = new ParticipantAction([$participant->participantID], 'delete', []);
+            $action->executeAction();
+            $result = ['action' => 'delete'];
+        } else {
+            $aliases = $data['aliases'];
+            unset($data['delete']);
+            unset($data['aliases']);
+            $action = new ParticipantAction([$participant->participantID], 'update', ['data' => $data]);
+            $action->executeAction();
+            $participant->updateAliases($aliases);
+            $data['color'] = Participant::colorToMarkerClass($data['color']);
+            $data['aliases'] = implode('/', $participant->getAliases());
+            $result = ['action' => 'update', 'data' => $data];
+        }
+        return $result;
     }
 
     private function getParticipantList(int $threadID): ParticipantList {
@@ -135,7 +151,7 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
                 'isEdit' => true,
                 'showEditNote' => true,
                 'data' => [
-                    'message' => $this->getParticipantList($threadID)->generateHtmlList(),
+                    'message' => $this->getParticipantList($threadID)->generateHtmlListWithAliases(),
                     'editReason' => WCF::getLanguage()->get('wbb.electionbot.participantListPost.update'),
                     'editCount' => $post->editCount + 1,
                     'editor' => WCF::getUser()->username,
@@ -161,6 +177,12 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
                 ->maximumLength(Election::MAX_VOTER_LENGTH)
                 ->autoFocus()
                 ->required(),
+            TextFormField::create('aliases')
+                ->label('wbb.electionbot.form.participant.aliases')
+                ->value($participant?->getAliasList() ?? '')
+                ->placeholder($participant?->getAliasList() ?? '')
+                ->minimumLength(1)
+                ->maximumLength(Election::MAX_VOTER_LENGTH),
             SelectFormField::create('color')
                 ->label('wbb.electionbot.form.participant.marker')
                 ->options(Participant::COLOR_OPTIONS)

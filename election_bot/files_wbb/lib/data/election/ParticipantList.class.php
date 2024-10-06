@@ -2,6 +2,7 @@
 
 namespace wbb\data\election;
 
+use wbb\data\election\utils\ParticipantListLine;
 use wcf\data\user\UserList;
 use wcf\data\DatabaseObjectList;
 use wcf\system\WCF;
@@ -25,13 +26,14 @@ class ParticipantList extends DatabaseObjectList {
 
     public $className = Participant::class;
 
-    private array $names = [];
-
-    private array $tooLong = [];
-
-    private array $notFound = [];
+    /**
+     * @var ParticipantListLine[]
+     */
+    private array $lines = [];
 
     private bool $validated = true;
+
+    private int $threadID = 0;
 
     /**
      * get all participants of given thread
@@ -40,12 +42,13 @@ class ParticipantList extends DatabaseObjectList {
         $list = new ParticipantList();
         $list->getConditionBuilder()->add('threadID = ?', [$threadID]);
         $list->readObjects();
+        $list->threadID = $threadID;
         return $list;
     }
 
     /**
-     * load names from a newline-seperated string
-     * names are trimmed and lines with starting with # are ignored
+     * load names from a newline-separated string
+     * names are trimmed and lines starting with '#' are ignored
      * afterwards `validate` and `save` need to be called to save the list
      */
     public static function fromNsvInput(string $input): static {
@@ -54,26 +57,35 @@ class ParticipantList extends DatabaseObjectList {
         foreach ($lines as $line) {
             $line = StringUtil::trim($line);
             if ($line !== '' && $line[0] !== '#') {
-                if (mb_strlen($line) > Election::MAX_VOTER_LENGTH) {
-                    $list->tooLong[] = $line;
-                } else {
-                    $list->names[] = $line;
-                }
+                $list->lines[] = new ParticipantListLine($line);
             }
         }
-        $list->names = array_unique($list->names);
         $list->validated = false;
         return $list;
     }
 
-    public function countNames(): int {
-        return count($this->names);
+    public function generateHtmlListWithAliases(): string {
+        if ($this->threadID === 0) {
+            throw new \BadMethodCallException('threadID is not set');
+        }
+        $sql = "SELECT participantID, alias FROM wbb1_election_participant_alias WHERE threadID = ?";
+        $statement = WCF::getDB()->prepare($sql);
+        $statement->execute([$this->threadID]);
+        $aliases = [];
+        while ($row = $statement->fetchArray()) {
+            if (isset($aliases[$row['participantID']])) {
+                $aliases[$row['participantID']][] = $row['alias'];
+            } else {
+                $aliases[$row['participantID']] = [$row['alias']];
+            }
+        }
+        return $this->generateHtmlList($aliases);
     }
 
     /**
      * Generate a formatted HTML list containing all the participants.
      */
-    public function generateHtmlList(): string {
+    public function generateHtmlList(array $aliases = []): string {
         $allCount = count($this);
         $activeCount = $this->countActive();
 
@@ -83,10 +95,15 @@ class ParticipantList extends DatabaseObjectList {
         }
         $html .= '</h2><ol>';
         foreach ($this as $participant) {
-            $html .= "<li>{$participant->decorateName()}</li>";
+            $html .= "<li>{$participant->decorateName()}";
+            if (isset($aliases[$participant->participantID])) {
+                $joined = implode('/', $aliases[$participant->participantID]);
+                $html .= " ($joined)";
+            }
             if ($participant->extra !== '') {
                 $html .= " - {$participant->extra}";
             }
+            $html .= '</li>';
         }
         $html .= '</ol>';
         return $html;
@@ -99,20 +116,60 @@ class ParticipantList extends DatabaseObjectList {
      * @return  string          the empty string if valid or else an error string
      */
     public function validate(bool $strict): string {
-        if ($strict) {
-            $userList = new UserList();
-            $userList->getConditionBuilder()->add('username IN (?)', [$this->names]);
-            $userList->readObjects();
-            $found = array_map(fn($user) => $user->username, $userList->getObjects());
-            $this->notFound = array_diff($this->names, $found);
-            $this->names = $found;
-        }
         $this->validated = true;
-        if (count($this->tooLong) || count($this->notFound)) {
-            return 'invalid';
+        if ($strict) {
+            $names = [];
+            foreach ($this->lines as $line) {
+                $aliases = $line->getAliases();
+                if (count($aliases) === 0) {
+                    $names[] = $line->getName();
+                } else {
+                    array_push($names, ...$aliases);
+                }
+            }
+            $userList = new UserList();
+            $userList->getConditionBuilder()->add('username IN (?)', [array_unique($names)]);
+            $userList->readObjects();
+            $founds = array_flip(array_map(fn($user) => $user->username, $userList->getObjects()));
+            foreach ($this->lines as $line) {
+                if (!isset($founds[$line->getName()])) {
+                    $line->notFound = true;
+                }
+                $aliases = $line->getAliases();
+                if (count($aliases) === 0) {
+                    $line->notFound = !isset($founds[$line->getName()]);
+                } else {
+                    $line->notFound = array_reduce(
+                        $aliases,
+                        fn($carry, $alias) => $carry || !isset($founds[$alias]),
+                        false
+                    );
+                }
+            }
         }
-        if (count($this->names) > static::MAX_PARTICIPANTS) {
+        $names = [];
+        foreach ($this->lines as $line) {
+            if (isset($names[$line->getName()])) {
+                $line->duplicate = true;
+                continue;
+            } else {
+                $names[$line->getName()] = true;
+            }
+            foreach ($line->getAliases() as $alias) {
+                if (isset($names[$alias])) {
+                    $line->duplicate = true;
+                } else {
+                    $names[$alias] = true;
+                }
+            }
+        }
+        if (count($this->lines) > static::MAX_PARTICIPANTS) {
             return 'tooMany';
+        }
+        foreach ($this->lines as $line) {
+            if (!$line->isValid()) {
+                return 'invalid';
+            }
         }
         return '';
     }
@@ -127,21 +184,20 @@ class ParticipantList extends DatabaseObjectList {
         if (!$this->validated) {
             throw new \BadMethodCallException('not validated');
         }
-        $res = '';
-        if (count($this->notFound)) {
-            $lang = WCF::getLanguage()->get('wbb.electionbot.form.participants.inline.notFound');
-            $res .= "\n# $lang\n" . implode("\n", $this->notFound);
+        $invalid = '';
+        $valid = '';
+        foreach($this->lines as $line) {
+            if (!$line->isValid()) {
+                $invalid .= '# ' . implode('; ', $line->getInvalidRemarks()) . "\n"
+                    . $line->reconstructLine() . "\n\n";
+            } else {
+                $valid .= $line->reconstructLine() . "\n";
+            }
         }
-        if (count($this->tooLong)) {
-            $lang = WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.form.participants.inline.tooLong',
-                ['maxLength' => Election::MAX_VOTER_LENGTH],
-            );
-            $res .= "\n# $lang\n" . implode("\n", $this->tooLong);
+        if ($valid === '') {
+            return $invalid;
         }
-        $lang = WCF::getLanguage()->get('wbb.electionbot.form.participants.inline.valid');
-        $res .= "\n# $lang\n" . implode("\n", $this->names);
-        return $res;
+        return $invalid . "# OK\n" . $valid;
     }
 
     /**
@@ -154,21 +210,36 @@ class ParticipantList extends DatabaseObjectList {
         if (!$this->validated) {
             throw new \BadMethodCallException('not validated');
         }
-        if (count($this->names)) {
-            try {
-                WCF::getDB()->beginTransaction();
-                $sql = "INSERT INTO wbb1_election_participant (threadID, name, extra, color)
-                        VALUES (?, ?, ?, ?)";
-                $statement = WCF::getDB()->prepare($sql);
-                foreach ($this->names as $name) {
-                    $statement->execute([$threadID, $name, '', 0]);
-                }
-                WCF::getDB()->commitTransaction();
-            } catch (\Exception $exception) {
-                WCF::getDB()->rollBackTransaction();
-                throw $exception;
-            }
+        if (count($this->lines) === 0) {
+            return;
         }
+        try {
+            WCF::getDB()->beginTransaction();
+            $sql = "INSERT INTO ".Participant::ALIAS_TABLE_NAME." (participantID, threadID, alias)
+                    VALUES (?, ?, ?)";
+            $statement = WCF::getDB()->prepare($sql);
+            foreach ($this->lines as $line) {
+                $action = new ParticipantAction([], 'create', ['data' => [
+                    'threadID' => $threadID,
+                    'name' => $line->getName(),
+                    'extra' => '',
+                    'color' => 0,
+                ]]);
+                $action->executeAction();
+                $participantID = $action->getReturnValues()['returnValues']->participantID;
+                foreach ($line->getAliases() as $alias) {
+                    $statement->execute([$participantID, $threadID, $alias]);
+                }
+            }
+            WCF::getDB()->commitTransaction();
+        } catch (\Exception $exception) {
+            WCF::getDB()->rollBackTransaction();
+            throw $exception;
+        }
+    }
+
+    public function countNames(): int {
+        return count($this->lines);
     }
 
     /**
@@ -186,4 +257,3 @@ class ParticipantList extends DatabaseObjectList {
         return $activeCount;
     }
 }
-

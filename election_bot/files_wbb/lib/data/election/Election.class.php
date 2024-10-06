@@ -97,5 +97,3 @@ class Election extends DatabaseObject {
         return StringUtil::encodeHTML($title);
     }
 }
-
-

@@ -68,4 +68,3 @@ class Vote extends DatabaseObject {
         return $value;
     }
 }
-

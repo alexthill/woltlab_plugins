@@ -50,6 +50,7 @@
                             </a>
                         </td>
                         <td><span class="name"></span></td>
+                        <td><span class="aliases"></span></td>
                         <td><span class="extra"></span></td>
                     </tr>
                 </template>
@@ -62,6 +63,7 @@
                             </a>
                         </td>
                         <td><span class="name {@$participant->getMarkerClass()}"{if !$participant->active} style="text-decoration-line:line-through;"{/if}>{$participant->name}</span></td>
+                        <td><span class="aliases">{'/'|implode:$participant->getAliases()}</span></td>
                         <td><span class="extra">{$participant->extra}</span></td>
                     </tr>
                 {foreachelse}
@@ -144,6 +146,7 @@ require([
                     nameNode.style.textDecorationLine = 'line-through';
                 }
                 node.querySelector('.extra').textContent = result.data.extra;
+                node.querySelector('.aliases').textContent = result.data.aliases;
             },
             async ({ response }) => {
                 const json = await response.json();
