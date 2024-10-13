@@ -6,7 +6,7 @@
         <packagename language="de">Wahl-Bot</packagename>
         <packagedescription language="de">Wahl-Bot</packagedescription>
         <version>6.0.3</version>
-        <date>2024-08-04</date>
+        <date>2024-10-13</date>
     </packageinformation>
 
     <authorinformation>
@@ -23,6 +23,7 @@
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
         <instruction type="database" application="wbb">acp/database/install_com.xaver.election_bot.php</instruction>
+        <instruction type="database" application="wbb">acp/database/update_com.xaver.election_bot_6.0.3.php</instruction>
         <instruction type="aclOption" />
         <instruction type="bbcode" />
         <instruction type="cronjob" />
@@ -35,12 +36,15 @@
         <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="database" application="wbb">acp/database/update_com.xaver.election_bot_6.0.3.php</instruction>
         <instruction type="script" application="wbb">update_com.xaver.election_bot_6.0.3.php</instruction>
     </instructions>
 
     <instructions  type="update" fromversion="6.0.2">
+        <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="database" application="wbb">acp/database/update_com.xaver.election_bot_6.0.3.php</instruction>
         <instruction type="script" application="wbb">update_com.xaver.election_bot_6.0.3.php</instruction>
     </instructions>
 

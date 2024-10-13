@@ -117,6 +117,3 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         return $data;
     }
 }
-
-
-

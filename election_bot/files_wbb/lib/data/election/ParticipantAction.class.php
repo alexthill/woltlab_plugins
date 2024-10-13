@@ -34,4 +34,3 @@ class ParticipantAction extends AbstractDatabaseObjectAction implements ISearchA
         return ElectionBotSuggestionsAction::getMatches($query, $threadID);
     }
 }
-

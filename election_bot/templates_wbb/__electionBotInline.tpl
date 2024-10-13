@@ -50,6 +50,7 @@
                             </a>
                         </td>
                         <td><span class="name"></span></td>
+                        <td><span class="aliases"></span></td>
                         <td><span class="extra"></span></td>
                     </tr>
                 </template>
@@ -62,6 +63,7 @@
                             </a>
                         </td>
                         <td><span class="name {@$participant->getMarkerClass()}"{if !$participant->active} style="text-decoration-line:line-through;"{/if}>{$participant->name}</span></td>
+                        <td><span class="aliases">{'/'|implode:$participant->getAliases()}</span></td>
                         <td><span class="extra">{$participant->extra}</span></td>
                     </tr>
                 {foreachelse}
@@ -93,8 +95,9 @@
 </template>
 <template id="electionAddTemplateVote">
     <span>{lang}wbb.electionbot.form.addVote.description{/lang}
-        <input type="text" data-name="voter" maxlength="255" required>
-        <input type="text" data-name="voted" maxlength="255">
+        {* These inputs are inside different spans, because else they would share the same dropdown for suggestions (thanks woltlab) *}
+        <span><input type="text" data-name="voter" maxlength="255" required></span>
+        <span><input type="text" data-name="voted" maxlength="255"></span>
         <input type="number" class="short" data-name="count" value="1" step="any" required>
     </span>
 </template>
@@ -144,6 +147,7 @@ require([
                     nameNode.style.textDecorationLine = 'line-through';
                 }
                 node.querySelector('.extra').textContent = result.data.extra;
+                node.querySelector('.aliases').textContent = result.data.aliases;
             },
             async ({ response }) => {
                 const json = await response.json();
@@ -162,7 +166,8 @@ require([
     'WoltLabSuite/Core/Event/Handler',
     'WoltLabSuite/Core/Component/Ckeditor/Event',
     'WoltLabSuite/Core/Dom/Util',
-], function (EventHandler, CkeditorEvent, DomUtil) {
+    'WoltLabSuite/Core/Ui/Search/Input',
+], function (EventHandler, CkeditorEvent, DomUtil, UiSearchInput) {
     'use strict';
 
     const wysiwygId = '{if $wysiwygSelector|isset}{$wysiwygSelector}{else}text{/if}';
@@ -170,7 +175,7 @@ require([
     const container = document.getElementById('electionBot_' + wysiwygId);
     // sections needs to be a live HTMLCollection
     const sections = container.getElementsByClassName('electionBotSection');
-    
+
     for (const el of container.querySelectorAll('[data-enable-if-checked]')) {
         const checkbox = document.getElementById(el.dataset.enableIfChecked);
         if (el.classList.contains('inputDatePicker')) {
@@ -203,6 +208,19 @@ require([
             newNode.querySelector('.electionAddRemoveBtn').addEventListener('click', () => {
                 addContainer.removeChild(newNode);
             });
+            let i = 0;
+            for (const input of subNode.querySelectorAll('input[type=text]')) {
+                if (i++ === 0) {
+                    input.focus();
+                }
+                new UiSearchInput(input, {
+                    ajax: {
+                        className: "wbb\\data\\election\\ParticipantAction",
+                        parameters: { data: { threadID: document.body.dataset.threadId } },
+                    },
+                    minLength: 1,
+                });
+            }
         });
     }
 

@@ -118,4 +118,3 @@ class VoteList extends DatabaseObjectList {
         return array_map(fn(array $lines): string => implode('<br/>', $lines), $linesByPhase);
     }
 }
-

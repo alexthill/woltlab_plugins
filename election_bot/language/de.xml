@@ -57,6 +57,7 @@
             <item name="wbb.electionbot.form.addVoteValue.description"><![CDATA[Von/Wert:]]></item>
             <item name="wbb.electionbot.form.participant.edit"><![CDATA[Spieler bearbeiten]]></item>
             <item name="wbb.electionbot.form.participant.add"><![CDATA[Spieler hinzufügen]]></item>
+            <item name="wbb.electionbot.form.participant.aliases"><![CDATA[Aliase]]></item>
             <item name="wbb.electionbot.form.participant.marker"><![CDATA[Farbliche Markierung]]></item>
             <item name="wbb.electionbot.form.participant.extra"><![CDATA[Zusätzlicher Text]]></item>
             <item name="wbb.electionbot.form.participant.active"><![CDATA[Aktiver Spieler]]></item>
@@ -68,10 +69,10 @@
             <item name="wbb.electionbot.form.participants.error.invalid"><![CDATA[Nicht alle Namen sind gültig. Siehe Textfeld.]]></item>
             <item name="wbb.electionbot.form.participants.error.tooMany"><![CDATA[Die maximale Spieleranzahl von {#$maxCount} wurde überschritten.]]></item>
             <item name="wbb.electionbot.form.participants.error.longTitle"><![CDATA[Der Titel des Themas ist zusammen mit der Anzahl der Spieler (x/y) zu lang.]]></item>
-            <item name="wbb.electionbot.form.participants.inline.valid"><![CDATA[Valide Namen:]]></item>
-            <item name="wbb.electionbot.form.participants.inline.notFound"><![CDATA[Nicht existierende Namen:]]></item>
-            <item name="wbb.electionbot.form.participants.inline.tooLong"><![CDATA[Zu lange Namen (maximale Länge ist {#$maxLength}):]]></item>
-            <item name="wbb.electionbot.form.silence"><![CDATA[Ruhe zwischen den Tagen der Wahl]]></item>
+            <item name="wbb.electionbot.form.participants.inline.notFound"><![CDATA[Name existiert nicht]]></item>
+            <item name="wbb.electionbot.form.participants.inline.tooLong"><![CDATA[Name ist zu lang (max {#$maxLength})]]></item>
+            <item name="wbb.electionbot.form.participants.inline.duplicate"><![CDATA[Name kommt doppelt vor]]></item>
+            <item name="wbb.electionbot.form.silence"><![CDATA[Ruhe zwischen den Phasen der Wahl]]></item>
         </category>
 
         <category name="wcf.acl.option">
@@ -94,4 +95,7 @@
             <item name="wcf.editor.button.election.votehistory"><![CDATA[Verlauf]]></item>
         </category>
     </import>
+    <delete>
+        <item name="wbb.electionbot.form.participants.inline.valid"/>
+    </delete>
 </language>
