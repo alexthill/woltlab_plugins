@@ -42,7 +42,7 @@ class VoteList extends DatabaseObjectList {
                     SELECT MAX(voteID) as maxVoteID FROM {$list->getDatabaseTableName()}
                     WHERE electionID = $electionID AND phase = $phase AND voter != ?
                     GROUP BY voter
-                ) t2 ON voteID = t2.maxVoteID";
+                ) t2 ON voteID = t2.maxVoteID ORDER BY voteID";
         $statement = WCF::getDB()->prepareStatement($sql);
         $statement->execute([$exceptVoter]);
         $list->objects = $statement->fetchObjects(($list->objectClassName ?: $list->className));
