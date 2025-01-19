@@ -93,7 +93,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
             $voteCountHtml = $voteList->getVoteCount()->generateHtml();
             $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
         }
-        return "<h3>$label1</h3><p>$voteCountHtml</p><h3>$label2</h3><woltlab-spoiler>$voteHistoryHtml</woltlab-spoiler>";
+        return "<h3>$label1</h3><p>$voteCountHtml</p><woltlab-spoiler data-label=\"$label2\">$voteHistoryHtml</woltlab-spoiler>";
     }
 }
 

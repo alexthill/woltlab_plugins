@@ -42,7 +42,7 @@ class VoteList extends DatabaseObjectList {
                     SELECT MAX(voteID) as maxVoteID FROM {$list->getDatabaseTableName()}
                     WHERE electionID = $electionID AND phase = $phase AND voter != ?
                     GROUP BY voter
-                ) t2 ON voteID = t2.maxVoteID ORDER BY voteID";
+                ) t2 ON voteID = t2.maxVoteID";
         $statement = WCF::getDB()->prepareStatement($sql);
         $statement->execute([$exceptVoter]);
         $list->objects = $statement->fetchObjects(($list->objectClassName ?: $list->className));
@@ -66,7 +66,7 @@ class VoteList extends DatabaseObjectList {
                 SELECT MAX(voteID) as maxVoteID FROM {$list->getDatabaseTableName()}
                 WHERE electionID = $electionID AND phase <= $phase
                 GROUP BY voter, phase
-            ) t2 ON voteID = t2.maxVoteID";
+            ) t2 ON voteID = t2.maxVoteID ORDER BY voteID";
         $statement = WCF::getDB()->prepareStatement($sql);
         $statement->execute();
         $votes = $statement->fetchObjects(($list->objectClassName ?: $list->className));
@@ -95,25 +95,36 @@ class VoteList extends DatabaseObjectList {
 
     public function generateHistoryHtml(int $threadID): string {
         $lines = [];
+        $prevVotes = [];
         foreach ($this as $vote) {
             $lines[] = WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.votehistory.line',
-                ['vote' => $vote, 'threadID' => $threadID],
+                'wbb.electionbot.votehistory.line', [
+                    'vote' => $vote,
+                    'prevVote' => $prevVotes[$vote->voter] ?? null,
+                    'threadID' => $threadID,
+                ],
             );
+            $prevVotes[$vote->voter] = $vote;
         }
         return implode('<br/>', $lines);
     }
 
     public function generateMultiHistoryHtml(int $threadID): array {
         $linesByPhase = [];
+        $prevVotesByPhase = [];
         foreach ($this as $vote) {
             if (!isset($linesByPhase[$vote->phase])) {
                 $linesByPhase[$vote->phase] = [];
+                $prevVotesByPhase[$vote->phase] = [];
             }
             $linesByPhase[$vote->phase][] = WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.votehistory.line',
-                ['vote' => $vote, 'threadID' => $threadID],
+                'wbb.electionbot.votehistory.line', [
+                    'vote' => $vote,
+                    'prevVote' => $prevVotesByPhase[$vote->phase][$vote->voter] ?? null,
+                    'threadID' => $threadID,
+                ],
             );
+            $prevVotesByPhase[$vote->phase][$vote->voter] = $vote;
         }
         return array_map(fn(array $lines): string => implode('<br/>', $lines), $linesByPhase);
     }
