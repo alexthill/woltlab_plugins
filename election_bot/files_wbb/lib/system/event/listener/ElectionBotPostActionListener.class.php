@@ -7,6 +7,7 @@ use wbb\data\election\ElectionAction;
 use wbb\data\election\ElectionList;
 use wbb\data\election\ElectionOptions;
 use wbb\data\election\Participant;
+use wbb\data\election\ParticipantList;
 use wbb\data\election\VoteAction;
 use wbb\data\election\VoteList;
 use wbb\data\post\PostAction;
@@ -137,9 +138,9 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $this->voteValues[$electionID] = $count;
 
             $election = $elections[$electionID];
-            $voteCountHtml = VoteList::getLastElectionVotes($electionID, $election->phase, $voter)
-                ->getVoteCount()
-                ->generateHtmlWithNewVote($voter, $voted, $count);
+            $voteList = VoteList::getLastElectionVotes($electionID, $election->phase, $voter);
+            $voteCountHtml = $voteList->getVoteCount()->generateHtmlWithNewVote($voter, $voted, $count);
+
             $fragment = $doc->createDocumentFragment();
             $fragment->appendXML($voteCountHtml);
             $p = $doc->createElement('p');
@@ -160,9 +161,16 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             if ($m < 10) $m = '0' . $m;
             $h = intdiv($diff, 3600);
             if ($h < 10) $h = '0' . $h;
+
+            $voterCount = count($voteList) + 1;
+            $activeCount = ParticipantList::countActiveForThread($this->threadID);
+
             $timeLeft = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.votecount.timeLeft',
-                ['h' => $h, 'm' => $m, 's' => $s],
+                [
+                    'h' => $h, 'm' => $m, 's' => $s,
+                    'voterCount' => $voterCount, 'activeCount' => $activeCount,
+                ],
             );
             $body->appendChild($doc->createTextNode($timeLeft));
         }

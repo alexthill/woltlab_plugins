@@ -47,6 +47,32 @@ class ParticipantList extends DatabaseObjectList {
     }
 
     /**
+     * Returns the number of active participants for the given thread.
+     */
+    public static function countActiveForThread(int $threadID): int {
+        $list = new ParticipantList();
+        $sql = "SELECT COUNT(*) FROM {$list->getDatabaseTableName()} WHERE threadID = ? AND active";
+        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement->execute([$threadID]);
+        return $statement->fetchSingleColumn();
+    }
+
+    /**
+     * Returns all active participants from given thread which have not voted in the given election and phase.
+     */
+    public static function nonVotersForElectionPhase(int $threadID, int $electionID, int $phase): static {
+        $list = new ParticipantList();
+        $sql = "SELECT * FROM {$list->getDatabaseTableName()}
+                WHERE threadID = ? AND active AND name NOT IN (
+                    SELECT voter FROM wbb1_election_vote WHERE electionID = ? AND phase = ?
+                )";
+        $statement = WCF::getDB()->prepare($sql);
+        $statement->execute([$threadID, $electionID, $phase]);
+        $list->objects = $statement->fetchObjects(($list->objectClassName ?: $list->className));
+        return $list;
+    }
+
+    /**
      * load names from a newline-separated string
      * names are trimmed and lines starting with '#' are ignored
      * afterwards `validate` and `save` need to be called to save the list

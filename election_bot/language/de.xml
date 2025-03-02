@@ -11,9 +11,10 @@
             <item name="wbb.electionbot.vote.insert.for"><![CDATA[Abstimmen für]]></item>
             <item name="wbb.electionbot.vote.insert.for.description"><![CDATA[Feld leer lassen, um auf niemanden zu stimmen.]]></item>
             <item name="wbb.electionbot.votecount.title"><![CDATA[Stand {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
-            <item name="wbb.electionbot.votecount.timeLeft"><![CDATA[Verbleibende Zeit: {@$h}:{@$m}:{@$s}]]></item>
+            <item name="wbb.electionbot.votecount.timeLeft"><![CDATA[{#$voterCount}/{#$activeCount} – Verbleibende Zeit: {@$h}:{@$m}:{@$s}]]></item>
             <item name="wbb.electionbot.votecount.empty"><![CDATA[Keine Stimmen abgegeben]]></item>
             <item name="wbb.electionbot.votecount.unvote"><![CDATA[Stimme zurückgezogen]]></item>
+            <item name="wbb.electionbot.votecount.novote"><![CDATA[Kein Stimme abgegeben: {implode from=$array item=participant}{$participant->name}{/implode}]]></item>
             <item name="wbb.electionbot.votecount.error.phase"><![CDATA[Die ausgewählte Wahl ist aktuell bei Phase {#$currentPhase}. Es kann kein Stand oder Verlauf für eine höhere Phase generiert werden.]]></item>
             <item name="wbb.electionbot.votecount.insert"><![CDATA[Stand einfügen]]></item>
             <item name="wbb.electionbot.votecount.insert.phase"><![CDATA[Für Phase Nummer]]></item>

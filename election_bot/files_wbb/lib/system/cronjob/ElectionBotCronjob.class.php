@@ -4,6 +4,7 @@ namespace wbb\system\cronjob;
 
 use wbb\data\election\Election;
 use wbb\data\election\ElectionList;
+use wbb\data\election\ParticipantList;
 use wbb\data\election\VoteList;
 use wbb\data\post\PostAction;
 use wcf\data\cronjob\Cronjob;
@@ -53,7 +54,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
             $html = WCF::getLanguage()->get('wbb.electionbot.deadlineOverPost.title');
             try {
                 foreach ($elections as $election) {
-                    $html .= $this->generateHtmlForElection($election);
+                    $html .= $this->generateHtmlForElection($threadID, $election);
                 }
             } catch (\Exception $exception) {
                 $html .= '<h2>' . WCF::getLanguage()->get('wcf.global.exception.title') . '</h2>'
@@ -76,7 +77,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
         }
     }
 
-    private function generateHtmlForElection(Election $election): string {
+    private function generateHtmlForElection(int $threadID, Election $election): string {
         $voteList = VoteList::getElectionVotes($election->electionID, $election->phase);
         $label1 = WCF::getLanguage()->getDynamicVariable(
             'wbb.electionbot.votecount.title',
@@ -86,6 +87,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
             'wbb.electionbot.votehistory.title',
             ['election' => $election],
         );
+
         if (count($voteList) === 0) {
             $voteCountHtml = WCF::getLanguage()->get('wbb.electionbot.votecount.empty');
             $voteHistoryHtml = $voteCountHtml;
@@ -93,7 +95,17 @@ final class ElectionBotCronjob extends AbstractCronjob {
             $voteCountHtml = $voteList->getVoteCount()->generateHtml();
             $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
         }
-        return "<h3>$label1</h3><p>$voteCountHtml</p><woltlab-spoiler data-label=\"$label2\">$voteHistoryHtml</woltlab-spoiler>";
+
+        $noVoters = ParticipantList::nonVotersForElectionPhase($threadID, $election->electionID, $election->phase);
+        $noVotersHtml = '';
+        if (count($noVoters->objects) !== 0) {
+            $noVoters = WCF::getLanguage()->getDynamicVariable(
+                'wbb.electionbot.votecount.novote',
+                ['array' => $noVoters->objects],
+            );
+            $noVotersHtml = "<p>$noVoters</p>";
+        }
+
+        return "<h3>$label1</h3><p>$voteCountHtml</p>$noVotersHtml<woltlab-spoiler data-label=\"$label2\">$voteHistoryHtml</woltlab-spoiler>";
     }
 }
-
