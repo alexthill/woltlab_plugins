@@ -132,7 +132,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         foreach ($this->votes as $electionID => $voted) {
             $sql = "SELECT count FROM wbb1_election_voter WHERE electionID = ? AND voter = ?";
             $statement = WCF::getDB()->prepare($sql, 1);
-            $statement->execute([$electionID, WCF::getUser()->username]);
+            $statement->execute([$electionID, $voter]);
             $count = $statement->fetchSingleColumn();
             $count = $count === false ? 1 : $count;
             $this->voteValues[$electionID] = $count;
