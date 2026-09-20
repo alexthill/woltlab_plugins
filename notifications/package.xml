@@ -5,8 +5,8 @@
         <packagedescription>Adds additional notifications to the calendar</packagedescription>
         <packagename language="de">Benachrichtigungen</packagename>
         <packagedescription language="de">Fügt zusätzliche Benachrichtigungen zum Kalender hinzu</packagedescription>
-        <version>6.0.0</version>
-        <date>2024-01-09</date>
+        <version>6.2.0</version>
+        <date>2026-09-20</date>
     </packageinformation>
 
     <authorinformation>
@@ -15,8 +15,8 @@
     </authorinformation>
 
     <requiredpackages>
-        <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
-        <requiredpackage minversion="6.0.0">com.woltlab.calendar</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.wcf</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.calendar</requiredpackage>
     </requiredpackages>
 
     <instructions type="install">
@@ -26,7 +26,9 @@
         <instruction type="userNotificationEvent" />
     </instructions>
 
-    <instructions type="update" fromversion="6.0.0 Alpha 6">
-        <void/>
+    <instructions type="update" fromversion="6.0.0">
+        <instruction type="language" />
+        <instruction type="file" application="calendar">files_calendar.tar</instruction>
+        <instruction type="userNotificationEvent" />
     </instructions>
 </package>

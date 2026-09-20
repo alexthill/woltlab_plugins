@@ -12,7 +12,7 @@ use wcf\system\user\notification\event\ITestableUserNotificationEvent;
 use wcf\system\user\notification\event\TTestableUserNotificationEvent;
 
 /**
- * Notification event for when an undecided event participant changes to not participating.
+ * Notification event for a new undecided event participant.
  * 
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
@@ -20,7 +20,7 @@ use wcf\system\user\notification\event\TTestableUserNotificationEvent;
  *
  * @method  EventDateParticipationUserNotificationObject  getUserNotificationObject()
  */
-class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEvent implements
+class MaybeRegisterNotificationEvent extends AbstractSharedUserNotificationEvent implements
     ITestableUserNotificationEvent
 {
     use TTestableEventDateRelatedUserNotificationEvent;
@@ -46,7 +46,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
         $count = \count($this->getAuthors());
         if ($count > 1) {
             return $this->getLanguage()->getDynamicVariable(
-                'calendar.event.maybeUnregister.notification.title.stacked',
+                'calendar.event.maybeRegister.notification.title.stacked',
                 [
                     'count' => $count,
                     'timesTriggered' => $this->notification->timesTriggered,
@@ -54,7 +54,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
             );
         }
 
-        return $this->getLanguage()->get('calendar.event.maybeUnregister.notification.title');
+        return $this->getLanguage()->get('calendar.event.maybeRegister.notification.title');
     }
 
     /**
@@ -68,7 +68,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
 
         if ($count > 1) {
             return $this->getLanguage()->getDynamicVariable(
-                'calendar.event.maybeUnregister.notification.message.stacked',
+                'calendar.event.maybeRegister.notification.message.stacked',
                 [
                     'author' => $this->author,
                     'authors' => $authors,
@@ -80,7 +80,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
             );
         }
 
-        return $this->getLanguage()->getDynamicVariable('calendar.event.maybeUnregister.notification.message', [
+        return $this->getLanguage()->getDynamicVariable('calendar.event.maybeRegister.notification.message', [
             'participation' => $this->userNotificationObject,
             'author' => $this->author,
             'eventDate' => $eventDate,
@@ -122,7 +122,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
      */
     public static function getTestObjects(UserProfile $recipient, UserProfile $author) {
         return [
-            new MaybeUnregisterNotificationEvent(self::createTestEventDateParticipation(
+            new MaybeRegisterNotificationEvent(self::createTestEventDateParticipation(
                 $recipient,
                 $author
             )),

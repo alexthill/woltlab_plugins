@@ -26,14 +26,31 @@ class ParticipationChangeActionListener implements IParameterizedEventListener {
 
         $eventDate = $eventObj->getObjects()[0]->getDecoratedObject();
         $prevDecision = $eventObj->eventDateParticipation->decision;
-        $eventName = null;
+        
+        //  prev \ curr
+        // |        | no sel | yes    | maybe  | no     |
+        // | ------ | ------ | ------ | ------ | ------ |
+        // | no sel | /      | re 🟢  | mre ✅ | dc     |
+        // | yes    | ur  🟠 | /      | ?   🟠 | ur  ✅ |
+        // | maybe  | mur 🟠 | re 🟢  | /      | mur ✅ |
+        // | no     | dc     | re 🟢  | mre ✅ | /      |
+        //
+        // ✅ notification implemented
+        // 🟢 notification handled by woltlab
+        // 🟠 notification could be improved
+        // ❗ notification missing
+        // dc = don't care, ur = unregister, mur = maybe unregister, re = register, mre = maybe register
         
         if (!empty($param['decision'])) {
-            if ($prevDecision === 'yes' && $param['decision'] !== 'yes') {
-                $eventName = 'participationUnregister';
-            } else if ($prevDecision === 'maybe' && $param['decision'] === 'no') {
-                $eventName = 'participationMaybeUnregister';
-            }
+            $eventName = match ($param['decision']) {
+                'maybe' => 'participationMaybeRegister',
+                'no' => match($prevDecision) {
+                    'yes' => 'participationUnregister',
+                    'maybe' => 'participationMaybeUnregister',
+                    default => null,
+                },
+                default => null,
+            };
 
             if ($eventName !== null) {
                 UserNotificationHandler::getInstance()->fireEvent(

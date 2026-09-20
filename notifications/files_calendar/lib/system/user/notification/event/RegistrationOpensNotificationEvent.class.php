@@ -4,6 +4,7 @@ namespace calendar\system\user\notification\event;
 
 use calendar\system\user\notification\object\EventUserNotificationObject;
 use wcf\system\user\notification\event\AbstractUserNotificationEvent;
+use wcf\system\user\notification\event\ITestableUserNotificationEvent;
 
 /**
  * Notification event for calendar event registration opens.
@@ -14,12 +15,25 @@ use wcf\system\user\notification\event\AbstractUserNotificationEvent;
  *
  * @method  EventUserNotificationObject getUserNotificationObject()
  */
-class RegistrationOpensNotificationEvent extends AbstractUserNotificationEvent {
+class RegistrationOpensNotificationEvent extends AbstractUserNotificationEvent implements ITestableUserNotificationEvent
+{
+    use TTestableEventUserNotificationEvent;
+
     /**
      * @inheritDoc
      */
-    public function checkAccess() {
-        return $this->getUserNotificationObject()->canRead();
+    public function getTitle(): string {
+        return $this->getLanguage()->get('calendar.event.registrationOpens.notification.title');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMessage(): string {
+        return $this->getLanguage()->getDynamicVariable('calendar.event.registrationOpens.notification.message', [
+            'event' => $this->getUserNotificationObject(),
+            'author' => $this->author,
+        ]);
     }
 
     /**
@@ -27,7 +41,6 @@ class RegistrationOpensNotificationEvent extends AbstractUserNotificationEvent {
      */
     public function getEmailMessage($notificationType = 'instant') {
         $eventDate = $this->getUserNotificationObject()->getFirstEventDate();
-        $eventDate->setEvent($this->getUserNotificationObject()->getDecoratedObject());
 
         return [
             'message-id' => 'com.woltlab.calendar.event/' . $this->getUserNotificationObject()->eventID,
@@ -51,17 +64,7 @@ class RegistrationOpensNotificationEvent extends AbstractUserNotificationEvent {
     /**
      * @inheritDoc
      */
-    public function getMessage(): string {
-        return $this->getLanguage()->getDynamicVariable('calendar.event.registrationOpens.notification.message', [
-            'author' => $this->author,
-            'event' => $this->getUserNotificationObject(),
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTitle(): string {
-        return $this->getLanguage()->get('calendar.event.registrationOpens.notification.title');
+    public function checkAccess() {
+        return $this->getUserNotificationObject()->canRead();
     }
 }
