@@ -37,7 +37,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
         $sql = "UPDATE {$list->getDatabaseTableName()}
                 SET isActive = 0
                 WHERE electionID IN (?$questionMarks)";
-        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
         $statement->execute($list->getObjectIDs());
 
         $botUser = new User(WBB_ELECTION_BOT_USER_ID);

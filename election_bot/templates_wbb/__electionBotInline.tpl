@@ -27,6 +27,9 @@
                 <dd>
                     <label><input type="checkbox" name="electionStart" id="showDeadlineChanger{@$id}"> {lang}wbb.electionbot.form.start{/lang}</label>
                 </dd>
+                <dd>
+                    <label><input type="number" id="electionPhase{@$id}" name="electionPhase" value="{@$election->phase + 1}" class="short" min="0" max="10000" data-enable-if-checked="showDeadlineChanger{@$id}"> {lang}wbb.electionbot.form.phase{/lang}</label>
+                </dd>
             {/if}
                 <dd>
                     <input type="datetime" id="electionDeadline{@$id}" name="electionDeadline" value="{time time=$election->getNextDeadline() type='machine'}" class="medium" data-enable-if-checked="showDeadlineChanger{@$id}">

@@ -5,8 +5,8 @@
         <packagedescription>Election Bot</packagedescription>
         <packagename language="de">Wahl-Bot</packagename>
         <packagedescription language="de">Wahl-Bot</packagedescription>
-        <version>6.0.3</version>
-        <date>2024-10-13</date>
+        <version>6.2.0 BETA 1</version>
+        <date>2025-03-02</date>
     </packageinformation>
 
     <authorinformation>
@@ -15,8 +15,8 @@
     </authorinformation>
 
     <requiredpackages>
-        <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
-        <requiredpackage minversion="6.0.0">com.woltlab.wbb</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.wcf</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.wbb</requiredpackage>
     </requiredpackages>
 
     <instructions type="install">
@@ -24,7 +24,6 @@
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
         <instruction type="database" application="wbb">acp/database/install_com.alexthill.election_bot.php</instruction>
-        <instruction type="database" application="wbb">acp/database/update_com.alexthill.election_bot_6.0.3.php</instruction>
         <instruction type="aclOption" />
         <instruction type="bbcode" />
         <instruction type="cronjob" />
@@ -33,20 +32,9 @@
         <instruction type="templateListener" />
     </instructions>
 
-    <instructions  type="update" fromversion="6.0.1">
+    <instructions  type="update" fromversion="6.0.3">
         <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
-        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
-        <instruction type="database" application="wbb">acp/database/update_com.alexthill.election_bot_6.0.3.php</instruction>
-        <instruction type="script" application="wbb">update_com.alexthill.election_bot_6.0.3.php</instruction>
-    </instructions>
-
-    <instructions  type="update" fromversion="6.0.2">
-        <instruction type="language" />
-        <instruction type="file" application="wbb">files_wbb.tar</instruction>
-        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
-        <instruction type="database" application="wbb">acp/database/update_com.alexthill.election_bot_6.0.3.php</instruction>
-        <instruction type="script" application="wbb">update_com.alexthill.election_bot_6.0.3.php</instruction>
     </instructions>
 
     <instructions type="uninstall">

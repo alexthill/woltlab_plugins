@@ -43,7 +43,7 @@ class VoteList extends DatabaseObjectList {
                     WHERE electionID = $electionID AND phase = $phase AND voter != ?
                     GROUP BY voter
                 ) t2 ON voteID = t2.maxVoteID";
-        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
         $statement->execute([$exceptVoter]);
         $list->objects = $statement->fetchObjects(($list->objectClassName ?: $list->className));
 
@@ -59,15 +59,15 @@ class VoteList extends DatabaseObjectList {
         return $list;
     }
 
-    public static function getAllVoteCounts(int $electionID, int $phase): array {
+    public static function getAllVoteCounts(int $electionID, int $upToPhase): array {
         $list = new VoteList();
         $sql = "SELECT voteID, postID, voter, voted, time, count, phase FROM {$list->getDatabaseTableName()}
             JOIN (
                 SELECT MAX(voteID) as maxVoteID FROM {$list->getDatabaseTableName()}
-                WHERE electionID = $electionID AND phase <= $phase
+                WHERE electionID = $electionID AND phase <= $upToPhase
                 GROUP BY voter, phase
             ) t2 ON voteID = t2.maxVoteID ORDER BY voteID";
-        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
         $statement->execute();
         $votes = $statement->fetchObjects(($list->objectClassName ?: $list->className));
 

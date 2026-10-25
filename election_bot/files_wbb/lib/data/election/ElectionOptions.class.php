@@ -20,6 +20,8 @@ class ElectionOptions {
 
     public bool $changeDeadline = false;
 
+    public int $phase = -1;
+
     public ?\DateTime $deadline = null;
 
     public array $addVotes = [];
@@ -36,6 +38,9 @@ class ElectionOptions {
         }
         if (!empty($parameters['electionChangeDeadline'])) {
             $options->changeDeadline = true;
+        }
+        if ($options->start && !empty($parameters['electionPhase'])) {
+            $options->phase = (int)$parameters['electionPhase'];
         }
         if (($options->changeDeadline || $options->start) && !empty($parameters['electionDeadline'])) {
             $deadline = \DateTime::createFromFormat(\DateTimeInterface::ATOM, $parameters['electionDeadline']);

@@ -143,6 +143,7 @@ final class ElectionBotParticipantsAction implements RequestHandlerInterface {
         $postList = new PostList();
         $postList->sqlOffset = 1;
         $postList->sqlLimit = 1;
+        $postList->sqlOrderBy = 'postId';
         $postList->getConditionBuilder()->add('threadID = ?', [$threadID]);
         $postList->readObjects();
         $post = $postList->getSingleObject();

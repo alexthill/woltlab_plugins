@@ -52,7 +52,7 @@ class ParticipantList extends DatabaseObjectList {
     public static function countActiveForThread(int $threadID): int {
         $list = new ParticipantList();
         $sql = "SELECT COUNT(*) FROM {$list->getDatabaseTableName()} WHERE threadID = ? AND active";
-        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
         $statement->execute([$threadID]);
         return $statement->fetchSingleColumn();
     }
@@ -204,7 +204,7 @@ class ParticipantList extends DatabaseObjectList {
      * returns the input from `static::fromNsvInput` but with remarks about which names are invalid.
      *
      * @return  string
-     * @throws  BadMethodCallException  if `validate` has not been called
+     * @throws  \BadMethodCallException  if `validate` has not been called
      */
     public function getValidatedInput(): string {
         if (!$this->validated) {
@@ -230,7 +230,7 @@ class ParticipantList extends DatabaseObjectList {
      * Save the names loaded from `static::fromNsvInput` to the database.
      *
      * @return  void
-     * @throws  BadMethodCallException  if `validate` has not been called
+     * @throws  \BadMethodCallException  if `validate` has not been called
      */
     public function save(int $threadID): void {
         if (!$this->validated) {

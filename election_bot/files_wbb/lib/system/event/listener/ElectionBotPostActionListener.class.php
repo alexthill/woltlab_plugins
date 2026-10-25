@@ -162,8 +162,18 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $h = intdiv($diff, 3600);
             if ($h < 10) $h = '0' . $h;
 
-            $voterCount = count($voteList) + 1;
+            // To correctly get the number of active participants who have already voted, we first
+            // get all the non voting participants, substract the current voter if it is in that list
+            // and substract that count from all active participants.
+            $nonVoters = ParticipantList::nonVotersForElectionPhase($this->threadID, $electionID, $election->phase);
+            $nonVoterCount = count($nonVoters);
+            foreach ($nonVoters->objects as $participant) {
+                if ($participant->name === $voter) {
+                    $nonVoterCount -= 1;
+                }
+            }
             $activeCount = ParticipantList::countActiveForThread($this->threadID);
+            $voterCount = max(0, $activeCount - $nonVoterCount);
 
             $timeLeft = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.votecount.timeLeft',
@@ -305,7 +315,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         $data = [];
         $msgs = [];
         if (!$election->isActive && $options->start) {
-            $data['phase'] = $election->phase + 1;
+            $data['phase'] = $options->phase === -1 ? $election->phase + 1 : $options->phase;
             $data['isActive'] = 1;
             $data['deadline'] = $options->deadline->getTimestamp();
             $msgs[] = WCF::getLanguage()->getDynamicVariable(
