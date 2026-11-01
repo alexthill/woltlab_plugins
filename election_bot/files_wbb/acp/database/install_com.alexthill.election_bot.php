@@ -24,6 +24,8 @@ return [
             NotNullInt10DatabaseTableColumn::create('phase'),
             DefaultTrueBooleanDatabaseTableColumn::create('isActive'),
             DefaultFalseBooleanDatabaseTableColumn::create('silenceBetweenPhases'),
+            NotNullInt10DatabaseTableColumn::create('reminder'),
+            DefaultFalseBooleanDatabaseTableColumn::create('isReminded'),
         ])
         ->foreignKeys([
             DatabaseTableForeignKey::create()
