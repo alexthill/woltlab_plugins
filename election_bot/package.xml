@@ -5,8 +5,8 @@
         <packagedescription>Election Bot</packagedescription>
         <packagename language="de">Wahl-Bot</packagename>
         <packagedescription language="de">Wahl-Bot</packagedescription>
-        <version>6.2.0 Beta 2</version>
-        <date>2026-10-25</date>
+        <version>6.2.0</version>
+        <date>2026-11-01</date>
     </packageinformation>
 
     <authorinformation>
@@ -40,7 +40,7 @@
         <instruction type="option" />
     </instructions>
 
-    <instructions  type="update" fromversion="6.2.0 Beta 1">
+    <instructions  type="update" fromversion="6.2.0 Beta 2">
         <instruction type="language" />
         <instruction type="file" application="wbb">files_wbb.tar</instruction>
         <instruction type="template" application="wbb">templates_wbb.tar</instruction>
