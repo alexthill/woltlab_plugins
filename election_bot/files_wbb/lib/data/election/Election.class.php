@@ -3,6 +3,7 @@
 namespace wbb\data\election;
 
 use wcf\data\DatabaseObject;
+use wcf\system\WCF;
 use wcf\util\StringUtil;
 
 /**
@@ -18,6 +19,7 @@ use wcf\util\StringUtil;
  * @property-read   string      $name0          user given name for pahse 0 of the election
  * @property-read   int         $deadline       time when the election ends
  * @property-read   int         $extension      extension of the deadline in seconds when a new phase starts
+ * @property-read   int         $reminder       second before end of deadline to post reminder
  * @property-read   string      $phase          the how many election this is 
  * @property-read   bool        $isActive       if currently an election is active
  * @property-read   bool        $silenceBetweenPhases   if users are forbidden to post between phases
@@ -95,5 +97,36 @@ class Election extends DatabaseObject {
             $title = "$this->name0/$title";
         }
         return StringUtil::encodeHTML($title);
+    }
+
+    public function formatTimeLeft(string $withVoter = null): string {
+        $diff = $this->deadline - TIME_NOW;
+        $s = $diff % 60;
+        if ($s < 10) $s = '0' . $s;
+        $m = intdiv($diff, 60) % 60;
+        if ($m < 10) $m = '0' . $m;
+        $h = intdiv($diff, 3600);
+        if ($h < 10) $h = '0' . $h;
+
+        // To correctly get the number of active participants who have already voted, we first
+        // get all the non voting participants, substract the current voter if it is in that list
+        // and substract that count from all active participants.
+        $nonVoters = ParticipantList::nonVotersForElectionPhase($this->threadID, $this->electionID, $this->phase);
+        $nonVoterCount = count($nonVoters);
+        foreach ($nonVoters->objects as $participant) {
+            if ($participant->name === $withVoter) {
+                $nonVoterCount -= 1;
+            }
+        }
+        $activeCount = ParticipantList::countActiveForThread($this->threadID);
+        $voterCount = max(0, $activeCount - $nonVoterCount);
+
+        return WCF::getLanguage()->getDynamicVariable(
+            'wbb.electionbot.votecount.timeLeft',
+            [
+                'h' => $h, 'm' => $m, 's' => $s,
+                'voterCount' => $voterCount, 'activeCount' => $activeCount,
+            ],
+        );
     }
 }

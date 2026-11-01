@@ -7,7 +7,6 @@ use wbb\data\election\ElectionAction;
 use wbb\data\election\ElectionList;
 use wbb\data\election\ElectionOptions;
 use wbb\data\election\Participant;
-use wbb\data\election\ParticipantList;
 use wbb\data\election\VoteAction;
 use wbb\data\election\VoteList;
 use wbb\data\post\PostAction;
@@ -154,34 +153,8 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
             $spoiler->setAttribute('data-label', $label);
             $body->appendChild($spoiler);
 
-            $diff = $election->deadline - TIME_NOW;
-            $s = $diff % 60;
-            if ($s < 10) $s = '0' . $s;
-            $m = intdiv($diff, 60) % 60;
-            if ($m < 10) $m = '0' . $m;
-            $h = intdiv($diff, 3600);
-            if ($h < 10) $h = '0' . $h;
 
-            // To correctly get the number of active participants who have already voted, we first
-            // get all the non voting participants, substract the current voter if it is in that list
-            // and substract that count from all active participants.
-            $nonVoters = ParticipantList::nonVotersForElectionPhase($this->threadID, $electionID, $election->phase);
-            $nonVoterCount = count($nonVoters);
-            foreach ($nonVoters->objects as $participant) {
-                if ($participant->name === $voter) {
-                    $nonVoterCount -= 1;
-                }
-            }
-            $activeCount = ParticipantList::countActiveForThread($this->threadID);
-            $voterCount = max(0, $activeCount - $nonVoterCount);
-
-            $timeLeft = WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.votecount.timeLeft',
-                [
-                    'h' => $h, 'm' => $m, 's' => $s,
-                    'voterCount' => $voterCount, 'activeCount' => $activeCount,
-                ],
-            );
+            $timeLeft = $election->formatTimeLeft($voter);
             $body->appendChild($doc->createTextNode($timeLeft));
         }
     }
@@ -289,9 +262,17 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                 } else {
                     $data = ElectionAction::extractFormData($form, $this->threadID);
                     $this->electionData[0] = $data;
-                    $this->electionData[0]['msgs'] = [WCF::getLanguage()->getDynamicVariable(
-                        'wbb.electionbot.message.create', $data
-                    )];
+                    $this->electionData[0]['msgs'] = [
+                        WCF::getLanguage()->getDynamicVariable(
+                            'wbb.electionbot.message.create',
+                            [
+                                'name' => $data['data']['name'],
+                                'name0' => $data['data']['name0'],
+                                'deadline' => $data['data']['deadline'],
+                                'reminder' => $data['data']['reminder'],
+                            ]
+                        ),
+                    ];
                 }
             }
         }
@@ -317,21 +298,24 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
         if (!$election->isActive && $options->start) {
             $data['phase'] = $options->phase === -1 ? $election->phase + 1 : $options->phase;
             $data['isActive'] = 1;
-            $data['deadline'] = $options->deadline->getTimestamp();
+            $data['isReminded'] = 0;
             $msgs[] = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.message.start',
-                ['time' => $options->deadline, 'phase' => $data['phase']],
+                ['phase' => $data['phase']],
             );
         }
         if ($election->isActive && $options->end) {
             $data['isActive'] = 0;
             $msgs[] = WCF::getLanguage()->get('wbb.electionbot.message.end');
         }
-        if ($options->changeDeadline && $options->deadline !== null) {
+        if ($options->deadline !== null) {
             $data['deadline'] = $options->deadline->getTimestamp();
+            if ($options->reminder !== $election->reminder && $options->reminder >= 0) {
+                $data['reminder'] = $options->reminder;
+            }
             $msgs[] = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.message.deadline',
-                ['time' => $options->deadline],
+                ['time' => $options->deadline, 'reminder' => $options->reminder],
             );
         }
         foreach ($options->addVotes as $vote) {

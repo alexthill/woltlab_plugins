@@ -22,6 +22,8 @@ class ElectionOptions {
 
     public int $phase = -1;
 
+    public int $reminder = -1;
+
     public ?\DateTime $deadline = null;
 
     public array $addVotes = [];
@@ -42,9 +44,13 @@ class ElectionOptions {
         if ($options->start && !empty($parameters['electionPhase'])) {
             $options->phase = (int)$parameters['electionPhase'];
         }
-        if (($options->changeDeadline || $options->start) && !empty($parameters['electionDeadline'])) {
-            $deadline = \DateTime::createFromFormat(\DateTimeInterface::ATOM, $parameters['electionDeadline']);
-            $options->deadline = $deadline;
+        if ($options->changeDeadline || $options->start) {
+            if (!empty($parameters['electionDeadline'])) {
+                $options->deadline = \DateTime::createFromFormat(\DateTimeInterface::ATOM, $parameters['electionDeadline']);
+            }
+            if (!empty($parameters['electionReminder'])) {
+                $options->reminder = (int)$parameters['electionReminder'] * 60; // minutes to seconds
+            }
         }
         if (isset($parameters['electionAddVote'])) {
             if (is_array($parameters['electionAddVote'])) {

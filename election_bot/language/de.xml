@@ -3,6 +3,7 @@
     <import>
         <category name="wbb.electionbot">
             <item name="wbb.electionbot.deadlineOverPost.title"><![CDATA[<h2>Deadline abgelaufen</h2>]]></item>
+            <item name="wbb.electionbot.deadlineReminderPost.title"><![CDATA[<h2>Erinnerung an Deadline</h2>]]></item>
             <item name="wbb.electionbot.participantListPost.update"><![CDATA[automatische Aktualisierung]]></item>
             <item name="wbb.electionbot.vote"><![CDATA[{if $election|isset}{$election} {/if}VOTE: {@$vote}]]></item>
             <item name="wbb.electionbot.vote.invalid"><![CDATA[{if $election|isset}{$election} {/if}Ungültiger VOTE: {@$vote}]]></item>
@@ -24,12 +25,12 @@
             <item name="wbb.electionbot.votehistory.title"><![CDATA[Verlauf {@$election->getTitle()} - Phase {if $phase|isset}{#$phase}{else}{#$election->phase}{/if}]]></item>
             <item name="wbb.electionbot.votehistory.line"><![CDATA[<a href="{link controller='Thread' application='wbb' id=$threadID isACP=0}postID={@$vote->postID}#post{@$vote->postID}{/link}">{$vote->voter} stimmt{if $prevVote|isset && $prevVote->voted !== ''} von {$prevVote->voted}{/if} auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}</a> ({time time=$vote->time type='custom' format='j. M y G:i'})]]></item>
             <item name="wbb.electionbot.votehistory.insert"><![CDATA[Verlauf einfügen]]></item>
-            <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt.]]></item>
+            <item name="wbb.electionbot.message.deadline"><![CDATA[Deadline auf {time time=$time type='plainTime'} gesetzt{if $reminder|isset && $reminder > 0} mit Erinnerung {#$reminder / 60} Minuten vorher{/if}.]]></item>
             <item name="wbb.electionbot.message.end"><![CDATA[Wahl wurde beendet.]]></item>
-            <item name="wbb.electionbot.message.start"><![CDATA[Phase {#$phase} wurde gestartet. Deadline: {time time=$time type='plainTime'}]]></item>
+            <item name="wbb.electionbot.message.start"><![CDATA[Phase {#$phase} wurde gestartet.]]></item>
             <item name="wbb.electionbot.message.addVote"><![CDATA[{$vote->voter} stimmt auf {if $vote->voted === ''}<em>niemanden</em>{else}{$vote->voted}{/if}{if $vote->count !== 1} mit Stimmwert {#$vote->count}{/if}.]]></item>
             <item name="wbb.electionbot.message.addVoteValue"><![CDATA[Der Stimmwert von {$vote->voter} wurde auf {#$vote->count} gesetzt.]]></item>
-            <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{if $data['name0']|isset && $data['name0'] !== ''}{$data['name0']}/{/if}{$data['name']}“ mit Deadline {time time=$data['deadline'] type='plainTime'} erstellt.]]></item>
+            <item name="wbb.electionbot.message.create"><![CDATA[Neue Wahl „{if !$name0|empty}{$name0}/{/if}{$name}“ mit Deadline {time time=$deadline type='plainTime'}{if $reminder|isset && $reminder > 0} und Erinnerung {#$reminder / 60} Minuten vorher{/if} erstellt.]]></item>
             <item name="wbb.electionbot.editorTab"><![CDATA[Wahlen]]></item>
             <item name="wbb.electionbot.form.reloadPage"><![CDATA[Bitte lade die Seite neu, um weitere Änderung vorzunehmen.]]></item>
             <item name="wbb.electionbot.form.error"><![CDATA[Wahl-Bot-Fehler (siehe den Tab „Wahlen“ für mehr Details)]]></item>
@@ -47,6 +48,8 @@
             <item name="wbb.electionbot.form.deadlineDisplay"><![CDATA[Ende der Wahl:]]></item>
             <item name="wbb.electionbot.form.extension"><![CDATA[Verlängerung der Deadline]]></item>
             <item name="wbb.electionbot.form.extension.description"><![CDATA[Um wie viele Minuten die Deadline automatisch für die nächste Phase verlängert werden soll.]]></item>
+            <item name="wbb.electionbot.form.reminder"><![CDATA[Deadline Erinnerung]]></item>
+            <item name="wbb.electionbot.form.reminder.description"><![CDATA[Wie viele Minuten vor Ablauf der Deadline eine automatische Erinnerung gepostet werden soll (0 zum Deaktivieren).]]></item>
             <item name="wbb.electionbot.form.phase"><![CDATA[Starte mit Phase Nummer]]></item>
             <item name="wbb.electionbot.form.addVote"><![CDATA[Stimme hinzufügen]]></item>
             <item name="wbb.electionbot.form.addVote.description"><![CDATA[Von/Auf/Wert:]]></item>

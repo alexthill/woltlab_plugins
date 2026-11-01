@@ -34,6 +34,9 @@
                 <dd>
                     <input type="datetime" id="electionDeadline{@$id}" name="electionDeadline" value="{time time=$election->getNextDeadline() type='machine'}" class="medium" data-enable-if-checked="showDeadlineChanger{@$id}">
                 </dd>
+                <dd>
+                    <label><input type="number" id="electionReminder{@$id}" name="electionReminder" value="{@$election->reminder / 60}" class="short" min="0" max="525600" data-enable-if-checked="showDeadlineChanger{@$id}"> {lang}wbb.electionbot.form.reminder.description{/lang}</label>
+                </dd>
             </dl>
         </section>
     {/foreach}
