@@ -34,7 +34,11 @@ final class ElectionBotCronjob extends AbstractCronjob {
             return;
         }
 
-        $this->botUser = new User(WBB_ELECTION_BOT_USER_ID);
+        if (date('m-d') === '04-01') {
+            $this->botUser = new User(WBB_ELECTION_BOT_USER_ID_TEST);
+        } else {
+            $this->botUser = new User(WBB_ELECTION_BOT_USER_ID);
+        }
 
         $this->execute_reminders();
         $this->execute_deadlines();

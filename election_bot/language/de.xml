@@ -90,6 +90,8 @@
             <item name="wcf.acp.option.category.board.electionbot.general"><![CDATA[Allgemein]]></item>
             <item name="wcf.acp.option.wbb_election_bot_user_id"><![CDATA[Bot-Benutzer-ID]]></item>
             <item name="wcf.acp.option.wbb_election_bot_user_id.description"><![CDATA[Die userID des Benutzers, der bei Ablauf einer Deadline automatisch posten soll.]]></item>
+            <item name="wcf.acp.option.wbb_election_bot_user_id_test"><![CDATA[Bot-Test-ID]]></item>
+            <item name="wcf.acp.option.wbb_election_bot_user_id_test.description"><![CDATA[Diesen Wert bitte nicht ändern!]]></item>
         </category>
 
         <category name="wcf.editor">

@@ -270,7 +270,7 @@ class ElectionBotPostActionListener implements IParameterizedEventListener {
                                 'name0' => $data['data']['name0'],
                                 'deadline' => $data['data']['deadline'],
                                 'reminder' => $data['data']['reminder'],
-                            ]
+                            ],
                         ),
                     ];
                 }

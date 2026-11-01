@@ -17,6 +17,12 @@
                 <defaultvalue>1</defaultvalue>
                 <minvalue>1</minvalue>
             </option>
+            <option name="wbb_election_bot_user_id_test">
+                <categoryname>board.electionbot.general</categoryname>
+                <optiontype>integer</optiontype>
+                <defaultvalue>1</defaultvalue>
+                <minvalue>1</minvalue>
+            </option>
         </options>
     </import>
 </data>
