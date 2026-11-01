@@ -20,6 +20,12 @@
             <preset>1</preset>
         </event>
         <event>
+            <name>participationMaybeRegister</name>
+            <objecttype>com.woltlab.calendar.event.date.participation</objecttype>
+            <classname>calendar\system\user\notification\event\MaybeRegisterNotificationEvent</classname>
+            <preset>1</preset>
+        </event>
+        <event>
             <name>participationMaybeUnregister</name>
             <objecttype>com.woltlab.calendar.event.date.participation</objecttype>
             <classname>calendar\system\user\notification\event\MaybeUnregisterNotificationEvent</classname>

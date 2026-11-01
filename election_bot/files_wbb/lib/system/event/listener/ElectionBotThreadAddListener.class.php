@@ -62,23 +62,31 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
     }
 
     protected function save(ThreadAddForm $eventObj) {
-        if ($this->form !== null) {
-            $data = $this->form->getData();
-            $data['msgs'] = [WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.message.create', $data
-            )];
-            $doc = $eventObj->htmlInputProcessor->getHtmlInputNodeProcessor()->getDocument();
-            $doc->getElementsByTagName('body')->item(0)
-                ->appendChild(Election::processMessages($doc, $data));
+        if ($this->form === null) {
+            return;
+        }
 
-            if ($this->electionParticipantsTitleAdd && $this->participantList) {
-                $nameCount = $this->participantList->countNames();
-                $newSubject = "{$eventObj->subject} $nameCount/$nameCount";
-                if (\mb_strlen($newSubject) > 255) {
-                    throw new UserInputException('electionParticipants', 'longTitle');
-                }
-                $eventObj->subject = $newSubject;
+        $data = ElectionAction::extractFormData($this->form, 0);
+        $data['msgs'] = [WCF::getLanguage()->getDynamicVariable(
+            'wbb.electionbot.message.create',
+            [
+                'name' => $data['data']['name'],
+                'name0' => $data['data']['name0'],
+                'deadline' => $data['data']['deadline'],
+                'reminder' => $data['data']['reminder'],
+            ],
+        )];
+        $doc = $eventObj->htmlInputProcessor->getHtmlInputNodeProcessor()->getDocument();
+        $doc->getElementsByTagName('body')->item(0)
+            ->appendChild(Election::processMessages($doc, $data));
+
+        if ($this->electionParticipantsTitleAdd && $this->participantList) {
+            $nameCount = $this->participantList->countNames();
+            $newSubject = "{$eventObj->subject} $nameCount/$nameCount";
+            if (\mb_strlen($newSubject) > 255) {
+                throw new UserInputException('electionParticipants', 'longTitle');
             }
+            $eventObj->subject = $newSubject;
         }
     }
 
@@ -133,4 +141,3 @@ class ElectionBotThreadAddListener implements IParameterizedEventListener {
         }
     }
 }
-

@@ -5,10 +5,14 @@ namespace calendar\system\user\notification\event;
 use calendar\system\cache\runtime\EventDateRuntimeCache;
 use calendar\system\cache\runtime\EventRuntimeCache;
 use calendar\system\user\notification\object\EventDateParticipationUserNotificationObject;
+use wcf\data\user\UserProfile;
+use wcf\system\cache\runtime\UserProfileRuntimeCache;
 use wcf\system\user\notification\event\AbstractSharedUserNotificationEvent;
+use wcf\system\user\notification\event\ITestableUserNotificationEvent;
+use wcf\system\user\notification\event\TTestableUserNotificationEvent;
 
 /**
- * Notification event for when an undecided event participant changes to not participaing.
+ * Notification event for when an undecided event participant changes to not participating.
  * 
  * @author  Xaver
  * @license MIT License <https://mit-license.org/>
@@ -16,7 +20,12 @@ use wcf\system\user\notification\event\AbstractSharedUserNotificationEvent;
  *
  * @method  EventDateParticipationUserNotificationObject  getUserNotificationObject()
  */
-class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEvent {
+class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEvent implements
+    ITestableUserNotificationEvent
+{
+    use TTestableEventDateRelatedUserNotificationEvent;
+    use TTestableUserNotificationEvent;
+
     /**
      * @inheritDoc
      */
@@ -27,6 +36,7 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
      */
     protected function prepare() {
         EventDateRuntimeCache::getInstance()->cacheObjectID($this->getUserNotificationObject()->eventDateID);
+        UserProfileRuntimeCache::getInstance()->cacheObjectID($this->getUserNotificationObject()->userID);
     }
 
     /**
@@ -52,8 +62,6 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
      */
     public function getMessage(): string {
         $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
-        $eventDate->setEvent(EventRuntimeCache::getInstance()->getObject($eventDate->eventID));
-        $this->getUserNotificationObject()->setEventDate($eventDate);
 
         $authors = \array_values($this->getAuthors());
         $count = \count($authors);
@@ -90,10 +98,6 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
      * @inheritDoc
      */
     public function getLink(): string {
-        $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
-        $eventDate->setEvent(EventRuntimeCache::getInstance()->getObject($eventDate->eventID));
-        $this->getUserNotificationObject()->setEventDate($eventDate);
-
         return $this->getUserNotificationObject()->getURL();
     }
 
@@ -109,6 +113,19 @@ class MaybeUnregisterNotificationEvent extends AbstractSharedUserNotificationEve
      */
     public function checkAccess(): bool {
         $eventDate = EventDateRuntimeCache::getInstance()->getObject($this->getUserNotificationObject()->eventDateID);
+
         return EventRuntimeCache::getInstance()->getObject($eventDate->eventID)->canRead();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getTestObjects(UserProfile $recipient, UserProfile $author) {
+        return [
+            new MaybeUnregisterNotificationEvent(self::createTestEventDateParticipation(
+                $recipient,
+                $author
+            )),
+        ];
     }
 }

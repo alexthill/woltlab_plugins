@@ -47,6 +47,32 @@ class ParticipantList extends DatabaseObjectList {
     }
 
     /**
+     * Returns the number of active participants for the given thread.
+     */
+    public static function countActiveForThread(int $threadID): int {
+        $list = new ParticipantList();
+        $sql = "SELECT COUNT(*) FROM {$list->getDatabaseTableName()} WHERE threadID = ? AND active";
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
+        $statement->execute([$threadID]);
+        return $statement->fetchSingleColumn();
+    }
+
+    /**
+     * Returns all active participants from given thread which have not voted in the given election and phase.
+     */
+    public static function nonVotersForElectionPhase(int $threadID, int $electionID, int $phase): static {
+        $list = new ParticipantList();
+        $sql = "SELECT * FROM {$list->getDatabaseTableName()}
+                WHERE threadID = ? AND active AND name NOT IN (
+                    SELECT voter FROM wbb1_election_vote WHERE electionID = ? AND phase = ?
+                )";
+        $statement = WCF::getDB()->prepare($sql);
+        $statement->execute([$threadID, $electionID, $phase]);
+        $list->objects = $statement->fetchObjects(($list->objectClassName ?: $list->className));
+        return $list;
+    }
+
+    /**
      * load names from a newline-separated string
      * names are trimmed and lines starting with '#' are ignored
      * afterwards `validate` and `save` need to be called to save the list
@@ -178,7 +204,7 @@ class ParticipantList extends DatabaseObjectList {
      * returns the input from `static::fromNsvInput` but with remarks about which names are invalid.
      *
      * @return  string
-     * @throws  BadMethodCallException  if `validate` has not been called
+     * @throws  \BadMethodCallException  if `validate` has not been called
      */
     public function getValidatedInput(): string {
         if (!$this->validated) {
@@ -204,7 +230,7 @@ class ParticipantList extends DatabaseObjectList {
      * Save the names loaded from `static::fromNsvInput` to the database.
      *
      * @return  void
-     * @throws  BadMethodCallException  if `validate` has not been called
+     * @throws  \BadMethodCallException  if `validate` has not been called
      */
     public function save(int $threadID): void {
         if (!$this->validated) {

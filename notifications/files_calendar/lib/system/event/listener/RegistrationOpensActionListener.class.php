@@ -43,7 +43,7 @@ class RegistrationOpensActionListener implements IParameterizedEventListener {
                 FROM   wcf' . WCF_N . '_user
                 WHERE  lastActivityTime > ?
                 AND userID != ' . WCF::getUser()->userID;
-        $statement = WCF::getDB()->prepareStatement($sql);
+        $statement = WCF::getDB()->prepareUnmanaged($sql);
         $statement->execute([TIME_NOW - 60*60*24*30]);
 
         $recipientIDs = [];

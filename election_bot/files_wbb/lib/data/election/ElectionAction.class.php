@@ -77,7 +77,14 @@ class ElectionAction extends AbstractDatabaseObjectAction {
                         ->required()
                         ->value(1440) // minutes in day
                         ->minimum(0)
-                        ->maximum(1440 * 365), // minutes in year
+                        ->maximum(525600), // minutes in year (arbitrary value)
+                    IntegerFormField::create('reminder')
+                        ->label('wbb.electionbot.form.reminder')
+                        ->description('wbb.electionbot.form.reminder.description')
+                        ->required()
+                        ->value(60) // minutes in hour
+                        ->minimum(0)
+                        ->maximum(525600), // minutes in year (arbitrary value)
                     // BooleanFormField::create('silenceBetweenPhases')
                         // ->label('wbb.electionbot.form.silence'),
                 ])
@@ -110,7 +117,9 @@ class ElectionAction extends AbstractDatabaseObjectAction {
         $data = $form->getData();
         $data['data']['threadID'] = $threadID;
         $data['data']['isActive'] = 1;
+        // Convert minutes to seconds.
         $data['data']['extension'] = $data['data']['extension'] * 60;
+        $data['data']['reminder'] = $data['data']['reminder'] * 60;
         if (!isset($data['data']['name0'])) {
             $data['data']['name0'] = '';
         }

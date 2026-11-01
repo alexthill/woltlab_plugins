@@ -22,4 +22,13 @@ return [
                 ->onDelete('CASCADE')
                 ->drop(),
         ]),
+    PartialDatabaseTable::create('wbb1_election_participant_alias')
+        ->foreignKeys([
+            DatabaseTableForeignKey::create()
+                ->columns(['participantID'])
+                ->referencedTable('wbb1_election_participant')
+                ->referencedColumns(['participantID'])
+                ->onDelete('CASCADE')
+                ->drop(),
+        ])
 ];

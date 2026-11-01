@@ -108,7 +108,7 @@ require([
         configuration.woltlabBbcode.push({
             name: 'votehistory',
             label: '{jslang}wcf.editor.button.election.votehistory{/jslang}',
-            icon: 'bars;false'
+            icon: 'clock-rotate-left;false'
         });
         items.push('woltlabBbcode_votehistory');
         {/if}
