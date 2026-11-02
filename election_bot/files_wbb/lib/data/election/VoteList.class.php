@@ -2,8 +2,10 @@
 
 namespace wbb\data\election;
 
+use wbb\data\election\ParticipantList;
 use wcf\data\DatabaseObjectList;
 use wcf\system\WCF;
+use wcf\util\StringUtil;
 
 /**
  * Represents a list of votes.
@@ -22,6 +24,8 @@ class VoteList extends DatabaseObjectList {
     public $className = Vote::class;
 
     private bool $singlePhase = true;
+
+    public array $participants = [];
 
     public static function getElectionVotes(int $electionID, int $phase, bool $single = true): static {
         $list = new VoteList();
@@ -59,6 +63,16 @@ class VoteList extends DatabaseObjectList {
         return $list;
     }
 
+    public function participants(?ParticipantList $participants): static {
+        $this->participants = [];
+        if ($participants !== null) {
+            foreach ($participants as $participant) {
+                $this->participants[$participant->name] = $participant;
+            }
+        }
+        return $this;
+    }
+
     public static function getAllVoteCounts(int $electionID, int $upToPhase): array {
         $list = new VoteList();
         $sql = "SELECT voteID, postID, voter, voted, time, count, phase FROM {$list->getDatabaseTableName()}
@@ -93,22 +107,6 @@ class VoteList extends DatabaseObjectList {
         return VoteCount::fromVoteList($this);
     }
 
-    public function generateHistoryHtml(int $threadID): string {
-        $lines = [];
-        $prevVotes = [];
-        foreach ($this as $vote) {
-            $lines[] = WCF::getLanguage()->getDynamicVariable(
-                'wbb.electionbot.votehistory.line', [
-                    'vote' => $vote,
-                    'prevVote' => $prevVotes[$vote->voter] ?? null,
-                    'threadID' => $threadID,
-                ],
-            );
-            $prevVotes[$vote->voter] = $vote;
-        }
-        return implode('<br/>', $lines);
-    }
-
     public function generateMultiHistoryHtml(int $threadID): array {
         $linesByPhase = [];
         $prevVotesByPhase = [];
@@ -117,15 +115,27 @@ class VoteList extends DatabaseObjectList {
                 $linesByPhase[$vote->phase] = [];
                 $prevVotesByPhase[$vote->phase] = [];
             }
+
+            $voted = $this->decorateName($vote->voted);
             $linesByPhase[$vote->phase][] = WCF::getLanguage()->getDynamicVariable(
                 'wbb.electionbot.votehistory.line', [
-                    'vote' => $vote,
-                    'prevVote' => $prevVotesByPhase[$vote->phase][$vote->voter] ?? null,
+                    'prevVoted' => $prevVotesByPhase[$vote->phase][$vote->voter] ?? null,
+                    'postID' => $vote->postID,
+                    'time' => $vote->time,
                     'threadID' => $threadID,
+                    'voted' => $voted,
+                    'voter' => $this->decorateName($vote->voter),
                 ],
             );
-            $prevVotesByPhase[$vote->phase][$vote->voter] = $vote;
+            $prevVotesByPhase[$vote->phase][$vote->voter] = $voted;
         }
         return array_map(fn(array $lines): string => implode('<br/>', $lines), $linesByPhase);
+    }
+
+    protected function decorateName(string $name): string {
+        if (array_key_exists($name, $this->participants)) {
+            return $this->participants[$name]->decorateName();
+        }
+        return StringUtil::encodeHTML($name);
     }
 }
