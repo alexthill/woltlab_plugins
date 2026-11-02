@@ -76,8 +76,14 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
             }
 
             $html = '';
+            $participants = null;
+            if ($data['color']) {
+                $participants = ParticipantList::forThread($threadID);
+            }
+
             if ($history) {
                 $voteHistory = VoteList::getElectionVotes($electionID, $data['phase'], !$data['all'])
+                    ->participants($participants)
                     ->generateMultiHistoryHtml($threadID);
                 ksort($voteHistory);
                 foreach ($voteHistory as $phase => $voteHistory) {
@@ -88,10 +94,6 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
                     $html .= "<p><u>$title</u><br/>{$voteHistory}</p>";
                 }
             } else {
-                $participants = null;
-                if ($data['color']) {
-                    $participants = ParticipantList::forThread($threadID);
-                }
                 if ($data['all']) {
                     $voteCounts = VoteList::getAllVoteCounts($electionID, $data['phase']);
                     ksort($voteCounts);
@@ -150,4 +152,3 @@ class ElectionBotVoteCountAction implements RequestHandlerInterface {
         return $form->build();
     }
 }
-

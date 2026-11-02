@@ -131,7 +131,7 @@ final class ElectionBotCronjob extends AbstractCronjob {
             $voteHistoryHtml = $voteCountHtml;
         } else {
             $voteCountHtml = $voteList->getVoteCount()->generateHtml();
-            $voteHistoryHtml = $voteList->generateHistoryHtml($election->threadID);
+            $voteHistoryHtml = $voteList->generateMultiHistoryHtml($election->threadID)[$election->phase];
         }
 
         $noVoters = ParticipantList::nonVotersForElectionPhase($threadID, $election->electionID, $election->phase);
