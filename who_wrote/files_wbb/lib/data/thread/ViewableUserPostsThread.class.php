@@ -5,7 +5,7 @@ namespace wbb\data\thread;
 use wcf\system\request\LinkHandler;
 
 /**
- * This just overwrites some methodes of ViewableThread for use in the ThreadUserPostsPage
+ * This just overwrites some methods of ViewableThread for use in the ThreadUserPostsPage.
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
@@ -17,7 +17,7 @@ class ViewableUserPostsThread extends ViewableThread {
      * @inheritDoc
      */
     public function canReply($checkForDoublePostOnly = null) {
-        // disable the quick reply editor
+        // Disable the quick reply editor.
         return false;
     }
 
@@ -25,7 +25,7 @@ class ViewableUserPostsThread extends ViewableThread {
      * @inheritDoc
      */
     public function canEdit() {
-        // prevent the wbb.thread.noPosts error from being shown and telling mods that the thread can be deleted
+        // Prevent the wbb.thread.noPosts error from being shown and telling mods that the thread can be deleted.
         return false;
     }
 

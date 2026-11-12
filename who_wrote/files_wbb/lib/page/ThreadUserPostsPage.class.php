@@ -14,7 +14,7 @@ use wcf\system\WCF;
  *
  * @author  Alex Thill
  * @license MIT License <https://mit-license.org/>
- * @package com.alexthill.notifications
+ * @package com.alexthill.who_wrote
  */
 class ThreadUserPostsPage extends ThreadPage {
 
