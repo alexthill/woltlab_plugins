@@ -7,17 +7,25 @@
             <eventname>infoBoxes</eventname>
             <templatecode><![CDATA[{include file='__whoWrote' application='wbb'}]]></templatecode>
         </templatelistener>
+        <templatelistener name="wbbWhoWrote">
+            <environment>user</environment>
+            <templatename>threadUserPosts</templatename>
+            <eventname>infoBoxes</eventname>
+            <templatecode><![CDATA[{include file='__whoWrote' application='wbb'}]]></templatecode>
+        </templatelistener>
         <templatelistener name="wbbWhoWroteShownUsers">
             <environment>user</environment>
-            <templatename>thread</templatename>
+            <templatename>threadUserPosts</templatename>
             <eventname>afterMetaData</eventname>
             <templatecode><![CDATA[{include file='__whoWroteShownUsers' application='wbb'}]]></templatecode>
         </templatelistener>
+    </import>
+    <delete>
         <templatelistener name="wbbWhoWrotePagination">
             <environment>user</environment>
             <templatename>contentInteraction</templatename>
             <eventname>beforeButtons</eventname>
             <templatecode><![CDATA[{include file='__whoWrotePagination' application='wbb'}]]></templatecode>
         </templatelistener>
-    </import>
+    </delete>
 </data>

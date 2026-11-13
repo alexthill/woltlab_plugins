@@ -5,8 +5,8 @@
         <packagedescription>Show in the thread footer the number of written contributions per user</packagedescription>
         <packagename language="de">Wer hat in einem Thema geantwortet</packagename>
         <packagedescription language="de">Zeige im Themen-Footer die Anzahl der geschriebenen Beiträge pro Benutzer</packagedescription>
-        <version>6.0.0</version>
-        <date>2024-01-04</date>
+        <version>6.2.0</version>
+        <date>2026-11-13</date>
     </packageinformation>
 
     <authorinformation>
@@ -14,8 +14,8 @@
     </authorinformation>
 
     <requiredpackages>
-        <requiredpackage minversion="6.0.0">com.woltlab.wcf</requiredpackage>
-        <requiredpackage minversion="6.0.0">com.woltlab.wbb</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.wcf</requiredpackage>
+        <requiredpackage minversion="6.2.0">com.woltlab.wbb</requiredpackage>
     </requiredpackages>
 
     <instructions type="install">
@@ -29,7 +29,10 @@
         <instruction type="userGroupOption" />
     </instructions>
     
-    <instructions  type="update" fromversion="6.0.0 Beta 3">
-        <void/>
+    <instructions  type="update" fromversion="6.0.0">
+        <instruction type="language" />
+        <instruction type="file" application="wbb">files_wbb.tar</instruction>
+        <instruction type="template" application="wbb">templates_wbb.tar</instruction>
+        <instruction type="templateListener" />
     </instructions>
 </package>
